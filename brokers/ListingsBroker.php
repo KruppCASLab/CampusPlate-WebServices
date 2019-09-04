@@ -10,15 +10,17 @@ class ListingsBroker {
     if ($id == "") {
       return ListingsModel::getListings();
     } else {
-        return ListingsModel::getListings();
+      return ListingsModel::getListings();
     }
   }
 
   static public function post($requestData) {
     $listing = new Listing($requestData[0]);
-    if (GeoFence::onCampus($listing->lat, $listing->lng)) {
-      ListingsModel::createListing($listing);
-    }
+
+    //TODO: GeoFencing is broken, need to fix
+    //if (GeoFence::onCampus($listing->lat, $listing->lng)) {
+      $result["error"] = ListingsModel::createListing($listing);
+    //}
   }
 
   //TODO: Complete for update
