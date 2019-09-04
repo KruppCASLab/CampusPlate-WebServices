@@ -1,7 +1,7 @@
 <?php
 
-require_once(__DIR__ . "/../model/types/Listing.php");
-require_once(__DIR__ . "/../model/ListingsModel.php");
+require_once(__DIR__ . "/../model/types/User.php");
+require_once(__DIR__ . "/../model/UsersModel.php");
 
 class UsersBroker {
   static public function get($requestData) {
@@ -12,8 +12,12 @@ class UsersBroker {
     }
   }
 
+  // Registration
   static public function post($requestData) {
-    // Registration
+    $user = new User($requestData[0]);
+
+    $result["error"] = UsersModel::createUser($user);
+    return $result;
   }
 
   //TODO: Complete for update
