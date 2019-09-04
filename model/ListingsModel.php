@@ -2,20 +2,21 @@
 require_once(__DIR__ . "/Database.php");
 require_once(__DIR__ . "/types/Listing.php");
 require_once(__DIR__ . "/types/User.php");
+require_once(__DIR__ . "/types/Response.php");
 
 class ListingsModel {
 
-  static public function createListing(Listing $listing) {
+  static public function createListing(Listing $listing) : Response{
     $db = new Database();
 
     $sql = "INSERT INTO tblListings(userId, title, lat, lng, quantity) VALUES (?, ?, ?, ?, ?)";
 
     $db->executeSql($sql, "isddi", array($listing->userId, $listing->title, $listing->lat, $listing->lng, $listing->quantity));
 
-    return $db->lastError;
+    return new Response(null, $db->lastError);
   }
 
-  static public function getListings() : array {
+  static public function getListings() : Response {
     $db = new Database();
 
     $sql = "SELECT * from tblListings";
@@ -26,7 +27,7 @@ class ListingsModel {
       array_push($objectresults, new Listing($result));
     }
 
-    return $objectresults;
+    return new Response($objectresults, $db->lastError);
   }
 
 }

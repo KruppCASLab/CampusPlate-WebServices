@@ -19,7 +19,7 @@ class ListingsBroker {
 
     //TODO: GeoFencing is broken, need to fix
     //if (GeoFence::onCampus($listing->lat, $listing->lng)) {
-      $result["error"] = ListingsModel::createListing($listing);
+      return ListingsModel::createListing($listing);
     //}
   }
 

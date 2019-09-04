@@ -16,8 +16,7 @@ class UsersBroker {
   static public function post($requestData) {
     $user = new User($requestData[0]);
 
-    $result["error"] = UsersModel::createUser($user);
-    return $result;
+    return UsersModel::createUser($user);
   }
 
   //TODO: Complete for update

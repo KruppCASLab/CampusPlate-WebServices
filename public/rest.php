@@ -49,11 +49,8 @@ if (method_exists($resource, $method)) {
   }
 
   $response = call_user_func(array($resource, $method), $requestData);
-  $responseObject["status"] = 0;
-  if ($response != null) {
-    $responseObject["data"] = $response;
-  }
-  echo json_encode($responseObject);
+
+  echo json_encode($response);
 } else {
   http_response_code(405);
 }
