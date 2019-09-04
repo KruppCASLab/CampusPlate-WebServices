@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . "../brokers/UserBroker.php");
+require_once(__DIR__ . "../brokers/UsersBroker.php");
 require_once(__DIR__ . "../brokers/ListingsBroker.php");
 require_once(__DIR__ . "../lib/Security.php");
 
