@@ -1,7 +1,7 @@
 <?php
-require_once(__DIR__ . "../brokers/UsersBroker.php");
-require_once(__DIR__ . "../brokers/ListingsBroker.php");
-require_once(__DIR__ . "../lib/Security.php");
+require_once(__DIR__ . "/../brokers/UsersBroker.php");
+require_once(__DIR__ . "/../brokers/ListingsBroker.php");
+require_once(__DIR__ . "/../lib/Security.php");
 
 
 $request = explode("/", $_SERVER["PATH_INFO"]);
