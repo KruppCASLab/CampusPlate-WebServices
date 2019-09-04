@@ -2,6 +2,7 @@
 
 require_once(__DIR__ . "/../model/types/Listing.php");
 require_once(__DIR__ . "/../model/ListingsModel.php");
+require_once(__DIR__ . "/../lib/Geofence.php");
 
 class ListingsBroker {
   static public function get($requestData) {
