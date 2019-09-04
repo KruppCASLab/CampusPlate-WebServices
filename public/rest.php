@@ -14,6 +14,7 @@ $userId = -1;
 
 // User is attempting to register
 //TODO: Uncomment for authentication
+/*
 if (!($resource == "SecurityBroker" && $method == "post")) {
   $username = $_SERVER['PHP_AUTH_USER'];
   $password = $_SERVER['PHP_AUTH_PW'];
@@ -26,6 +27,7 @@ if (!($resource == "SecurityBroker" && $method == "post")) {
     die("Error");
   }
 }
+*/
 
 $requestBody = json_decode(file_get_contents("php://input"));
 
