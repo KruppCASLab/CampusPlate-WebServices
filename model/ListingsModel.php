@@ -9,9 +9,9 @@ class ListingsModel {
   static public function createListing(Listing $listing) : Response{
     $db = new Database();
 
-    $sql = "INSERT INTO tblListings(userId, title, lat, lng, quantity) VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO tblListings(userId, title, lat, lng, quantity, creationTime) VALUES (?, ?, ?, ?, ?, ?)";
 
-    $db->executeSql($sql, "isddi", array($listing->userId, $listing->title, $listing->lat, $listing->lng, $listing->quantity));
+    $db->executeSql($sql, "isddii", array($listing->userId, $listing->title, $listing->lat, $listing->lng, $listing->quantity, time()));
 
     return new Response(null, $db->lastError);
   }
