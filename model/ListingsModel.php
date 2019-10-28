@@ -19,7 +19,7 @@ class ListingsModel {
   static public function getListings() : Response {
     $db = new Database();
 
-    $sql = "SELECT * from tblListings";
+    $sql = "SELECT * from tblListings ORDER BY creationTime DESC";
 
     $results = $db->executeSql($sql);
     $objectresults = array();
