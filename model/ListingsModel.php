@@ -11,7 +11,7 @@ class ListingsModel {
 
     $sql = "INSERT INTO tblListings(userId, title, locationDescription, lat, lng, quantity, creationTime) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    $db->executeSql($sql, "isddii", array($listing->userId, $listing->title, $listing->locationDescription, $listing->lat, $listing->lng, $listing->quantity, time()));
+    $db->executeSql($sql, "issddii", array($listing->userId, $listing->title, $listing->locationDescription, $listing->lat, $listing->lng, $listing->quantity, time()));
 
     return new Response(null, $db->lastError);
   }
