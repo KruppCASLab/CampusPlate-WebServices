@@ -22,6 +22,14 @@ class ListingsBroker {
       return ListingsModel::createListing($listing);
     //}
   }
+  static public function patch($requestData) {
+    $id = $requestData[0];
+
+    // Check key
+    foreach($requestData[1] as $key=>$val) {
+      return "$key = $val";
+    }
+  }
 
   //TODO: Complete for update
   static public function put($requestData) {
