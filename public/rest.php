@@ -38,12 +38,12 @@ if (method_exists($resource, $method)) {
   http_response_code(200);
 
   // Check for an ID
-  if ($method == "get" || $method == "put" || $method == "delete") {
+  if ($method == "get" || $method == "put" || $method == "delete" || $method == "patch") {
     $id = $request[2];
     array_push($requestData, $id);
   }
   // Check if we are sending JSON
-  if ($method == "post" || $method == "put") {
+  if ($method == "post" || $method == "put" || $method == "patch") {
     $requestBody->userId = $userId;
     array_push($requestData, $requestBody);
   }

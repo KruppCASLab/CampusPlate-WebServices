@@ -24,11 +24,12 @@ class ListingsBroker {
   }
   static public function patch($requestData) {
     $id = $requestData[0];
-
-    // Check key
     foreach($requestData[1] as $key=>$val) {
-      return "$key = $val";
+      if ($key == "quantity") {
+        return ListingsModel::updateQuantity($id, $val);
+      }
     }
+
   }
 
   //TODO: Complete for update
