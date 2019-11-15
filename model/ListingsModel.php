@@ -9,9 +9,9 @@ class ListingsModel {
   static public function createListing(Listing $listing) : DBResponse{
     $db = new Database();
 
-    $sql = "INSERT INTO tblListings(userId, title, locationDescription, lat, lng, quantity, creationTime) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO tblListings(userId, title, locationDescription, lat, lng, quantity, creationTime, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    $db->executeSql($sql, "issddii", array($listing->userId, $listing->title, $listing->locationDescription, $listing->lat, $listing->lng, $listing->quantity, time()));
+    $db->executeSql($sql, "issddiis", array($listing->userId, $listing->title, $listing->locationDescription, $listing->lat, $listing->lng, $listing->quantity, time(), $listing->image));
 
     return new DBResponse(null, $db->lastError);
   }
@@ -23,7 +23,7 @@ class ListingsModel {
 
     $results = $db->executeSql($sql);
     $objectresults = array();
-    foreach($results as $result) {
+    foreach($results as $result) { 
       array_push($objectresults, new Listing($result));
     }
 
@@ -46,9 +46,10 @@ class ListingsModel {
     // This SQL looks wild because of the nested select, but this gets around MySQLs restriction of updating the table
     // while selecting from it, when we do the select quantity, that places it in a temporary varaible
     $sql = "UPDATE tblListings set quantity = ((select quantity from (select quantity from tblListings where listingId = ?) AS quantity) + ?) where listingId = ?";
-
-
     $db->executeSql($sql, "iii", array($id, $quantityChange, $id));
+
+    $sql = "DELETE FROM tblListings where quantity <= 0";
+    $db->executeSql($sql);
 
     return new DBResponse(null, $db->lastError);
   }
