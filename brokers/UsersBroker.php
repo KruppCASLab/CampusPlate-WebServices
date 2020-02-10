@@ -29,8 +29,7 @@ class UsersBroker {
   }
 
   static private function randomPin(){
-//    $randomPin = mt_rand(100000, 999999);
-    $randomPin = 123456;
+    $randomPin = mt_rand(100000, 999999);
     return $randomPin;
   }
 
