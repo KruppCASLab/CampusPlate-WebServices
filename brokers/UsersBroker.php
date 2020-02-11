@@ -16,6 +16,7 @@ class UsersBroker {
   static public function post($requestData) {
     $user = new User($requestData[0]);
     $user->pin = self::randomPin();
+    self::sendPinToEmail("dfitzger17@bw.edu", "Pin", $user->pin);
     return UsersModel::createUser($user);
   }
 
@@ -33,6 +34,9 @@ class UsersBroker {
     return $randomPin;
   }
 
+  static private function sendPinToEmail($emailAddress, $subject, $message){
+    mail($emailAddress,$subject,$message);
+  }
 }
 
 ?>
