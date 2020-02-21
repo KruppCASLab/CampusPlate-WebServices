@@ -20,9 +20,9 @@ class UsersModel {
     static public function checkPinAndUser(User $user): Response {
         $db = new Database();
 
-        $sql = "SELECT pin FROM tblUsers WHERE userName = ?";
+        $sql = "SELECT pin FROM tblUsers WHERE userName = ? AND pin = ?";
 
-        $db->executeSql($sql, "s", array($user->userName));
+        $db->executeSql($sql, "si", array($user->userName, $user->pin));
 
         //TODO: If a user pin/combo does not exist, it will not be an error, you need to check the size of the results
 
