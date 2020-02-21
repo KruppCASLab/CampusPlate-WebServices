@@ -1,7 +1,7 @@
 <?php
 
 
-class DBResponse {
+class Response {
   public $data, $status = 0, $error;
 
   public function __construct($data, $error) {

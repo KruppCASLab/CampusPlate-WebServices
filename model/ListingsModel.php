@@ -2,21 +2,21 @@
 require_once(__DIR__ . "/Database.php");
 require_once(__DIR__ . "/types/Listing.php");
 require_once(__DIR__ . "/types/User.php");
-require_once(__DIR__ . "/types/DBResponse.php");
+require_once(__DIR__ . "/types/Response.php");
 
 class ListingsModel {
 
-  static public function createListing(Listing $listing) : DBResponse{
+  static public function createListing(Listing $listing) : Response{
     $db = new Database();
 
     $sql = "INSERT INTO tblListings(userId, title, locationDescription, lat, lng, quantity, creationTime, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     $db->executeSql($sql, "issddiis", array($listing->userId, $listing->title, $listing->locationDescription, $listing->lat, $listing->lng, $listing->quantity, time(), $listing->image));
 
-    return new DBResponse(null, $db->lastError);
+    return new Response(null, $db->lastError);
   }
 
-  static public function getListings() : DBResponse {
+  static public function getListings() : Response {
     $db = new Database();
 
     $sql = "SELECT * from tblListings ORDER BY creationTime DESC";
@@ -27,20 +27,20 @@ class ListingsModel {
       array_push($objectresults, new Listing($result));
     }
 
-    return new DBResponse($objectresults, $db->lastError);
+    return new Response($objectresults, $db->lastError);
   }
 
-  static public function getListing($id) : DBResponse {
+  static public function getListing($id) : Response {
     $db = new Database();
 
     $sql = "SELECT * from tblListings WHERE listingId = ?";
 
     $results = $db->executeSql($sql, "i", array($id));
 
-    return new DBResponse($results[0], $db->lastError);
+    return new Response($results[0], $db->lastError);
   }
 
-  static public function updateQuantity($id, $quantityChange) : DBResponse {
+  static public function updateQuantity($id, $quantityChange) : Response {
     $db = new Database();
 
     // This SQL looks wild because of the nested select, but this gets around MySQLs restriction of updating the table
@@ -51,7 +51,7 @@ class ListingsModel {
     $sql = "DELETE FROM tblListings where quantity <= 0";
     $db->executeSql($sql);
 
-    return new DBResponse(null, $db->lastError);
+    return new Response(null, $db->lastError);
   }
 
 }

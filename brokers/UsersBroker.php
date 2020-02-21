@@ -29,13 +29,17 @@ class UsersBroker {
     //TODO: Check to see if pin is not null, if null return error
 
     if ($user->pin != null){
+      // TODO: Here you need to check your response from this, and then create the appropriate response object and return
       UsersModel::checkPinAndUser($user);
+      
+      //TODO: If your response is good, then set the verified flag
+      UsersModel::updateVerifiedFlag($user);
     }else{
+
       //DBResponse->$status = 1
     }
 
-    //TODO: Add to user model object verify user
-    UsersModel::updateVerifiedFlag($user);
+
   }
 
   //TODO: Complete for delete
