@@ -3,6 +3,7 @@
 require_once(__DIR__ . "/../model/types/User.php");
 require_once(__DIR__ . "/../model/UsersModel.php");
 
+
 class UsersBroker {
   static public function get($requestData) {
     $id = $requestData[0];
@@ -16,13 +17,25 @@ class UsersBroker {
   static public function post($requestData) {
     $user = new User($requestData[0]);
     $user->pin = self::randomPin();
-    self::sendPinToEmail("dfitzger17@bw.edu", "Pin", $user->pin);
     return UsersModel::createUser($user);
   }
 
   //TODO: Complete for update
-  static public function put($requestData) {
+  static public function patch($requestData) {
 
+    //TODO: Create user object
+    $user = new User($requestData[0]);
+
+    //TODO: Check to see if pin is not null, if null return error
+
+    if ($user->pin != null){
+      UsersModel::checkPinAndUser($user);
+    }else{
+      //DBResponse->$status = 1
+    }
+
+    //TODO: Add to user model object verify user
+    UsersModel::updateVerifiedFlag($user);
   }
 
   //TODO: Complete for delete
@@ -34,9 +47,6 @@ class UsersBroker {
     return $randomPin;
   }
 
-  static private function sendPinToEmail($emailAddress, $subject, $message){
-    mail($emailAddress,$subject,$message);
-  }
 }
 
 ?>
