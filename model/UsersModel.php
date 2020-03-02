@@ -26,6 +26,7 @@ class UsersModel {
 
         //TODO: If a user pin/combo does not exist, it will not be an error, you need to check the size of the results
 
+
         return new Response(null, $db->lastError);
     }
 

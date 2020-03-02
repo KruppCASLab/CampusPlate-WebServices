@@ -22,8 +22,6 @@ class UsersBroker {
 
   //TODO: Complete for update
   static public function patch($requestData) {
-
-
     $userName = $requestData[0];
 
     $user = new User($requestData[1]);
@@ -31,15 +29,25 @@ class UsersBroker {
 
     //TODO: Check to see if pin is not null, if null return error
 
+    $response = new Response(null, null);
+
     if ($user->pin != null){
       // TODO: Here you need to check your response from this, and then create the appropriate response object and return
-      UsersModel::checkPinAndUser($user);
+      if(UsersModel::checkPinAndUser($user)->error == 0){
+
+        $response->data = $user;
+        $response->error = 0;
+        
+      }else{
+
+      }
 
       //TODO: If your response is good, then set the verified flag
       UsersModel::updateVerifiedFlag($user);
     }else{
 
-      //DBResponse->$status = 1
+      $response->error = 1;
+
     }
 
 
