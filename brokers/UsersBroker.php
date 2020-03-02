@@ -27,33 +27,27 @@ class UsersBroker {
     $user = new User($requestData[1]);
     $user->userName = $userName;
 
-    //TODO: Check to see if pin is not null, if null return error
-
-    $response = new Response(null, null);
+    $response = new Response();
 
     if ($user->pin != null){
-      // TODO: Here you need to check your response from this, and then create the appropriate response object and return
-      if(UsersModel::checkPinAndUser($user)->error == 0){
+      if(UsersModel::checkPinAndUser($user)->status === 0){
+        UsersModel::updateVerifiedFlag($user);
 
-        $response->data = $user;
-        $response->error = 0;
-        
-      }else{
+        // TODO: Create GUID and store that in DB
+        // TODO: Return response containing GUID to use for auth
+        // TODO: On iOS, store the GUID and the username in the keychain
+        $response->data = "SOME GUID";
+        $response->status = 0;
 
+        return $response;
       }
-
-      //TODO: If your response is good, then set the verified flag
-      UsersModel::updateVerifiedFlag($user);
-    }else{
-
-      $response->error = 1;
-
+      else{
+        return new Response(null, 2); // Use 2 to indicate invalid match
+      }
     }
-
-
-    return new Response("AAA-11-", 0);
-
-
+    else{
+      return new Response(null, 1); // Use 1 to indicate they did not send pin
+    }
   }
 
   //TODO: Complete for delete

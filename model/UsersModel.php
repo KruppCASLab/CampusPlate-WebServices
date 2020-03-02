@@ -18,16 +18,22 @@ class UsersModel {
   }
 
     static public function checkPinAndUser(User $user): Response {
+        $response = new Response();
         $db = new Database();
 
         $sql = "SELECT pin FROM tblUsers WHERE userName = ? AND pin = ?";
 
-        $db->executeSql($sql, "si", array($user->userName, $user->pin));
+        $results = $db->executeSql($sql, "si", array($user->userName, $user->pin));
 
-        //TODO: If a user pin/combo does not exist, it will not be an error, you need to check the size of the results
+        // Pin and Username combo don't exist
+        if (sizeof($results) == 0) {
+          $response->status = 1;
+        }
+        else {
+          $response->status = 0;
+        }
 
-
-        return new Response(null, $db->lastError);
+        return $response;
     }
 
     static public function updateVerifiedFlag(User $user): Response {

@@ -2,9 +2,9 @@
 
 
 class Response {
-  public $data, $status = 0, $error;
+  public $data, $status, $error;
 
-  public function __construct($data, $error) {
+  public function __construct($data = null, $error = null, $status = 0) {
     if ($data !== null) {
       $this->data = $data;
     }
