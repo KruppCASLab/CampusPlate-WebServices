@@ -6,7 +6,7 @@ class Database {
   public $lastError;
   private function getDbConnection() {
     $servername = Config::getConfigValue("db", "host");
-    $username = Config::getConfigValue("db", "userName");
+    $username = Config::getConfigValue("db", "username");
     $password = Config::getConfigValue("db", "password");
     $database = Config::getConfigValue("db", "database");
 
