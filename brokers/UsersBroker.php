@@ -34,9 +34,11 @@ class UsersBroker {
         UsersModel::updateVerifiedFlag($user);
 
         // TODO: Create GUID and store that in DB
+        $response->data = self::generateGUID();
+
         // TODO: Return response containing GUID to use for auth
         // TODO: On iOS, store the GUID and the username in the keychain
-        $response->data = "SOME GUID";
+
         $response->status = 0;
 
         return $response;
@@ -57,6 +59,11 @@ class UsersBroker {
   static private function randomPin(){
     $randomPin = mt_rand(100000, 999999);
     return $randomPin;
+  }
+
+  static private function generateGUID(){
+    $guid = bin2hex(openssl_random_pseudo_bytes(16));
+    return $guid;
   }
 
 }
