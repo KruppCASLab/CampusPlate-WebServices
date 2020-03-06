@@ -2,6 +2,7 @@
 
 require_once(__DIR__ . "/../model/types/User.php");
 require_once(__DIR__ . "/../model/UsersModel.php");
+require_once(__DIR__ . "/../lib/Mail.php");
 
 
 class UsersBroker {
@@ -17,7 +18,12 @@ class UsersBroker {
   static public function post($requestData) {
     $user = new User($requestData[0]);
     $user->pin = self::randomPin();
-    return UsersModel::createUser($user);
+
+    $result = UsersModel::createUser($user);
+
+    Mail::sendPinEmail($user->userName, $user->pin);
+
+    return $result;
   }
 
   //TODO: Complete for update
