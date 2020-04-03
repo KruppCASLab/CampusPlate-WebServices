@@ -46,4 +46,16 @@ class UsersModel {
         return new Response(null, $db->lastError);
     }
 
+    static public function addGuid(User $user, $GUID): Response{
+      $db = new Database();
+
+      $sql = "UPDATE tblUsers SET GUID = ? WHERE userName = ?";
+
+      $db->executeSql($sql,"ss", array($GUID,$user->userName));
+
+      return new Response(null, $db->lastError);
+    }
+
+
+
 }

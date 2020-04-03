@@ -40,10 +40,15 @@ class UsersBroker {
         UsersModel::updateVerifiedFlag($user);
 
         // TODO: Create GUID and store that in DB
-        $data["GUID"] = self::generateGUID();
+
+        $GUID = self::generateGUID();
+
+        UsersModel::addGuid($user, $GUID);
+
+        $data["GUID"] = $GUID;
+
         $response->data = $data;
 
-        // TODO: Return response containing GUID to use for auth
         // TODO: On iOS, store the GUID and the username in the keychain
 
         $response->status = 0;
@@ -72,6 +77,7 @@ class UsersBroker {
     $guid = bin2hex(openssl_random_pseudo_bytes(16));
     return $guid;
   }
+
 
 }
 
