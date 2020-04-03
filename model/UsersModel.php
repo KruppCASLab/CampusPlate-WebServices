@@ -10,9 +10,9 @@ class UsersModel {
   static public function createUser(User $user): Response {
     $db = new Database();
 
-    $sql = "INSERT INTO tblUsers(userName, password, pin) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO tblUsers(userName, pin) VALUES (?, ?)";
 
-    $db->executeSql($sql, "ssi", array($user->userName, Security::hashPassword($user->password), $user->pin));
+    $db->executeSql($sql, "si", array($user->userName, $user->pin));
 
     return new Response(null, $db->lastError);
   }
