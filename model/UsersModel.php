@@ -13,10 +13,11 @@ class UsersModel {
    * @return int userId of user, -1 if authentication failed
    */
   static public function authenticateUser($username, $password) : int {
-    $sql = "SELECT userId FROM tblUsers WHERE userName = ? AND guid = ?";
-    $result = Database::executeSql($sql, "ss", array($username, $password));
-    if (sizeof($result[0]) > 1) {
-      return $result[0];
+    $sql = "SELECT userId FROM tblUsers WHERE userName = ? AND GUID = ?";
+    $results = Database::executeSql($sql, "ss", array($username, $password));
+    if (sizeof($results) > 0) {
+      $user = new User($results[0]);
+      return $user->userId;
     }
     else {
       return -1;

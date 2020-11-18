@@ -52,7 +52,7 @@ class UsersBroker {
     $response = new Response();
 
     if ($user->pin != null){
-      if(UsersModel::verifyPin($user) == 0){
+      if(UsersModel::verifyPin($user)){
         UsersModel::updateVerifiedFlag($user, true);
 
         $GUID = Security::generateGUID();
