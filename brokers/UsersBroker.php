@@ -3,22 +3,47 @@
 require_once(__DIR__ . "/../model/types/User.php");
 require_once(__DIR__ . "/../model/UsersModel.php");
 require_once(__DIR__ . "/../lib/Mail.php");
+require_once(__DIR__ . "/../lib/Security.php");
+require_once(__DIR__ . "/../model/types/Response.php");
 
 
 class UsersBroker {
-  // Registration
-  static public function post($requestData) {
+
+  /**
+   * Creates a user account, overwrites those that exist with a new pin and invalidates account
+   * @param $requestData
+   * @return Response status = 0 on successful creation, 1 on failure, 2 on user existed but pin was update
+   */
+  static public function post($requestData) : Response {
     $user = new User($requestData[0]);
-    $user->pin = self::randomPin();
+    $user->pin = Security::randomPin();
 
-    $result = UsersModel::createUser($user);
+    $status = 0;
 
-    Mail::sendPinEmail($user->userName, $user->pin);
+    if (UsersModel::doesUserExist($user->userName)) {
+      UsersModel::updatePin($user);
+      UsersModel::updateVerifiedFlag($user, false);
+      $status = 2;
+    }
+    else {
+      if (! UsersModel::createUser($user)) {
+        $status = 1;
+      }
+    }
 
-    return $result;
+    // If we created the user or updated their pin, send an email
+    if ($status == 0 || $status == 2) {
+      Mail::sendPinEmail($user->userName, $user->pin);
+    }
+
+    return new Response(null, null, $status);;
   }
 
-  //TODO: Complete for update
+  /**
+   * Verifies a user account with a given pin
+   * @param $requestData
+   * @return Response
+   */
   static public function patch($requestData) {
     $userName = $requestData[0];
 
@@ -29,30 +54,26 @@ class UsersBroker {
 
     if ($user->pin != null){
       if(UsersModel::checkPinAndUser($user)->status === 0){
-        UsersModel::updateVerifiedFlag($user);
+        UsersModel::updateVerifiedFlag($user, true);
 
-        // TODO: Create GUID and store that in DB
-
-        $GUID = self::generateGUID();
-
-        UsersModel::addGuid($user, $GUID);
+        $GUID = Security::generateGUID();
+        UsersModel::setGUID($user, $GUID);
 
         $data["GUID"] = $GUID;
 
         $response->data = $data;
 
-        // TODO: On iOS, store the GUID and the username in the keychain
 
         $response->status = 0;
 
         return $response;
       }
       else{
-        return new Response(null, 2); // Use 2 to indicate invalid match
+        return new Response(null, null, 2); // Use 2 to indicate invalid match
       }
     }
     else{
-      return new Response(null, 1); // Use 1 to indicate they did not send pin
+      return new Response(null, null, 1); // Use 1 to indicate they did not send pin
     }
   }
 
@@ -60,15 +81,7 @@ class UsersBroker {
   static public function delete($requestData) {
   }
 
-  static private function randomPin(){
-    $randomPin = mt_rand(100000, 999999);
-    return $randomPin;
-  }
 
-  static private function generateGUID(){
-    $guid = bin2hex(openssl_random_pseudo_bytes(16));
-    return $guid;
-  }
 }
 
 ?>
