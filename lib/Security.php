@@ -1,20 +1,27 @@
 <?php
-
-require_once (__DIR__ . "/../model/Database.php");
 require_once (__DIR__ . "/Config.php");
+require_once (__DIR__ . "/../model/UsersModel.php");
+require_once (__DIR__ . "/../model/types/User.php");
 
 class Security {
-
-  static function generateGUID() {
-    if (function_exists('com_create_guid') === true) {
-      return trim(com_create_guid(), '{}');
+  static function isAuthenticationRequired($resource, $method) : bool {
+    if ($resource == "users" && ($method == "post" || $method == "patch")) {
+      return false;
     }
-
-    return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+    else {
+      return true;
+    }
   }
 
-  static function hashPassword($password) {
-    return password_hash($password, PASSWORD_DEFAULT);
+  // Returns userId if valid, -1 if not
+  static function authenticate($username, $password) : int {
+      $result = UsersModel::authenticateUser($username, $password);
+      $user = new User($result->data);
+      if (isset($user->userId)) {
+        return $user->userId;
+      }
+      else {
+        return -1;
+      }
   }
-
 }

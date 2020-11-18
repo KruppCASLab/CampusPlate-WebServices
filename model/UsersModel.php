@@ -7,6 +7,16 @@ require_once(__DIR__ . "/types/Response.php");
 
 class UsersModel {
 
+  static public function authenticateUser($username, $password) : Response {
+    $db = new Database();
+
+    $sql = "SELECT userId FROM tblUsers WHERE userName = ? AND guid = ?";
+
+    $result = $db->executeSql($sql, "ss", array($username, $password));
+
+    return new Response($result[0], $db->lastError);
+  }
+
   static public function createUser(User $user): Response {
     $db = new Database();
 

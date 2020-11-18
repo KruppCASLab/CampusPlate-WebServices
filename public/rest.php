@@ -5,38 +5,33 @@ require_once(__DIR__ . "/../lib/Security.php");
 
 header('Content-Type: application/json');
 
-
+// Break apart path to determine broker and method
 $request = explode("/", $_SERVER["PATH_INFO"]);
 $method = strtolower($_SERVER["REQUEST_METHOD"]);
 
 $resource = $request[1];
-$resource = ucfirst($resource) . "Broker";
+$broker = ucfirst($resource) . "Broker";
 
 $userId = -1;
 
-// User is attempting to register
-//TODO: Uncomment for authentication
+// Check if service requires authentication
+if (Security::isAuthenticationRequired($resource, $method)) {
+  $username = $_SERVER['PHP_AUTH_USER'];
+  $password = $_SERVER['PHP_AUTH_PW'];
 
-//if (!($resource == "SecurityBroker" && $method == "post")) {
-//  $username = $_SERVER['PHP_AUTH_USER'];
-//  $password = $_SERVER['PHP_AUTH_PW'];
-//  // TODO: Auth the user
-//  // TODO: if auth fails, die("Error")
-//  $userId = authenticate($username, $password);
-//
-//  if ($userId === false) {
-//    http_response_code(401);
-//    die("Error");
-//  }
-//}
+  $userId = Security::authenticate($username, $password);
 
+  if ($userId == -1) {
+    http_response_code(401);
+    die();
+  }
+}
 
 $requestBody = json_decode(file_get_contents("php://input"));
-
-
 $requestData = array();
 
-if (method_exists($resource, $method)) {
+// Check if broker supports method
+if (method_exists($broker, $method)) {
   http_response_code(200);
 
   // Check for an ID
@@ -50,12 +45,9 @@ if (method_exists($resource, $method)) {
     array_push($requestData, $requestBody);
   }
 
-  $response = call_user_func(array($resource, $method), $requestData);
+  $response = call_user_func(array($broker, $method), $requestData);
 
   echo json_encode($response);
 } else {
   http_response_code(405);
 }
-
-
-?>

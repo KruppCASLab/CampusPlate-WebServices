@@ -6,14 +6,6 @@ require_once(__DIR__ . "/../lib/Mail.php");
 
 
 class UsersBroker {
-  static public function get($requestData) {
-    $id = $requestData[0];
-    if ($id == "") {
-
-    } else {
-    }
-  }
-
   // Registration
   static public function post($requestData) {
     $user = new User($requestData[0]);
@@ -77,8 +69,6 @@ class UsersBroker {
     $guid = bin2hex(openssl_random_pseudo_bytes(16));
     return $guid;
   }
-
-
 }
 
 ?>
