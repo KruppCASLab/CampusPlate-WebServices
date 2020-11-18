@@ -3,8 +3,10 @@
 require_once(__DIR__ . "/../lib/Config.php");
 
 class Database {
-  public $lastError;
-  private function getDbConnection() {
+  static public $lastError;
+  static private $db;
+
+  static private function getDbConnection() {
     $servername = Config::getConfigValue("db", "host");
     $username = Config::getConfigValue("db", "username");
     $password = Config::getConfigValue("db", "password");
@@ -19,10 +21,9 @@ class Database {
     return $dbConnection;
   }
 
-  public function executeSql($sqlQuery, $bindTypes = null, $bindParams = null) { // Adding null makes them optional
-    $this->lastError = null;
-
-    $db = $this->getDbConnection();
+  static public function executeSql($sqlQuery, $bindTypes = null, $bindParams = null) { // Adding null makes them optional
+    $lastError = null;
+    $db = self::getDbConnection();
 
     if ($db === false) return false;
 
@@ -31,14 +32,14 @@ class Database {
     $results = array();
 
     if (!$statement->prepare($sqlQuery)) {
-      $this->lastError = $statement->error . " with " . $sqlQuery;
+      $lastError = $statement->error . " with " . $sqlQuery;
       return false;
     } else {
       if (isset($bindTypes) && isset($bindParams)) {
         $statement->bind_param($bindTypes, ...$bindParams);
       }
       if ($statement->execute() === false) {
-        $this->lastError = $db->error;
+        $lastError = $db->error;
         return false;
       }
 
