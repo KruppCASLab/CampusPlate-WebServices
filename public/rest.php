@@ -3,6 +3,8 @@ require_once(__DIR__ . "/../brokers/UsersBroker.php");
 require_once(__DIR__ . "/../brokers/ListingsBroker.php");
 require_once(__DIR__ . "/../lib/Security.php");
 
+header('Content-Type: application/json');
+
 
 $request = explode("/", $_SERVER["PATH_INFO"]);
 $method = strtolower($_SERVER["REQUEST_METHOD"]);
@@ -14,20 +16,20 @@ $userId = -1;
 
 // User is attempting to register
 //TODO: Uncomment for authentication
-/*
-if (!($resource == "SecurityBroker" && $method == "post")) {
-  $username = $_SERVER['PHP_AUTH_USER'];
-  $password = $_SERVER['PHP_AUTH_PW'];
-  // TODO: Auth the user
-  // TODO: if auth fails, die("Error")
-  $userId = authenticate($username, $password);
 
-  if ($userId === false) {
-    http_response_code(401);
-    die("Error");
-  }
-}
-*/
+//if (!($resource == "SecurityBroker" && $method == "post")) {
+//  $username = $_SERVER['PHP_AUTH_USER'];
+//  $password = $_SERVER['PHP_AUTH_PW'];
+//  // TODO: Auth the user
+//  // TODO: if auth fails, die("Error")
+//  $userId = authenticate($username, $password);
+//
+//  if ($userId === false) {
+//    http_response_code(401);
+//    die("Error");
+//  }
+//}
+
 
 $requestBody = json_decode(file_get_contents("php://input"));
 
