@@ -6,10 +6,21 @@ require_once(__DIR__ . "/types/User.php");
 require_once(__DIR__ . "/types/Response.php");
 
 class UsersModel {
-  static public function authenticateUser($username, $password) : Response {
+  /**
+   * Authenticates user and returns userId
+   * @param $username
+   * @param $password
+   * @return int userId of user, -1 if authentication failed
+   */
+  static public function authenticateUser($username, $password) : int {
     $sql = "SELECT userId FROM tblUsers WHERE userName = ? AND guid = ?";
     $result = Database::executeSql($sql, "ss", array($username, $password));
-    return new Response($result[0], Database::$lastError);
+    if (sizeof($result[0]) > 1) {
+      return $result[0];
+    }
+    else {
+      return -1;
+    }
   }
 
   /**
@@ -34,7 +45,6 @@ class UsersModel {
     return ! isset(Database::$lastError);
   }
 
-
   /**
    * Updates a user pin to a new value
    * @param User $user
@@ -46,7 +56,12 @@ class UsersModel {
     return ! isset(Database::$lastError);
   }
 
-  static public function checkPinAndUser(User $user): Response {
+  /**
+   *
+   * @param User $user
+   * @return bool true if uusername and pin combination exists, false otherwise
+   */
+  static public function verifyPin(User $user): bool {
     $response = new Response();
     $db = new Database();
 
@@ -56,14 +71,11 @@ class UsersModel {
 
     // Pin and Username combo don't exist
     if (sizeof($results) == 0) {
-      $response->status = 1;
+      return false;
     } else {
-      $response->status = 0;
+      return true;
     }
-
-    return $response;
   }
-
 
   /**
    * Sets whether or not a user is verified.
