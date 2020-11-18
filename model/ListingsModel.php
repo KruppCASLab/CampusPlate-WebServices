@@ -6,52 +6,50 @@ require_once(__DIR__ . "/types/Response.php");
 
 class ListingsModel {
 
-  static public function createListing(Listing $listing) : Response{
-    $db = new Database();
 
-    $sql = "INSERT INTO tblListings(userId, title, locationDescription, lat, lng, quantity, creationTime, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  /**
+   * Creates a listing
+   * @param Listing $listing
+   * @return bool true on success, false otherwise
+   */
+  static public function createListing(Listing $listing) : bool {
+    $sql = "INSERT INTO tblListings(userId, title, locationDescription, lat, lng, quantity, creationTime) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    Database::executeSql($sql, "issddiis", array($listing->userId, $listing->title, $listing->locationDescription, $listing->lat, $listing->lng, $listing->quantity, time()));
 
-    $db->executeSql($sql, "issddiis", array($listing->userId, $listing->title, $listing->locationDescription, $listing->lat, $listing->lng, $listing->quantity, time(), $listing->image));
-
-    return new Response(null, $db->lastError);
+    return ! isset(Database::$lastError);
   }
 
-  static public function getListings() : Response {
-    $db = new Database();
-
+  /**
+   * Returns all listings ordered by creation time in descending order
+   * @return array Array contains array of Listing objects
+   */
+  static public function getListings() : array {
     $sql = "SELECT * from tblListings ORDER BY creationTime DESC";
-
-    $results = $db->executeSql($sql);
-    $objectresults = array();
+    $results = Database::executeSql($sql);
+    $listings = array();
     foreach($results as $result) {
-      array_push($objectresults, new Listing($result));
+      array_push($listings, new Listing($result));
     }
 
-    return new Response($objectresults, $db->lastError);
+    return $listings;
   }
 
-  static public function getListing($id) : Response {
-    $db = new Database();
-
-    $sql = "SELECT * from tblListings WHERE listingId = ?";
-
-    $results = $db->executeSql($sql, "i", array($id));
-
-    return new Response($results[0], $db->lastError);
-  }
-
-  static public function updateQuantity($id, $quantityChange) : Response {
-    $db = new Database();
-
+  /**
+   * Updates the quantity of a listing relative to current quantity. If quantity is 0, item is deleted from database
+   * @param $id
+   * @param $quantityChange
+   * @return bool true on sucess, false otherwise
+   */
+  static public function updateQuantity($id, $quantityChange) : bool {
     // This SQL looks wild because of the nested select, but this gets around MySQLs restriction of updating the table
     // while selecting from it, when we do the select quantity, that places it in a temporary varaible
     $sql = "UPDATE tblListings set quantity = ((select quantity from (select quantity from tblListings where listingId = ?) AS quantity) + ?) where listingId = ?";
-    $db->executeSql($sql, "iii", array($id, $quantityChange, $id));
+    Database::executeSql($sql, "iii", array($id, $quantityChange, $id));
 
     $sql = "DELETE FROM tblListings where quantity <= 0";
-    $db->executeSql($sql);
+    Database::executeSql($sql);
 
-    return new Response(null, $db->lastError);
+    return ! isset(Database::$lastError);
   }
 
 }
