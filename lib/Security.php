@@ -4,6 +4,13 @@ require_once (__DIR__ . "/../model/UsersModel.php");
 require_once (__DIR__ . "/../model/types/User.php");
 
 class Security {
+
+  /**
+   * Determines if the user need to authenticate when accessing a specific service
+   * @param $resource
+   * @param $method
+   * @return bool
+   */
   static function isAuthenticationRequired($resource, $method) : bool {
     if ($resource == "users" && ($method == "post" || $method == "patch")) {
       return false;
@@ -13,25 +20,31 @@ class Security {
     }
   }
 
-  // Returns userId if valid, -1 if not
+  /**
+   * Returns the userId if a valid userId exists, otherwise, returns -1
+   * @param $username
+   * @param $password
+   * @return int
+   */
   static function authenticate($username, $password) : int {
-      $result = UsersModel::authenticateUser($username, $password);
-      $user = new User($result->data);
-      if (isset($user->userId)) {
-        return $user->userId;
-      }
-      else {
-        return -1;
-      }
+      return UsersModel::authenticateUser($username, $password);
+
   }
 
+  /**
+   * Generates random pin from 100000 to 999999
+   * @return int
+   */
   static public function randomPin(){
-    $randomPin = mt_rand(100000, 999999);
-    return $randomPin;
+    return mt_rand(100000, 999999);
+
   }
 
+  /**
+   * Generates GUID
+   * @return string
+   */
   static public function generateGUID(){
-    $guid = bin2hex(openssl_random_pseudo_bytes(16));
-    return $guid;
+    return bin2hex(openssl_random_pseudo_bytes(16));
   }
 }
