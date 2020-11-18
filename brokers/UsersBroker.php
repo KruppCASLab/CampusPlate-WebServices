@@ -41,7 +41,7 @@ class UsersBroker {
   /**
    * Verifies a user account with a given pin
    * @param $requestData
-   * @return Response
+   * @return Response status 0 on success, 1 if pin not sent, 2 indicates invalid user/pin match
    */
   static public function patch($requestData) {
     $userName = $requestData[0];
