@@ -8,7 +8,6 @@ require_once(__DIR__ . "/../model/types/Response.php");
 
 
 class UsersBroker {
-
   /**
    * Creates a user account, overwrites those that exist with a new pin and invalidates account
    * @param $requestData
@@ -53,19 +52,15 @@ class UsersBroker {
     $response = new Response();
 
     if ($user->pin != null){
-      if(UsersModel::checkPinAndUser($user)->status === 0){
+      if(UsersModel::verifyPin($user) == 0){
         UsersModel::updateVerifiedFlag($user, true);
 
         $GUID = Security::generateGUID();
         UsersModel::setGUID($user, $GUID);
 
         $data["GUID"] = $GUID;
-
         $response->data = $data;
-
-
         $response->status = 0;
-
         return $response;
       }
       else{
@@ -76,12 +71,6 @@ class UsersBroker {
       return new Response(null, null, 1); // Use 1 to indicate they did not send pin
     }
   }
-
-  //TODO: Complete for delete
-  static public function delete($requestData) {
-  }
-
-
 }
 
 ?>
