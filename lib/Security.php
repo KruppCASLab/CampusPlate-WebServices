@@ -24,4 +24,14 @@ class Security {
         return -1;
       }
   }
+
+  static public function randomPin(){
+    $randomPin = mt_rand(100000, 999999);
+    return $randomPin;
+  }
+
+  static public function generateGUID(){
+    $guid = bin2hex(openssl_random_pseudo_bytes(16));
+    return $guid;
+  }
 }
