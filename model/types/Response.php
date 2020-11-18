@@ -12,6 +12,10 @@ class Response {
       $this->error = $error;
       $this->status = 1;
     }
+    else {
+      // If we had an error, change status to 0
+      $this->status = 0;
+    }
   }
 
 }
