@@ -13,8 +13,8 @@ class ListingsModel {
    * @return bool true on success, false otherwise
    */
   static public function createListing(Listing $listing) : bool {
-    $sql = "INSERT INTO tblListings(userId, title, locationDescription, lat, lng, quantity, creationTime) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    Database::executeSql($sql, "issddii", array($listing->userId, $listing->title, $listing->locationDescription, $listing->lat, $listing->lng, $listing->quantity, time()));
+    $sql = "INSERT INTO tblListings(userId, foodStopId, title, description, quantity, creationTime) VALUES (?, ?, ?, ?, ?, ?)";
+    Database::executeSql($sql, "iissii", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, time()));
 
     return ! isset(Database::$lastError);
   }

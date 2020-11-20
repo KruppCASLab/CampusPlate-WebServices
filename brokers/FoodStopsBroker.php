@@ -6,7 +6,7 @@ require_once(__DIR__ . "/../model/FoodStopsModel.php");
 class FoodStopsBroker {
   /**
    * Allows the creation of a food stop
-   * @param $requestData Data containing Food Stop
+   * @param $requestData
    * @return Response
    */
   static public function post($requestData) : Response {
@@ -17,6 +17,20 @@ class FoodStopsBroker {
       $status = 0;
     }
     return new Response(null, null, $status);
+  }
+
+
+  /**
+   * @param $requestData
+   * @return Response Array of Food Stops
+   */
+  static public function get($requestData) : Response {
+    $id = $requestData[0];
+
+    // TODO: Support getting 1 listing detail
+    $foodstops = FoodStopsModel::getFoodStops();
+
+    return new Response($foodstops);
   }
 
 }

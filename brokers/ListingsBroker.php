@@ -48,6 +48,9 @@ class ListingsBroker {
         ListingsModel::updateQuantity($id, $val);
         return new Response();
       }
+      else if ($key == "image") {
+        // TODO: Allow store of image
+      }
     }
     return new Response();
   }

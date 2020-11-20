@@ -19,4 +19,15 @@ class FoodStopsModel {
     return ! isset(Database::$lastError);
   }
 
+  static public function getFoodStops() : array {
+    $sql = "SELECT * from tblFoodStops ORDER BY foodStopId ASC";
+    $results = Database::executeSql($sql);
+    $foodstops = array();
+    foreach($results as $result) {
+      array_push($foodstops, new FoodStop($result));
+    }
+
+    return $foodstops;
+  }
+
 }
