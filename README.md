@@ -61,14 +61,40 @@ A status of 0 indicates success, any other number can mean an error or some othe
 * Request:
 ```json
 {
-    "title": "Cookies",
-    "locationDescription": "Macs",
-    "lat": 41.374414,
-    "lng": -81.851910,
-    "quantity": 20
+    "foodStopId": 1,
+    "title": "Sandwiches",
+    "description": "Cold cut and PB&J",
+    "quantity": 10
 }
 ```
 * Response: 0 on success, failure otherwise
+
+### Get Listings
+* Description: Creates a listing. The userId will be from the user authenticated and the time will be from when the server receives the listing.
+* Path: `https://<baseurl>/listings/`
+* Method: GET
+* Response: Array of listings within data field, status = 0 on success, failure otherwise
+```json
+{
+    "data": [
+        {
+            "listingId": 143,
+            "foodStopId": 3,
+            "userId": 335,
+            "title": "Cookies",
+            "description": "Need a sweet treat, we got it!",
+            "creationTime": 1605734297,
+            "quantity": 30
+        },
+        {
+            "listingId": 141,
+// .. continue on
+    ],
+    "status": 0,
+    "error": null
+}
+
+```
 
 ### Update a Listing
 * Description: Creates a listing. The userId will be from the user authenticated and the time will be from when the server receives the listing.
@@ -81,3 +107,47 @@ A status of 0 indicates success, any other number can mean an error or some othe
 }
 ```
 * Response: 0 on success, failure otherwise
+
+### Food Stops
+### Create a Food Stop
+* Description: Creates a food stop. This will be used mainly within the admin portal 
+* Path: `https://<baseurl>/foodstops/`
+* Method: POST
+* Request:
+```json
+{
+    "foodStopId": 1,
+    "title": "Sandwiches",
+    "description": "Cold cut and PB&J",
+    "quantity": 10
+}
+```
+* Response: 0 on success, failure otherwise
+
+### Get Food Stops
+Description: Gets list of food stops 
+* Path: `https://<baseurl>/foodstops/`
+* Method: GET
+* Response: Array of food stops within data field, status = 0 on success, failure otherwise. 
+```json
+{
+    "data": [
+        {
+            "foodStopId": 1,
+            "name": "Knowlton Center",
+            "description": "Macs",
+            "lat": 41.374858,
+            "lng": -81.851229
+        },
+        {
+            "foodStopId": 4,
+            "name": "The Union Dining Hall",
+            "description": "See the buffet. Open 9am to 5pm from Monday through Friday.",
+            "lat": 41.369176,
+            "lng": -81.848572
+        }
+    ],
+    "status": 0,
+    "error": null
+}
+```
