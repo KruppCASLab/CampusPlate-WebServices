@@ -78,6 +78,15 @@ A status of 0 indicates success, any other number can mean an error or some othe
 {
     "data": [
         {
+            "listingId": 144,
+            "foodStopId": 1,
+            "userId": 335,
+            "title": "Sandwiches",
+            "description": "Cold cut and PB&J",
+            "creationTime": 1605891664,
+            "quantity": 10
+        },
+        {
             "listingId": 143,
             "foodStopId": 3,
             "userId": 335,
@@ -85,15 +94,11 @@ A status of 0 indicates success, any other number can mean an error or some othe
             "description": "Need a sweet treat, we got it!",
             "creationTime": 1605734297,
             "quantity": 30
-        },
-        {
-            "listingId": 141,
-// .. continue on
+        }
     ],
     "status": 0,
     "error": null
 }
-
 ```
 
 ### Update a Listing
