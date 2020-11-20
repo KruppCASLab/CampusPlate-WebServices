@@ -1,0 +1,22 @@
+<?php
+require_once(__DIR__ . "/Database.php");
+require_once(__DIR__ . "/types/Listing.php");
+require_once(__DIR__ . "/types/FoodStop.php");
+require_once(__DIR__ . "/types/User.php");
+require_once(__DIR__ . "/types/Response.php");
+
+class FoodStopsModel {
+
+  /**
+   * Creates a food stop
+   * @param FoodStop $foodStop
+   * @return bool true on success, false, on error
+   */
+  static public function createFoodStop(FoodStop $foodStop) : bool {
+    $sql = "INSERT INTO tblFoodStops(name, description, lat, lng) VALUES (?, ?, ?, ?)";
+    Database::executeSql($sql, "ssdd", array($foodStop->name, $foodStop->description, $foodStop->lat, $foodStop->lng));
+
+    return ! isset(Database::$lastError);
+  }
+
+}
