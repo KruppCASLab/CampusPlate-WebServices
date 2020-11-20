@@ -1,6 +1,7 @@
 <?php
 
 require_once(__DIR__ . "/../lib/Config.php");
+require_once(__DIR__ . "/../lib/Logger.php");
 
 class Database {
   static public $lastError;
@@ -15,10 +16,16 @@ class Database {
     $dbConnection = new mysqli($servername, $username, $password, $database);
 
     if ($dbConnection->connect_errno) {
-      die("Unable to connect to DB");
+      self::handleError($dbConnection->error, "Unable to connect to DB");
+      die();
     }
 
     return $dbConnection;
+  }
+
+  static private function handleError($error, $message) {
+    Database::$lastError = $error;
+    Logger::log(Database::class, "Error: $error, Detail: $message");
   }
 
   static public function executeSql($sqlQuery, $bindTypes = null, $bindParams = null) { // Adding null makes them optional
@@ -33,6 +40,7 @@ class Database {
 
     if (!$statement->prepare($sqlQuery)) {
       Database::$lastError = $statement->error . " with " . $sqlQuery;
+      self::handleError($statement->error, "Failed on Prepare SQL: " . $sqlQuery);
       return false;
     } else {
       if (isset($bindTypes) && isset($bindParams)) {
@@ -40,6 +48,7 @@ class Database {
       }
       if ($statement->execute() === false) {
         Database::$lastError = $db->error;
+        self::handleError($db->error, "Failed on Execute SQL: " . $sqlQuery);
         return false;
       }
 
