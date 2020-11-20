@@ -22,7 +22,7 @@ class Database {
   }
 
   static public function executeSql($sqlQuery, $bindTypes = null, $bindParams = null) { // Adding null makes them optional
-    $lastError = null;
+    Database::$lastError = null;
     $db = self::getDbConnection();
 
     if ($db === false) return false;
@@ -32,14 +32,14 @@ class Database {
     $results = array();
 
     if (!$statement->prepare($sqlQuery)) {
-      $lastError = $statement->error . " with " . $sqlQuery;
+      Database::$lastError = $statement->error . " with " . $sqlQuery;
       return false;
     } else {
       if (isset($bindTypes) && isset($bindParams)) {
         $statement->bind_param($bindTypes, ...$bindParams);
       }
       if ($statement->execute() === false) {
-        $lastError = $db->error;
+        Database::$lastError = $db->error;
         return false;
       }
 
