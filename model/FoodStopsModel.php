@@ -4,6 +4,7 @@ require_once(__DIR__ . "/types/Listing.php");
 require_once(__DIR__ . "/types/FoodStop.php");
 require_once(__DIR__ . "/types/User.php");
 require_once(__DIR__ . "/types/Response.php");
+require_once(__DIR__ . "/Filesystem.php");
 
 class FoodStopsModel {
 
@@ -29,5 +30,4 @@ class FoodStopsModel {
 
     return $foodstops;
   }
-
 }

@@ -7,17 +7,21 @@ require_once(__DIR__ . "/../lib/Geofence.php");
 
 class ListingsBroker {
   /**
-   * Returns all listings or a subset based on ID
+   * Returns all listings or the image of a listing if the ID and param are set
    * @param $requestData
-   * @return Response data contains array of listings
+   * @return Response data contains array of listings or image of listing
    */
   static public function get($requestData) : Response {
     $id = $requestData[0];
+    $param = $requestData[1];
 
-    // TODO: Support getting 1 listing detail
-    $listings = ListingsModel::getListings();
-
-    return new Response($listings);
+    if (isset($id) && isset($param)) {
+      $data = ListingsModel::getListingImage($id);
+      return new Response($data);
+    }
+    else {
+      return new Response(ListingsModel::getListings());
+    }
   }
 
   /**

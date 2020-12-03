@@ -59,18 +59,20 @@ A status of 0 indicates success, any other number can mean an error or some othe
 * Path: `https://<baseurl>/listings/`
 * Method: POST
 * Request:
+	* Please note: the image property is optional. If submitting an image with the listing, the image data should be base64_encoded.
 ```json
 {
     "foodStopId": 1,
     "title": "Sandwiches",
     "description": "Cold cut and PB&J",
-    "quantity": 10
+    "quantity": 10,
+    "image": "REPLACE_WITH_BASE_64_ENCODING_OF_IMAGE"
 }
 ```
 * Response: 0 on success, failure otherwise
 
 ### Get Listings
-* Description: Creates a listing. The userId will be from the user authenticated and the time will be from when the server receives the listing.
+* Description: Returns a list of listings for all food stops. The userId will be from the user authenticated and the time will be from when the server receives the listing. **Please note: Images are not returned with getListings, a different service is used for the image (see below)**
 * Path: `https://<baseurl>/listings/`
 * Method: GET
 * Response: Array of listings within data field, status = 0 on success, failure otherwise
@@ -100,6 +102,12 @@ A status of 0 indicates success, any other number can mean an error or some othe
     "error": null
 }
 ```
+
+### Get Listing Image
+* Description: Gets an image from a particular listing
+* Path: `https://<baseurl>/listings/<listingid>/image`
+* Method: GET
+* Response: Returns the image data. (Please note, this is not base 64 encoded)
 
 ### Update a Listing
 * Description: Creates a listing. The userId will be from the user authenticated and the time will be from when the server receives the listing.
@@ -156,3 +164,4 @@ Description: Gets list of food stops
     "error": null
 }
 ```
+

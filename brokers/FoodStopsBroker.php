@@ -25,9 +25,6 @@ class FoodStopsBroker {
    * @return Response Array of Food Stops
    */
   static public function get($requestData) : Response {
-    $id = $requestData[0];
-
-    // TODO: Support getting 1 listing detail
     $foodstops = FoodStopsModel::getFoodStops();
 
     return new Response($foodstops);

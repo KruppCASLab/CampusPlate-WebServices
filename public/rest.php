@@ -1,10 +1,9 @@
 <?php
-require_once(__DIR__ . "/../brokers/UsersBroker.php");
+
 require_once(__DIR__ . "/../brokers/ListingsBroker.php");
 require_once(__DIR__ . "/../brokers/FoodStopsBroker.php");
 require_once(__DIR__ . "/../lib/Security.php");
-
-header('Content-Type: application/json');
+require_once(__DIR__ . "/../brokers/UsersBroker.php");
 
 // Break apart path to determine broker and method
 $request = explode("/", $_SERVER["PATH_INFO"]);
@@ -34,11 +33,13 @@ $requestData = array();
 // Check if broker supports method
 if (method_exists($broker, $method)) {
   http_response_code(200);
-
+  $param = null;
   // Check for an ID
   if ($method == "get" || $method == "put" || $method == "delete" || $method == "patch") {
     $id = $request[2];
-    array_push($requestData, $id);
+    $param = $request[3];
+
+    array_push($requestData, $id, $param);
   }
   // Check if we are sending JSON
   if ($method == "post" || $method == "put" || $method == "patch") {
@@ -48,7 +49,15 @@ if (method_exists($broker, $method)) {
 
   $response = call_user_func(array($broker, $method), $requestData);
 
-  echo json_encode($response);
+  // Check if image is requested then return appropriate content type and data
+  if ($method == "get" && $param == "image") {
+    header('Content-Type: image/jpeg');
+    echo $response->data;
+  }
+  else {
+    header('Content-Type: application/json');
+    echo json_encode($response);
+  }
 } else {
   http_response_code(405);
 }
