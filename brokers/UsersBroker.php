@@ -46,7 +46,7 @@ class UsersBroker {
   static public function patch($requestData) {
     $userName = $requestData[0];
 
-    $user = new User($requestData[1]);
+    $user = new User($requestData[2]);
     $user->userName = $userName;
 
     $response = new Response();
