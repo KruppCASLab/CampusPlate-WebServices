@@ -4,10 +4,10 @@ require_once(__DIR__ . "/../model/types/Request.php");
 require_once(__DIR__ . "/../model/types/FoodStop.php");
 require_once(__DIR__ . "/../model/FoodStopsModel.php");
 
-class FoodStopsBroker {
+class FoodStopsController {
   /**
    * Allows the creation of a food stop
-   * @param Request $request The request for the broker
+   * @param Request $request
    * @return Response
    */
   static public function post(Request $request) : Response {
@@ -23,7 +23,7 @@ class FoodStopsBroker {
 
   /**
    * Gets the food stops that are available
-   * @param Request $request The request for the broker
+   * @param Request $request The
    * @return Response Array of Food Stops
    */
   static public function get(Request $request) : Response {

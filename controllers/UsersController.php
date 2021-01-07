@@ -8,10 +8,10 @@ require_once(__DIR__ . "/../model/types/Response.php");
 require_once(__DIR__ . "/../model/types/Request.php");
 
 
-class UsersBroker {
+class UsersController {
   /**
    * Creates a user account, overwrites those that exist with a new pin and invalidates account
-   * @param Request $request The request for the broker
+   * @param Request $request
    * @return Response status = 0 on successful creation, 1 on failure, 2 on user existed but pin was update
    */
   static public function post(Request $request) : Response {
@@ -41,7 +41,7 @@ class UsersBroker {
 
   /**
    * Verifies a user account with a given pin
-   * @param Request $request The request for the broker
+   * @param Request $request
    * @return Response status 0 on success, 1 if pin not sent, 2 indicates invalid user/pin match
    */
   static public function patch(Request $request) {

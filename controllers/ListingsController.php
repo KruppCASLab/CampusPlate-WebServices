@@ -6,10 +6,10 @@ require_once(__DIR__ . "/../model/types/Listing.php");
 require_once(__DIR__ . "/../model/ListingsModel.php");
 require_once(__DIR__ . "/../lib/Geofence.php");
 
-class ListingsBroker {
+class ListingsController {
   /**
    * Returns all listings or the image of a listing if the ID and param are set
-   * @param Request $request The request for the broker
+   * @param Request $request
    * @return Response data contains array of listings or image of listing
    */
   static public function get(Request $request) : Response {
@@ -27,7 +27,7 @@ class ListingsBroker {
 
   /**
    * Allows the creation of a food listing
-   * @param Request $request The request for the broker
+   * @param Request $request
    * @return Response status code contains success
    */
   static public function post(Request $request) : Response {
@@ -43,7 +43,7 @@ class ListingsBroker {
 
   /**
    * Allows the update of a quantity of a food listing
-   * @param Request $request The request for the broker
+   * @param Request $request
    * @return Response
    */
   static public function patch(Request $request) : Response {

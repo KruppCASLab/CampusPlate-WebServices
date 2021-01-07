@@ -1,17 +1,17 @@
 <?php
 
-require_once(__DIR__ . "/../brokers/ListingsBroker.php");
-require_once(__DIR__ . "/../brokers/FoodStopsBroker.php");
+require_once(__DIR__ . "/../controllers/ListingsController.php");
+require_once(__DIR__ . "/../controllers/FoodStopsController.php");
 require_once(__DIR__ . "/../lib/Security.php");
-require_once(__DIR__ . "/../brokers/UsersBroker.php");
+require_once(__DIR__ . "/../controllers/UsersController.php");
 require_once(__DIR__ . "/../model/types/Request.php");
 
-// Break apart path to determine broker and method
+// Break apart path to determine controller and method
 $path = explode("/", $_SERVER["PATH_INFO"]);
 $method = strtolower($_SERVER["REQUEST_METHOD"]);
 
 $resource = $path[1];
-$broker = ucfirst($resource) . "Broker";
+$controller = ucfirst($resource) . "Controller";
 
 $userId = -1;
 
@@ -31,8 +31,8 @@ if (Security::isAuthenticationRequired($resource, $method)) {
 $data = json_decode(file_get_contents("php://input"));
 $request = new Request();
 
-// Check if broker supports method
-if (method_exists($broker, $method)) {
+// Check if controller supports method
+if (method_exists($controller, $method)) {
   http_response_code(200);
 
   // If we have a get, put, delete, or patch, we may have an id and path on the request
@@ -46,7 +46,7 @@ if (method_exists($broker, $method)) {
     $request->data = $data;
   }
 
-  $response = call_user_func(array($broker, $method), $request);
+  $response = call_user_func(array($controller, $method), $request);
 
   // Check if image is requested then return appropriate content type and data
   if ($method == "get" && $request->param == "image") {
