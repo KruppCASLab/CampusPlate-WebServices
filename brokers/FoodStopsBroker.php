@@ -1,16 +1,17 @@
 <?php
 require_once(__DIR__ . "/../model/types/Response.php");
+require_once(__DIR__ . "/../model/types/Request.php");
 require_once(__DIR__ . "/../model/types/FoodStop.php");
 require_once(__DIR__ . "/../model/FoodStopsModel.php");
 
 class FoodStopsBroker {
   /**
    * Allows the creation of a food stop
-   * @param $requestData
+   * @param Request $request The request for the broker
    * @return Response
    */
-  static public function post($requestData) : Response {
-    $foodStop = new FoodStop($requestData[0]);
+  static public function post(Request $request) : Response {
+    $foodStop = new FoodStop($request->data);
 
     $status = 1;
     if (FoodStopsModel::createFoodStop($foodStop)) {
@@ -21,10 +22,11 @@ class FoodStopsBroker {
 
 
   /**
-   * @param $requestData
+   * Gets the food stops that are available
+   * @param Request $request The request for the broker
    * @return Response Array of Food Stops
    */
-  static public function get($requestData) : Response {
+  static public function get(Request $request) : Response {
     $foodstops = FoodStopsModel::getFoodStops();
 
     return new Response($foodstops);
