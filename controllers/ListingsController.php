@@ -5,6 +5,7 @@ require_once(__DIR__ . "/../model/types/Request.php");
 require_once(__DIR__ . "/../model/types/Listing.php");
 require_once(__DIR__ . "/../model/ListingsModel.php");
 require_once(__DIR__ . "/../lib/Geofence.php");
+require_once(__DIR__ . "/../model/AuthorizationModel.php");
 
 class ListingsController {
   /**
@@ -32,11 +33,17 @@ class ListingsController {
    */
   static public function post(Request $request) : Response {
     $listing = new Listing($request->data);
-
-    //TODO: Implement role check
+    $listing->userId = $request->userId;
     $status = 1;
-    if (ListingsModel::createListing($listing)) {
-      $status = 0;
+
+    if (AuthorizationModel::isFoodStopManager($request->userId, $listing->foodStopId) || AuthorizationModel::isAdmin($request->userId)) {
+      if (ListingsModel::createListing($listing)) {
+        $status = 0;
+      }
+    }
+    else {
+      // Return Unauthorized
+      $status = 401;
     }
     return new Response(null, null, $status);
   }
