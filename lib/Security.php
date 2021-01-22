@@ -34,7 +34,7 @@ class Security {
    * Generates random pin from 100000 to 999999
    * @return int
    */
-  static public function randomPin(){
+  static public function getRandomPin(){
     return mt_rand(100000, 999999);
 
   }
