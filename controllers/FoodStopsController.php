@@ -3,6 +3,7 @@ require_once(__DIR__ . "/../model/types/Response.php");
 require_once(__DIR__ . "/../model/types/Request.php");
 require_once(__DIR__ . "/../model/types/FoodStop.php");
 require_once(__DIR__ . "/../model/FoodStopsModel.php");
+require_once(__DIR__ . "/../model/AuthorizationModel.php");
 
 class FoodStopsController {
   /**
@@ -14,8 +15,13 @@ class FoodStopsController {
     $foodStop = new FoodStop($request->data);
 
     $status = 1;
-    if (FoodStopsModel::createFoodStop($foodStop)) {
-      $status = 0;
+    if (AuthorizationModel::isAdmin($request->userId)) {
+      if (FoodStopsModel::createFoodStop($foodStop)) {
+        $status = 0;
+      }
+    }
+    else {
+      $status = 401;
     }
     return new Response(null, null, $status);
   }
