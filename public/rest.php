@@ -30,6 +30,7 @@ if (Security::isAuthenticationRequired($resource, $method)) {
 
 $data = json_decode(file_get_contents("php://input"));
 $request = new Request();
+$request->userId = $userId;
 
 // Check if controller supports method
 if (method_exists($controller, $method)) {
@@ -42,7 +43,6 @@ if (method_exists($controller, $method)) {
   }
   // Check if we are sending JSON
   if ($method == "post" || $method == "put" || $method == "patch") {
-    $data->userId = $userId;
     $request->data = $data;
   }
 

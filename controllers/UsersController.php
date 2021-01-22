@@ -16,6 +16,7 @@ class UsersController {
    */
   static public function post(Request $request) : Response {
     $user = new User($request->data);
+    $user->userId = $request->userId;
     $user->pin = Security::getRandomPin();
 
     $status = 0;
@@ -48,6 +49,7 @@ class UsersController {
     $userName = $request->id;
 
     $user = new User($request->data);
+    $user->userId = $request->userId;
     $user->userName = $userName;
 
     $response = new Response();
