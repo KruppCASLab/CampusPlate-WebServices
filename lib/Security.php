@@ -30,6 +30,17 @@ class Security {
       return UsersModel::authenticateUser($username, $password);
   }
 
+  static function authenticateActiveDirectory($username, $password) : int {
+    // TODO: Pull from config file the URL to AD
+    $ldap = ldap_connect("bw.edu");
+    if ($bind = ldap_bind($ldap, $username, $password)) {
+      // TODO: Get User ID and return that
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+
   /**
    * Generates random pin from 100000 to 999999
    * @return int

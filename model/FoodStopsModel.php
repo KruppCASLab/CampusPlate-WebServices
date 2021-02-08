@@ -14,8 +14,8 @@ class FoodStopsModel {
    * @return bool true on success, false, on error
    */
   static public function createFoodStop(FoodStop $foodStop) : bool {
-    $sql = "INSERT INTO tblFoodStops(name, description, lat, lng) VALUES (?, ?, ?, ?)";
-    Database::executeSql($sql, "ssdd", array($foodStop->name, $foodStop->description, $foodStop->lat, $foodStop->lng));
+    $sql = "INSERT INTO tblFoodStops(name, description, lat, lng, hexColor, foodStopNumber) VALUES (?, ?, ?, ?, ?, ?)";
+    Database::executeSql($sql, "ssddsi", array($foodStop->name, $foodStop->description, $foodStop->lat, $foodStop->lng, $foodStop->hexColor, $foodStop->foodStopNumber));
 
     return ! isset(Database::$lastError);
   }

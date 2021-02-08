@@ -5,7 +5,6 @@ require_once(__DIR__ . "/../lib/Logger.php");
 
 class Database {
   static public $lastError;
-  static private $db;
 
   static private function getDbConnection() {
     $servername = Config::getConfigValue("db", "host");
