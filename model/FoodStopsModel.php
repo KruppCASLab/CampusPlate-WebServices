@@ -20,6 +20,11 @@ class FoodStopsModel {
     return ! isset(Database::$lastError);
   }
 
+
+  /**
+   * Returns all food stops
+   * @return FoodStop[]
+   */
   static public function getFoodStops() : array {
     $sql = "SELECT * from tblFoodStops ORDER BY foodStopId ASC";
     $results = Database::executeSql($sql);
