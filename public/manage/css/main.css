@@ -1,0 +1,15 @@
+:root {
+    --primary-green: rgb(104, 163, 0);
+}
+
+html {
+
+}
+body {
+    background-color: var(--primary-green);
+}
+
+.container {
+    background-color: white;
+    min-height:100vh !important;
+}

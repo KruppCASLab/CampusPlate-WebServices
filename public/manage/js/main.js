@@ -1,0 +1,1 @@
+let serviceEndpoint = "https://mopsdev.bw.edu/~bkrupp/food/public/rest.php/"
