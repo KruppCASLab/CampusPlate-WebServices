@@ -19,7 +19,7 @@ class ListingsController {
 
     if (isset($id) && isset($param)) {
       $data = ListingsModel::getListingImage($id);
-      return new Response($data);
+      return new Response(base64_encode($data));
     }
     else {
       return new Response(ListingsModel::getListings());

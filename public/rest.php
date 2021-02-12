@@ -48,15 +48,9 @@ if (method_exists($controller, $method)) {
 
   $response = call_user_func(array($controller, $method), $request);
 
-  // Check if image is requested then return appropriate content type and data
-  if ($method == "get" && $request->param == "image") {
-    header('Content-Type: image/jpeg');
-    echo $response->data;
-  }
-  else {
-    header('Content-Type: application/json');
-    echo json_encode($response);
-  }
+  header('Content-Type: application/json');
+  echo json_encode($response);
+
 }
 else {
   http_response_code(405);
