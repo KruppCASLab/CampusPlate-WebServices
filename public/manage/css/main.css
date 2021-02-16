@@ -9,7 +9,8 @@ body {
     background-color: var(--primary-green);
 }
 
-.container {
+.container, .container-fluid{
     background-color: white;
     min-height:100vh !important;
+    padding-top:30px;
 }
