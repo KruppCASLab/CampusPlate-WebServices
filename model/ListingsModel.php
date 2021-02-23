@@ -13,7 +13,7 @@ class ListingsModel {
    */
   static public function createListing(Listing $listing) : bool {
     $sql = "INSERT INTO tblListings(userId, foodStopId, title, description, quantity, creationTime) VALUES (?, ?, ?, ?, ?, ?)";
-    $id = Database::executeSql($sql, "iissii", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, time()));
+    $id = Database::executeSql($sql, "iissii", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, $listing->creationTime));
 
     if (isset($listing->image)) {
       Filesystem::saveFile($id, base64_decode($listing->image));

@@ -34,6 +34,7 @@ class ListingsController {
   static public function post(Request $request) : Response {
     $listing = new Listing($request->data);
     $listing->userId = $request->userId;
+    $listing->creationTime = time();
     $status = 1;
 
     if (AuthorizationModel::isFoodStopManager($request->userId, $listing->foodStopId) || AuthorizationModel::isAdmin($request->userId)) {
