@@ -4,6 +4,7 @@ require_once(__DIR__ . "/../model/types/Response.php");
 require_once(__DIR__ . "/../model/types/Request.php");
 require_once(__DIR__ . "/../model/types/Listing.php");
 require_once(__DIR__ . "/../model/ListingsModel.php");
+require_once(__DIR__ . "/../model/ReservationsModel.php");
 require_once(__DIR__ . "/../lib/Geofence.php");
 require_once(__DIR__ . "/../model/AuthorizationModel.php");
 
@@ -22,7 +23,11 @@ class ListingsController {
       return new Response(base64_encode($data));
     }
     else {
-      return new Response(ListingsModel::getListings());
+      $listings = ListingsModel::getListings();
+      foreach($listings as $listing) {
+        $listing->quantityRemaining = ($listing->quantity - ReservationsModel::getReservationQuantity($listing->listingId));
+      }
+      return new Response($listings);
     }
   }
 

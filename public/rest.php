@@ -1,10 +1,14 @@
 <?php
 
+// Available Services
 require_once(__DIR__ . "/../controllers/ListingsController.php");
 require_once(__DIR__ . "/../controllers/FoodStopsController.php");
-require_once(__DIR__ . "/../lib/Security.php");
+require_once(__DIR__ . "/../controllers/ReservationsController.php");
 require_once(__DIR__ . "/../controllers/UsersController.php");
+
 require_once(__DIR__ . "/../model/types/Request.php");
+require_once(__DIR__ . "/../lib/Security.php");
+
 
 // Break apart path to determine controller and method
 $path = explode("/", $_SERVER["PATH_INFO"]);

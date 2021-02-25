@@ -24,7 +24,7 @@ class ListingsModel {
 
   /**
    * Returns all listings ordered by creation time in descending order
-   * @return array Array contains array of Listing objects
+   * @return Listing[] Array contains array of Listing objects
    */
   static public function getListings() : array {
     $sql = "SELECT * from tblListings ORDER BY creationTime DESC";
@@ -35,6 +35,22 @@ class ListingsModel {
     }
 
     return $listings;
+  }
+
+
+  /**
+   * @param int $id The id of the single listing
+   * @return Listing Returns back the listing if it exists, null otherwise
+   */
+  static public function getListing(int $id)  {
+    $sql = "SELECT * from tblListings where listingId = ?";
+    $results = Database::executeSql($sql, "i", array($id));
+    if (sizeof($results) > 0) {
+      return new Listing($results[0]);
+    }
+    else {
+      return null;
+    }
   }
 
   /**
