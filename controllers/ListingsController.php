@@ -53,20 +53,5 @@ class ListingsController {
     }
     return new Response(null, null, $status);
   }
-
-  /**
-   * Allows the update of a quantity of a food listing
-   * @param Request $request
-   * @return Response
-   */
-  static public function patch(Request $request) : Response {
-    $id = $request->id;
-    foreach($request->data as $key=>$val) {
-      if ($key == "quantity") {
-        ListingsModel::updateQuantity($id, $val);
-        return new Response();
-      }
-    }
-    return new Response();
-  }
+  
 }

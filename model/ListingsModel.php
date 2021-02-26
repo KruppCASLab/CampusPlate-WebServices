@@ -61,22 +61,5 @@ class ListingsModel {
     return Filesystem::getFile($id);
   }
 
-  /**
-   * Updates the quantity of a listing relative to current quantity. If quantity is 0, item is deleted from database
-   * @param $id
-   * @param $quantityChange
-   * @return bool true on sucess, false otherwise
-   */
-  static public function updateQuantity($id, $quantityChange) : bool {
-    // This SQL looks wild because of the nested select, but this gets around MySQLs restriction of updating the table
-    // while selecting from it, when we do the select quantity, that places it in a temporary varaible
-    $sql = "UPDATE tblListings set quantity = ((select quantity from (select quantity from tblListings where listingId = ?) AS quantity) + ?) where listingId = ?";
-    Database::executeSql($sql, "iii", array($id, $quantityChange, $id));
-
-    $sql = "DELETE FROM tblListings where quantity <= 0";
-    Database::executeSql($sql);
-
-    return ! isset(Database::$lastError);
-  }
 
 }
