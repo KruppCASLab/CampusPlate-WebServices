@@ -42,7 +42,7 @@ class ReservationsController {
     $reservation->timeExpired = time() + (30 * 60); // 30 minutes,
 
     ReservationsModel::createReservation($reservation);
-    return new Response($reservation, null, null );
+    return new Response($reservation);
   }
 
   static public function get(Request $request) : Response {

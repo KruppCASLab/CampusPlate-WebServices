@@ -53,5 +53,5 @@ class ListingsController {
     }
     return new Response(null, null, $status);
   }
-  
+
 }
