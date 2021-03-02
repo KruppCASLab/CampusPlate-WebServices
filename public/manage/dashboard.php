@@ -1,0 +1,193 @@
+<?php
+require_once(__DIR__ . "/../../lib/Security.php");
+require_once(__DIR__ . "/../../lib/Session.php");
+require_once(__DIR__ . "/../../controllers/UsersController.php");
+require_once(__DIR__ . "/../../controllers/FoodStopsController.php");
+require_once(__DIR__ . "/../../controllers/ReservationsController.php");
+require_once(__DIR__ . "/../../controllers/ListingsController.php");
+require_once(__DIR__ . "/../../model/types/FoodStop.php");
+require_once(__DIR__ . "/../../model/types/User.php");
+require_once(__DIR__ . "/../../model/types/Reservation.php");
+require_once(__DIR__ . "/../../model/types/Listing.php");
+
+
+if (!Session::isSessionValid()) {
+  header('Location: '. "index.php");
+}
+
+$baseRequest = new Request(null, null, null, Session::getSessionUserId());
+
+$foodStops = FoodStopsController::get($baseRequest)->data;
+$user = new User(UsersController::get(new Request($baseRequest))->data);
+$selectedFoodStopId = $_GET["food_stop"];
+$selectedFoodStop = null;
+
+// Default to first food stop
+if (isset($selectedFoodStopId)) {
+    foreach($foodStops as $foodStop) {
+        $foodStop = new FoodStop($foodStop);
+        if ($foodStop->foodStopId == $selectedFoodStopId) {
+            $selectedFoodStop = $foodStop;
+        }
+    }
+}
+else {
+    $selectedFoodStop = new FoodStop($foodStops[0]);
+}
+$reservationRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstop", Session::getSessionUserId());
+$listingRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstop", Session::getSessionUserId());
+
+$reservations = ReservationsController::get($reservationRequest)->data;
+$listings = ListingsController::get($listingRequest)->data;
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+  <script src="js/main.js"></script>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <title>CampusPlate | Manage</title>
+</head>
+<body>
+<div class="container min-vh-100 h-100" id="login">
+  <h1 class="display-4"> Dashboard</h1>
+  <h5 class="subtitle" style="color:#<?=$selectedFoodStop->hexColor?>"><span class="badge" style="background-color:#<?=$selectedFoodStop->hexColor?>; border-radius:50%"><?=$selectedFoodStop->foodStopNumber?></span> <?=$selectedFoodStop->name?></h5>
+  <hr />
+  <!-- Modal -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Confirm Retrieval Amount</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Confirm the amount of items that were retrieved.</p>
+          <p><em>If full amount was not retrieved, remaining items will become available.</em></p>
+          <select class="form-select" id="selectedAmount">
+            <option value="4" selected>All</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var confirmModal = document.getElementById('confirmModal')
+    confirmModal.addEventListener('show.bs.modal', function (event) {
+      let sourceButton = event.relatedTarget;
+
+      // Reservation Id
+      let id = sourceButton.getAttribute("data-bs-id");
+
+      //TODO: Change this so that it is the quantity from the reservation
+      let quantity = id;
+
+      confirmModal.querySelector("#selectedAmount").innerHTML = "";
+      for(var x = quantity; x > 0; x--) {
+        var select = document.createElement("option");
+        select.value = x;
+        select.innerText = x;
+        confirmModal.querySelector("#selectedAmount").appendChild(select);
+      }
+    })
+  </script>
+
+  <h3>Reservations</h3>
+
+  <table class="table table-sm table-hover table-responsive-lg">
+    <thead>
+    <tr>
+      <th scope="col">Listing</th>
+      <th scope="col">Pickup Expiration</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Code</th>
+      <th scope="col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php
+        if (sizeof($reservations) > 0) {
+            foreach($reservations as $reservation) {
+                $reservation = new Reservation($reservation);
+
+                $matchedListing = new Listing();
+                foreach($listings as $listing) {
+                    $listing = new Listing($listing);
+                    if ($listing->listingId == $reservation->listingId) {
+                        $matchedListing = $listing;
+                    }
+                }
+    ?>
+                <tr>
+                    <th scope="row"><?=$matchedListing->title?></th>
+                    <td><?=date("g:ia", $reservation->timeExpired)?></td>
+                    <td><?=$reservation->quantity?></td>
+                    <td><?=$reservation->code?></td>
+                    <td>
+                        <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-bs-id="4">Retrieved</button>
+                    </td>
+                </tr>
+    <?php
+            }
+        }
+        else {
+    ?>
+    <?php
+        }
+    ?>
+
+    </tbody>
+  </table>
+  <div style="height:50px"></div>
+
+  <h3>Listings</h3>
+  <table class="table table-sm table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Quantity Remaining</th>
+      <th scope="col">Date Added</th>
+      <th scope="col">Date Expires</th>
+      <th scope="col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php
+        foreach($listings as $listing) {
+            $listing = new Listing($listing);
+
+    ?>
+            <tr>
+                <th scope="row"><?=$listing->title?></th>
+                <td><?=$listing->description?></td>
+                <td><?=$listing->quantityRemaining?>/<?=$listing->quantity?></td>
+                <td><?=date("M NS g:ia", $listing->creationTime)?></td>
+                <td><?=date("M NS g:ia", $listing->creationTime + (60 * 60 * 48))?></td>
+                <td>
+                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-bs-id="4">Edit</button>
+                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-bs-id="4">Delete</button>
+                </td>
+            </tr>
+    <?php
+        }
+    ?>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
