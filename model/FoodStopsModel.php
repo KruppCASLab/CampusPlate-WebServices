@@ -35,4 +35,21 @@ class FoodStopsModel {
 
     return $foodstops;
   }
+
+
+  /**
+   * Returns food stops that a particular user manages
+   * @param $userId
+   * @return array
+   */
+  static public function getManagedFoodStops($userId) : array {
+    $sql = "SELECT * from tblFoodStops WHERE foodStopId IN (SELECT foodStopId FROM tblFoodStopManagers WHERE userId = ?)";
+    $results = Database::executeSql($sql, "i", array($userId));
+    $foodstops = array();
+    foreach($results as $result) {
+      array_push($foodstops, new FoodStop($result));
+    }
+    return $foodstops;
+
+  }
 }

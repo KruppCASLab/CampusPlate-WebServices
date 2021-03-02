@@ -33,24 +33,17 @@ class FoodStopsController {
    * @return Response Array of Food Stops
    */
   static public function get(Request $request) : Response {
-    $allfoodstops = FoodStopsModel::getFoodStops();
-    $foodstops = array();
-    if ($request->id == "manage") {
+    if ($request->param == "manage") {
       // Return all food stops if the user is an admin
       if (AuthorizationModel::isAdmin($request->userId)) {
-        $foodstops = $allfoodstops;
+        $foodstops = FoodStopsModel::getFoodStops();
       }
       else {
-        // Get each that the user is a manager of
-        foreach ($allfoodstops as $foodstop) {
-          if (AuthorizationModel::isFoodStopManager($request->userId, $foodstop->foodStopId)) {
-            array_push($foodstops, $foodstop);
-          }
-        }
+        $foodstops = FoodStopsModel::getManagedFoodStops($request->userId);
       }
     }
     else {
-      $foodstops = $allfoodstops;
+      $foodstops = FoodStopsModel::getFoodStops();
     }
 
     return new Response($foodstops);
