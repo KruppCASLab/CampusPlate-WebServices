@@ -9,6 +9,12 @@ require_once(__DIR__ . "/../model/types/Request.php");
 
 
 class UsersController {
+
+  static public function get(Request $request) : Response {
+    $user = UsersModel::getUser($request->userId);
+    return new Response($user);
+  }
+
   /**
    * Creates a user account, overwrites those that exist with a new pin and invalidates account
    * @param Request $request
