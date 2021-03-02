@@ -21,24 +21,24 @@ class Security {
   }
 
   /**
-   * Returns the userId if a valid userId exists, otherwise, returns -1
+   * Authenticates a user's device given a username and a device token, returns valid userId or -1 otherwise
+   * @param $username
+   * @param $deviceToken
+   * @return int
+   */
+  static function authenticateDevice($username, $deviceToken) : int {
+      return UsersModel::authenticateUserDevice($username, $deviceToken);
+  }
+
+
+  /**
+   * Authenticates a user given a username and a password, returns valid userId or -1 otherwise
    * @param $username
    * @param $password
    * @return int
    */
-  static function authenticate($username, $password) : int {
-      return UsersModel::authenticateUser($username, $password);
-  }
-
-  static function authenticateActiveDirectory($username, $password) : int {
-    // TODO: Pull from config file the URL to AD
-    $ldap = ldap_connect("bw.edu");
-    if ($bind = ldap_bind($ldap, $username, $password)) {
-      // TODO: Get User ID and return that
-      return 1;
-    } else {
-      return -1;
-    }
+  static function authenticateUser($username, $password) : int {
+    return UsersModel::authenticateUser($username, $password);
   }
 
   /**

@@ -7,14 +7,14 @@ require_once(__DIR__ . "/types/Response.php");
 
 class UsersModel {
   /**
-   * Authenticates user and returns userId
+   * Authenticates user device and returns userId
    * @param $username
-   * @param $password
+   * @param $deviceToken
    * @return int userId of user, -1 if authentication failed
    */
-  static public function authenticateUser($username, $password) : int {
+  static public function authenticateUserDevice($username, $deviceToken) : int {
     $sql = "SELECT userId FROM tblUsers WHERE userName = ? AND GUID = ?";
-    $results = Database::executeSql($sql, "ss", array($username, $password));
+    $results = Database::executeSql($sql, "ss", array($username, $deviceToken));
     if (sizeof($results) > 0) {
       $user = new User($results[0]);
       return $user->userId;
@@ -22,6 +22,43 @@ class UsersModel {
     else {
       return -1;
     }
+  }
+
+  /**
+   * Authenticates user and returns userId
+   * @param $username
+   * @param $password
+   * @return int
+   */
+  static public function authenticateUser($username, $password) : int {
+    $sql = "SELECT userId, password FROM tblUsers WHERE userName = ?";
+    $results = Database::executeSql($sql, "s", array($username));
+
+    // If we get nothing back, user does not exist
+    if (sizeof($results) == 0) {
+      return -1;
+    }
+    $user = new User($results[0]);
+
+    if (password_verify($password, $user->password)) {
+      return $user->userId;
+    }
+    else {
+      return -1;
+    }
+  }
+
+
+  /**
+   * Returns a User given a userId.
+   * @param $userId
+   * @return User
+   */
+  static public function getUser($userId) : User {
+    $sql = "SELECT userId, userName, role, accountValidated, requireReset FROM tblUsers WHERE userId = ?";
+    $results = Database::executeSql($sql, "d", array($userId));
+
+    return new User($results[0]);
   }
 
   /**
