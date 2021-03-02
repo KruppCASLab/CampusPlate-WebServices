@@ -5,6 +5,9 @@ require_once(__DIR__ . "/types/User.php");
 require_once(__DIR__ . "/types/Response.php");
 require_once(__DIR__ . "/Filesystem.php");
 
+/**
+ * Class ListingsModel
+ */
 class ListingsModel {
   /**
    * Creates a listing
@@ -22,13 +25,20 @@ class ListingsModel {
     return ! isset(Database::$lastError);
   }
 
+
   /**
-   * Returns all listings ordered by creation time in descending order
+   * @param int|null $foodStopId
    * @return Listing[] Array contains array of Listing objects
    */
-  static public function getListings() : array {
-    $sql = "SELECT * from tblListings ORDER BY creationTime DESC";
-    $results = Database::executeSql($sql);
+  static public function getListings(int $foodStopId = null) : array {
+    if (isset($foodStopId)) {
+      $sql = "SELECT * from tblListings WHERE foodStopId = ? ORDER BY creationTime DESC ";
+      $results = Database::executeSql($sql, "i", array($foodStopId));
+    }
+    else {
+      $sql = "SELECT * from tblListings ORDER BY creationTime DESC";
+      $results = Database::executeSql($sql);
+    }
     $listings = array();
     foreach($results as $result) {
       array_push($listings, new Listing($result));

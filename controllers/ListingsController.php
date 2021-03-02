@@ -18,17 +18,26 @@ class ListingsController {
     $id = $request->id;
     $param = $request->param;
 
-    if (isset($id) && isset($param)) {
+    if (isset($id) && $param == "image") {
       $data = ListingsModel::getListingImage($id);
       return new Response(base64_encode($data));
     }
+    else if (isset($id) && $param == "foodstop") {
+      if (AuthorizationModel::isFoodStopManager($request->userId, $id) || AuthorizationModel::isAdmin($request->userId)) {
+        $listings = ListingsModel::getListings($id);
+      }
+      else {
+        return new Response(null, null, 1);
+      }
+    }
     else {
       $listings = ListingsModel::getListings();
-      foreach($listings as $listing) {
-        $listing->quantityRemaining = ($listing->quantity - ReservationsModel::getReservationQuantity($listing->listingId));
-      }
-      return new Response($listings);
     }
+
+    foreach($listings as $listing) {
+      $listing->quantityRemaining = ($listing->quantity - ReservationsModel::getReservationQuantity($listing->listingId));
+    }
+    return new Response($listings);
   }
 
   /**
