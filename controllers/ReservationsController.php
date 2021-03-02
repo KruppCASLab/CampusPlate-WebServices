@@ -49,7 +49,18 @@ class ReservationsController {
   }
 
   static public function get(Request $request) : Response {
-    return new Response(ReservationsModel::getUserReservations($request->userId));
+    if ($request->param == "foodstop" && isset($request->id)) {
+      if (AuthorizationModel::isFoodStopManager($request->userId, $request->id) || AuthorizationModel::isAdmin($request->userId)) {
+        return new Response(ReservationsModel::getFoodStopReservations($request->id));
+      }
+      else {
+        return new Response(null, null, 1);
+      }
+    }
+    else {
+      return new Response(ReservationsModel::getUserReservations($request->userId));
+    }
+
   }
 
 }

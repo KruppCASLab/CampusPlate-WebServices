@@ -30,4 +30,11 @@ class ReservationsModel {
     return $results;
   }
 
+  static public function getFoodStopReservations(int $foodStopId) {
+    // Only return reservations that have not expired AND have not been fulfilled
+    $sql = "SELECT r.reservationId, r.listingId, r.quantity, r.status, r.code, r.timeCreated, r.timeExpired FROM tblReservations r JOIN tblListings l ON r.listingId = l.listingId WHERE l.foodStopId = ? AND ? < timeExpired AND status != ?";
+    $results = Database::executeSql($sql, "iii", array($foodStopId, time(), Reservation::$RESERVATION_FULFILLED));
+    return $results;
+  }
+
 }
