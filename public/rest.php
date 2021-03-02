@@ -42,8 +42,14 @@ if (method_exists($controller, $method)) {
 
   // If we have a get, put, delete, or patch, we may have an id and path on the request
   if ($method == "get" || $method == "put" || $method == "delete" || $method == "patch") {
-    $request->id = $path[2];
-    $request->param = $path[3];
+    // Check if we passed an ID or some param
+    if (is_numeric($path[2])) {
+      $request->id = $path[2];
+      $request->param = $path[3];
+    }
+    else {
+      $request->param = $path[2];
+    }
   }
   // Check if we are sending JSON
   if ($method == "post" || $method == "put" || $method == "patch") {
