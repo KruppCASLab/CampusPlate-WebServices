@@ -38,8 +38,11 @@ class ReservationsController {
     $reservation->code = $reservationCode;
     $reservation->timeCreated = time();
 
-    // TODO: Change so that we use a config value per system or per food stop
-    $reservation->timeExpired = time() + (30 * 60); // 30 minutes,
+    $minuteExpire  = Config::getConfigValue("food", "reservation_expire");
+    if (! isset($minuteExpire)) {
+      $minuteExpire = 30;
+    }
+    $reservation->timeExpired = time() + ($minuteExpire * 60); // 30 minutes,
 
     ReservationsModel::createReservation($reservation);
     return new Response($reservation);
