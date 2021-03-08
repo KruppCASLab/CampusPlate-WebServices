@@ -15,12 +15,26 @@ if (!Session::isSessionValid()) {
   header('Location: '. "index.php");
 }
 
+$selectedFoodStopId = $_GET["foodstop"];
+$selectedFoodStop = null;
+
+$action = $_GET["action"];
+// Based on the action, fullfill reservations, update listings, or delete listings
+switch ($action) {
+  case "retrieve":
+      $reservation = new Reservation($_GET);
+      $fulfillRequest = new Request($reservation, $selectedFoodStopId, "fulfill", Session::getSessionUserId());
+      $response = ReservationsController::patch($fulfillRequest);
+      header("Location: " . "dashboard.php?foodstop=$selectedFoodStopId");
+      die();
+      break;
+}
+
 $baseRequest = new Request(null, null, null, Session::getSessionUserId());
 
 $foodStops = FoodStopsController::get($baseRequest)->data;
 $user = new User(UsersController::get(new Request($baseRequest))->data);
-$selectedFoodStopId = $_GET["food_stop"];
-$selectedFoodStop = null;
+
 
 // Default to first food stop
 if (isset($selectedFoodStopId)) {
@@ -58,7 +72,7 @@ $listings = ListingsController::get($listingRequest)->data;
 <div class="container min-vh-100 h-100" id="login">
   <h1 class="display-4"> Dashboard</h1>
   <h5 class="subtitle" style="color:#<?=$selectedFoodStop->hexColor?>"><span class="badge" style="background-color:#<?=$selectedFoodStop->hexColor?>; border-radius:50%"><?=$selectedFoodStop->foodStopNumber?></span> <?=$selectedFoodStop->name?> <div class="float-end">
-          <button class="btn btn-primary" onclick="window.location='dashboard.php?foodstop=<?=$selectedFoodStop->foodStopId?>'"><span class="glyphicon glyphicon-refresh"></span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+              <button class="btn btn-primary" onclick="window.location='dashboard.php?foodstop=<?=$selectedFoodStop->foodStopId?>'"><span class="glyphicon glyphicon-refresh"></span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
                   <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
               </svg> Update</button>
@@ -87,22 +101,45 @@ $listings = ListingsController::get($listingRequest)->data;
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary">Submit</button>
+          <button type="button" class="btn btn-primary" id="submit">Submit</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    var reservations = [];
     var confirmModal = document.getElementById('confirmModal')
+
+    var modalReservationId;
+
+    function getReservation(id) {
+        var reservation = null;
+
+        for(var i = 0; i < reservations.length; i++) {
+            reservation = reservations[i];
+            if (reservation.reservationId === parseInt(id)) {
+                break;
+            }
+        }
+        return reservation;
+    }
+
+    confirmModal.querySelector("#submit").addEventListener("click", function(event) {
+        let reservation = getReservation(modalReservationId);
+        let quantityRetrieved = confirmModal.querySelector("#selectedAmount").value;
+        window.location='dashboard.php?foodstop=<?=$selectedFoodStop->foodStopId?>&action=retrieve&reservationId=' + reservation.reservationId + '&quantity=' + quantityRetrieved;
+       //console.log("Retrieving " + reservation.reservationId + " quantity of " + quantityRetrieved);
+    });
+
     confirmModal.addEventListener('show.bs.modal', function (event) {
       let sourceButton = event.relatedTarget;
 
-      // Reservation Id
-      let id = sourceButton.getAttribute("data-bs-id");
+      modalReservationId = sourceButton.getAttribute("data-bs-id");
+      let reservation = getReservation(modalReservationId);
 
-      //TODO: Change this so that it is the quantity from the reservation
-      let quantity = id;
+      //TODO: Check if reservation is null
+      let quantity = reservation.quantity;
 
       confirmModal.querySelector("#selectedAmount").innerHTML = "";
       for(var x = quantity; x > 0; x--) {
@@ -111,15 +148,16 @@ $listings = ListingsController::get($listingRequest)->data;
         select.innerText = x;
         confirmModal.querySelector("#selectedAmount").appendChild(select);
       }
-    })
+    });
+
   </script>
 
-  <h3>Reservations</h3>
+  <h3>Active Reservations</h3>
 
   <table class="table table-sm table-hover table-responsive-lg">
     <thead>
     <tr>
-      <th scope="col">Listing</th>
+      <th scope="col">Food Listing Title</th>
       <th scope="col">Pickup Expiration</th>
       <th scope="col">Quantity</th>
       <th scope="col">Code</th>
@@ -131,6 +169,13 @@ $listings = ListingsController::get($listingRequest)->data;
         if (sizeof($reservations) > 0) {
             foreach($reservations as $reservation) {
                 $reservation = new Reservation($reservation);
+
+                ?>
+                <script>
+                    reservation = <?=json_encode($reservation)?>;
+                    reservations.push(reservation);
+                </script>
+                    <?php
 
                 $matchedListing = new Listing();
                 foreach($listings as $listing) {
@@ -146,7 +191,7 @@ $listings = ListingsController::get($listingRequest)->data;
                     <td><?=$reservation->quantity?></td>
                     <td><?=$reservation->code?></td>
                     <td>
-                        <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-bs-id="4">Retrieved</button>
+                        <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-bs-id="<?=$reservation->reservationId?>">Retrieved</button>
                     </td>
                 </tr>
     <?php
@@ -162,7 +207,7 @@ $listings = ListingsController::get($listingRequest)->data;
   </table>
   <div style="height:50px"></div>
 
-  <h3>Listings</h3>
+  <h3>Food Listings</h3>
   <table class="table table-sm table-hover">
     <thead>
     <tr>

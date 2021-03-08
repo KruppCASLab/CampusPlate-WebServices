@@ -63,4 +63,19 @@ class ReservationsController {
 
   }
 
+  static public function patch(Request $request) : Response {
+    if ($request->param == "fulfill" && isset($request->id)) {
+      if (AuthorizationModel::isFoodStopManager($request->userId, $request->id) || AuthorizationModel::isAdmin($request->userId)) {
+        $reservation = new Reservation($request->data);
+        return new Response(ReservationsModel::fulfillReservation($reservation));
+      }
+      else {
+        return new Response(null, null, 1);
+      }
+    }
+    else {
+      return new Response(null, null, 2);
+    }
+  }
+
 }

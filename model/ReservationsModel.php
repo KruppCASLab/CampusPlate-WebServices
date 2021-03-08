@@ -16,6 +16,15 @@ class ReservationsModel {
     return ! isset(Database::$lastError);
   }
 
+  static public function fulfillReservation(Reservation $reservation) {
+
+    print_r($reservation);
+    $sql = "UPDATE tblReservations SET quantity = ?, status = ? WHERE reservationId = ?";
+    Database::executeSql($sql, "iii", array($reservation->quantity, Reservation::$RESERVATION_FULFILLED, $reservation->reservationId));
+
+    return ! isset(Database::$lastError);
+  }
+
   static public function getReservationQuantity(int $listingId) {
     // Get the total number of items that have been fulfilled or reserved and haven't expired
     $sql = "SELECT SUM(quantity) from tblReservations where listingId = ? AND (status = ? OR (status = ? AND ? < timeExpired) )";
@@ -36,5 +45,6 @@ class ReservationsModel {
     $results = Database::executeSql($sql, "iii", array($foodStopId, time(), Reservation::$RESERVATION_FULFILLED));
     return $results;
   }
+
 
 }
