@@ -1,5 +1,5 @@
 :root {
-    --primary-green: rgb(104, 163, 0);
+    --primary-green: rgba(104, 163, 0, .5);
 }
 
 html {
