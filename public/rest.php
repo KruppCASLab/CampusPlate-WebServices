@@ -48,6 +48,8 @@ if (method_exists($controller, $method)) {
       $request->param = $path[3];
     }
     else {
+      // Otherwise second field could be ID or param
+      $request->id = $path[2];
       $request->param = $path[2];
     }
   }
