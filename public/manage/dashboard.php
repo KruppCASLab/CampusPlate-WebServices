@@ -229,8 +229,8 @@ $listings = ListingsController::get($listingRequest)->data;
                 <th scope="row"><?=$listing->title?></th>
                 <td><?=$listing->description?></td>
                 <td><?=$listing->quantityRemaining?>/<?=$listing->quantity?></td>
-                <td><?=date("M NS g:ia", $listing->creationTime)?></td>
-                <td><?=date("M NS g:ia", $listing->creationTime + (60 * 60 * 48))?></td>
+                <td><?=date("M jS g:ia", $listing->creationTime)?></td>
+                <td><?=date("M jS g:ia", $listing->creationTime + (60 * 60 * 48))?></td>
                 <td>
                     <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-bs-id="4">Edit</button>
                     <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-bs-id="4">Delete</button>
