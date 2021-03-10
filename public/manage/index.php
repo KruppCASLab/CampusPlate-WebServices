@@ -36,7 +36,7 @@ if (isset($username) && isset($password)) {
         <form action="<?=$_SERVER['PHP_SELF']?>" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" name="username" aria-describedby="loginHelp">
+                <input type="email" class="form-control" name="username" aria-describedby="loginHelp">
                 <div id="loginHelp" class="form-text">This is your BW email address</div>
             </div>
             <div class="mb-3">

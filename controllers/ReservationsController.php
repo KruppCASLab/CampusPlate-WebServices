@@ -13,14 +13,17 @@ class ReservationsController {
 
     $reservation->userId = $request->userId;
 
-    // By default, we are trying to place the reservation, so set the status to placed
-    $reservation->status = Reservation::$RESERVATION_PLACED;
+    // By default, we are trying to place the reservation, so set the status to placed. Otherwise, it could be an
+    // on demand reservation
+    if (! isset($reservation->status)) {
+      $reservation->status = Reservation::$RESERVATION_STATUS_PLACED;
+    }
 
     // Check if listing exists
     $listing = ListingsModel::getListing($reservation->listingId);
 
     if ($listing === null) {
-      return new Response(null, null, Reservation::$RESERVATION_LISTING_NOT_AVAILABLE);
+      return new Response(null, null, Reservation::$RESERVATION_RETURN_CODE_LISTING_NOT_AVAILABLE);
     }
 
     // Check if there is enough quantity to be reserved
@@ -28,7 +31,7 @@ class ReservationsController {
 
     // Check to make sure enough quantity is available
     if (isset($totalReserved) && (($totalReserved + $reservation->quantity) > $listing->quantity)) {
-      return new Response(null, null, Reservation::$RESERVATION_RETURN_QUANTITY_NOT_AVAILABLE);
+      return new Response(null, null, Reservation::$RESERVATION_RETURN_CODE_QUANTITY_NOT_AVAILABLE);
     }
 
     // Create random code

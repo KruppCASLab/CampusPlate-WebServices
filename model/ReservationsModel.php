@@ -17,32 +17,30 @@ class ReservationsModel {
   }
 
   static public function fulfillReservation(Reservation $reservation) {
-
-    print_r($reservation);
     $sql = "UPDATE tblReservations SET quantity = ?, status = ? WHERE reservationId = ?";
-    Database::executeSql($sql, "iii", array($reservation->quantity, Reservation::$RESERVATION_FULFILLED, $reservation->reservationId));
+    Database::executeSql($sql, "iii", array($reservation->quantity, Reservation::$RESERVATION_STATUS_FULFILLED, $reservation->reservationId));
 
     return ! isset(Database::$lastError);
   }
 
   static public function getReservationQuantity(int $listingId) {
-    // Get the total number of items that have been fulfilled or reserved and haven't expired
-    $sql = "SELECT SUM(quantity) from tblReservations where listingId = ? AND (status = ? OR (status = ? AND ? < timeExpired) )";
-    $results = Database::executeSql($sql, "iiii", array($listingId, Reservation::$RESERVATION_FULFILLED, Reservation::$RESERVATION_PLACED, time()));
+    // Get the total number of items that have been fulfilled through reservation or on demand OR or placed but have not expired
+    $sql = "SELECT SUM(quantity) from tblReservations where listingId = ? AND (status = ? OR status = ? OR (status = ? AND ? < timeExpired) )";
+    $results = Database::executeSql($sql, "iiiii", array($listingId, Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND, Reservation::$RESERVATION_STATUS_PLACED, time()));
     return $results[0]["SUM(quantity)"];
   }
 
   static public function getUserReservations(int $userId) {
-    // Only return reservations that have not expired AND have not been fulfilled
-    $sql = "SELECT * from tblReservations where userId = ? AND ? < timeExpired AND status != ? ";
-    $results = Database::executeSql($sql, "iii", array($userId, time(), Reservation::$RESERVATION_FULFILLED));
+    // Only return reservations that were placed and not expired
+    $sql = "SELECT * from tblReservations where userId = ? AND ? < timeExpired AND status = ? ";
+    $results = Database::executeSql($sql, "iii", array($userId, time(), Reservation::$RESERVATION_STATUS_PLACED));
     return $results;
   }
 
   static public function getFoodStopReservations(int $foodStopId) {
     // Only return reservations that have not expired AND have not been fulfilled
-    $sql = "SELECT r.reservationId, r.listingId, r.quantity, r.status, r.code, r.timeCreated, r.timeExpired FROM tblReservations r JOIN tblListings l ON r.listingId = l.listingId WHERE l.foodStopId = ? AND ? < timeExpired AND status != ?";
-    $results = Database::executeSql($sql, "iii", array($foodStopId, time(), Reservation::$RESERVATION_FULFILLED));
+    $sql = "SELECT r.reservationId, r.listingId, r.quantity, r.status, r.code, r.timeCreated, r.timeExpired FROM tblReservations r JOIN tblListings l ON r.listingId = l.listingId WHERE l.foodStopId = ? AND ? < timeExpired AND status = ?";
+    $results = Database::executeSql($sql, "iii", array($foodStopId, time(), Reservation::$RESERVATION_STATUS_PLACED));
     return $results;
   }
 

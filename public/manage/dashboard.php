@@ -27,7 +27,16 @@ switch ($action) {
       $response = ReservationsController::patch($fulfillRequest);
       header("Location: " . "dashboard.php?foodstop=$selectedFoodStopId");
       die();
-      break;
+  case "place":
+      $reservation = new Reservation();
+      $reservation->listingId = $_GET["listingId"];
+      $reservation->quantity = $_GET["quantity"];
+      $reservation->status = Reservation::$RESERVATION_STATUS_ON_DEMAND;
+
+      $placeRequest = new Request($reservation, $selectedFoodStop, null, Session::getSessionUserId());
+      $response = ReservationsController::post($placeRequest);
+      print_r($response);
+      header("Location: " . "dashboard.php?foodstop=$selectedFoodStopId");
 }
 
 $baseRequest = new Request(null, null, null, Session::getSessionUserId());
@@ -71,21 +80,66 @@ $listings = ListingsController::get($listingRequest)->data;
 
 <div class="container min-vh-100 h-100" id="login">
   <h1 class="display-4"> Dashboard</h1>
-  <h5 class="subtitle" style="color:#<?=$selectedFoodStop->hexColor?>"><span class="badge" style="background-color:#<?=$selectedFoodStop->hexColor?>; border-radius:50%"><?=$selectedFoodStop->foodStopNumber?></span> <?=$selectedFoodStop->name?> <div class="float-end">
-              <button class="btn btn-primary" onclick="window.location='dashboard.php?foodstop=<?=$selectedFoodStop->foodStopId?>'"><span class="glyphicon glyphicon-refresh"></span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                  <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                  <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-              </svg> Update</button>
-      </div></h5>
+    <h5 class="subtitle" style="color:#<?= $selectedFoodStop->hexColor ?>">
+        <span class="badge" style="background-color:#<?= $selectedFoodStop->hexColor ?>; border-radius:50%">
+          <?= $selectedFoodStop->foodStopNumber ?>
+        </span> <?= $selectedFoodStop->name ?>
+        <div class="float-end">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#placeOrderModal" >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-plus-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                </svg>
+                Add Order
+            </button>
+
+            <button class="btn btn-primary"
+                    onclick="window.location='dashboard.php?foodstop=<?= $selectedFoodStop->foodStopId ?>'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                </svg>
+                Update
+            </button>
+        </div>
+    </h5>
 
 
     <hr />
-  <!-- Modal -->
-  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Pickup Modal -->
+    <div class="modal fade" id="placeOrderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Select food listing being retrieved:</p>
+                    <select class="form-select" id="selectedListing">
+                    </select>
+                </div>
+                <div class="modal-body">
+                    <p>Select quantity being retrieved:</p>
+                    <select class="form-select" id="selectedQuantity">
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submit">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Confirm Retrieval Amount</h5>
+          <h5 class="modal-title">Confirm Retrieval Amount</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -109,7 +163,9 @@ $listings = ListingsController::get($listingRequest)->data;
 
   <script>
     var reservations = [];
-    var confirmModal = document.getElementById('confirmModal')
+    var listings = [];
+    var confirmModal = document.getElementById('confirmModal');
+    var placeModal = document.getElementById('placeOrderModal');
 
     var modalReservationId;
 
@@ -125,11 +181,52 @@ $listings = ListingsController::get($listingRequest)->data;
         return reservation;
     }
 
+    function updatePickupListingQuantity(listing) {
+        let select = placeModal.querySelector("#selectedQuantity");
+        select.innerHTML = "";
+        for(let i = 1; i <= listing.quantityRemaining; i++) {
+            let option = document.createElement("option");
+            option.value = i.toString();
+            option.innerText = i.toString();
+            select.appendChild(option);
+        }
+    }
+
+    placeModal.querySelector("#selectedListing").addEventListener('change', function (event) {
+        let select = placeModal.querySelector("#selectedListing");
+        listings.forEach(listing => {
+            if (parseInt(listing.listingId) === parseInt(select.value)) {
+                updatePickupListingQuantity(listing);
+            }
+        });
+
+    });
+
+    placeModal.querySelector("#submit").addEventListener("click", function(event) {
+        let listingId = placeModal.querySelector("#selectedListing").value;
+        let quantity = placeModal.querySelector("#selectedQuantity").value;
+        window.location='dashboard.php?foodstop=<?=$selectedFoodStop->foodStopId?>&action=place&listingId=' + listingId + '&quantity=' + quantity;
+    });
+
+    placeModal.addEventListener('show.bs.modal', function (event) {
+        // Show listings
+        let select = placeModal.querySelector("#selectedListing");
+        select.innerHTML = "";
+        for(let i = 0; i < listings.length; i++) {
+            let listing = listings[i];
+            let option = document.createElement("option");
+            option.value = listing.listingId;
+            option.innerText = listing.title + " (" + listing.quantityRemaining + " Remaining)";
+            select.appendChild(option);
+        }
+
+        updatePickupListingQuantity(listings[0]);
+
+    });
     confirmModal.querySelector("#submit").addEventListener("click", function(event) {
         let reservation = getReservation(modalReservationId);
         let quantityRetrieved = confirmModal.querySelector("#selectedAmount").value;
         window.location='dashboard.php?foodstop=<?=$selectedFoodStop->foodStopId?>&action=retrieve&reservationId=' + reservation.reservationId + '&quantity=' + quantityRetrieved;
-       //console.log("Retrieving " + reservation.reservationId + " quantity of " + quantityRetrieved);
     });
 
     confirmModal.addEventListener('show.bs.modal', function (event) {
@@ -143,10 +240,10 @@ $listings = ListingsController::get($listingRequest)->data;
 
       confirmModal.querySelector("#selectedAmount").innerHTML = "";
       for(var x = quantity; x > 0; x--) {
-        var select = document.createElement("option");
-        select.value = x;
-        select.innerText = x;
-        confirmModal.querySelector("#selectedAmount").appendChild(select);
+        var option = document.createElement("option");
+        option.value = x;
+        option.innerText = x;
+        confirmModal.querySelector("#selectedAmount").appendChild(option);
       }
     });
 
@@ -224,7 +321,12 @@ $listings = ListingsController::get($listingRequest)->data;
         foreach($listings as $listing) {
             $listing = new Listing($listing);
 
+
     ?>
+            <script>
+                listing = <?=json_encode($listing)?>;
+                listings.push(listing);
+            </script>
             <tr>
                 <th scope="row"><?=$listing->title?></th>
                 <td><?=$listing->description?></td>
