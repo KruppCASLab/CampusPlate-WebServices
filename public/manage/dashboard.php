@@ -18,6 +18,8 @@ if (!Session::isSessionValid()) {
 $selectedFoodStopId = $_GET["foodstop"];
 $selectedFoodStop = null;
 
+$reservationError = false;
+
 $action = $_GET["action"];
 // Based on the action, fullfill reservations, update listings, or delete listings
 switch ($action) {
@@ -35,8 +37,13 @@ switch ($action) {
 
       $placeRequest = new Request($reservation, $selectedFoodStop, null, Session::getSessionUserId());
       $response = ReservationsController::post($placeRequest);
-      print_r($response);
-      header("Location: " . "dashboard.php?foodstop=$selectedFoodStopId");
+
+      if ($response->status == Reservation::$RESERVATION_RETURN_CODE_QUANTITY_NOT_AVAILABLE) {
+        $reservationError = true;
+      }
+      else {
+        header("Location: " . "dashboard.php?foodstop=$selectedFoodStopId");
+      }
 }
 
 $baseRequest = new Request(null, null, null, Session::getSessionUserId());
@@ -79,32 +86,54 @@ $listings = ListingsController::get($listingRequest)->data;
 <body>
 
 <div class="container min-vh-100 h-100" id="login">
-  <h1 class="display-4"> Dashboard</h1>
-    <h5 class="subtitle" style="color:#<?= $selectedFoodStop->hexColor ?>">
-        <span class="badge" style="background-color:#<?= $selectedFoodStop->hexColor ?>; border-radius:50%">
-          <?= $selectedFoodStop->foodStopNumber ?>
-        </span> <?= $selectedFoodStop->name ?>
-        <div class="float-end">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#placeOrderModal" >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                     class="bi bi-plus-circle" viewBox="0 0 16 16">
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                </svg>
-                Add Order
-            </button>
+    <div class="row">
+        <h1 class="display-4"> Dashboard</h1>
+        <h5 class="subtitle" style="color:#<?= $selectedFoodStop->hexColor ?>">
+            <span class="badge" style="background-color:#<?= $selectedFoodStop->hexColor ?>; border-radius:50%">
+              <?= $selectedFoodStop->foodStopNumber ?>
+            </span> <?= $selectedFoodStop->name ?>
+            <div class="float-end">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#placeOrderModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                    Add Order
+                </button>
 
-            <button class="btn btn-primary"
-                    onclick="window.location='dashboard.php?foodstop=<?= $selectedFoodStop->foodStopId ?>'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                     class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                </svg>
-                Update
-            </button>
-        </div>
-    </h5>
+                <button class="btn btn-primary"
+                        onclick="window.location='dashboard.php?foodstop=<?= $selectedFoodStop->foodStopId ?>'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                    </svg>
+                    Update
+                </button>
+            </div>
+        </h5>
+    </div>
+
+
+  <?php
+  if ($reservationError) {
+  ?>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <h4 class="alert-heading">Unable to Complete Order - Quantity Changed</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <p>
+            A reservation may have been placed for the selected food listing causing the quantity to change when the order was placed.
+            Before placing an order, please click on the update button to show an updated quantity for each food listing.
+        </p>
+        <hr>
+        <p class="mb-0">
+            If an item is popular, it is also possible that a reservation was placed right before the order was placed.
+        </p>
+    </div>
+  <?php
+  }
+  ?>
 
 
     <hr />
