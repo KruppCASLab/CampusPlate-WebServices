@@ -1,5 +1,5 @@
 :root {
-    --primary-green: rgba(104, 163, 0, .5);
+    --primary-green: rgba(104, 163, 0, .7);
 }
 
 html {
@@ -14,3 +14,8 @@ body {
     min-height:100vh !important;
     padding-top:30px;
 }
+.badge {
+    height:50px;
+    width:50px;
+}
+
