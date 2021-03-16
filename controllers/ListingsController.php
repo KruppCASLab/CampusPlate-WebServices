@@ -50,7 +50,14 @@ class ListingsController {
     static public function post(Request $request): Response {
         $listing = new Listing($request->data);
         $listing->userId = $request->userId;
-        $listing->creationTime = time();
+
+        if (! isset($listing->creationTime)) {
+            $listing->creationTime = time();
+        }
+        if (! isset($listing->expirationTime)) {
+            $listing->expirationTime = time() + (60 * 60 * 24 * 2); // 2 Days expire by default
+        }
+
         $status = 1;
 
         if (AuthorizationModel::isFoodStopManager($request->userId, $listing->foodStopId) || AuthorizationModel::isAdmin($request->userId)) {
