@@ -91,6 +91,7 @@ if (isset($selectedFoodStopId)) {
 }
 else {
     $selectedFoodStop = new FoodStop($foodStops[0]);
+    $selectedFoodStopId = $selectedFoodStop->foodStopId;
 }
 $reservationRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstop", Session::getSessionUserId());
 $listingRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstop", Session::getSessionUserId());
@@ -404,7 +405,17 @@ $listings = ListingsController::get($listingRequest)->data;
     </table>
     <div style="height:50px"></div>
 
-    <h3>Food Listings</h3>
+    <h3>Food Listings
+        <div class="float-end">
+            <button class="btn btn-success" onclick="window.location.href='listing.php?action=create&foodstop=<?=$selectedFoodStopId?>'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-plus-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                </svg>
+                Add Listing
+            </button>
+    </h3>
     <table class="table table-sm table-hover">
         <thead>
         <tr>
@@ -428,14 +439,13 @@ $listings = ListingsController::get($listingRequest)->data;
                 listings.push(listing);
             </script>
             <tr>
-                <th scope="row"><?= $listing->title ?></th>
+                <th scope="row" ><?= $listing->title?></th>
                 <td><?= $listing->description ?></td>
                 <td><?= $listing->quantityRemaining ?>/<?= $listing->quantity ?></td>
                 <td><?= date("M jS g:ia", $listing->creationTime) ?></td>
-                <td><?= date("M jS g:ia", $listing->creationTime + (60 * 60 * 48)) ?></td>
+                <td><?= date("M jS g:ia", $listing->expirationTime) ?></td>
                 <td>
-                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#confirmModal" data-bs-id="4">Edit
+                    <button class="btn btn-outline-secondary btn-sm" onclick="window.location.href='listing.php?action=update&foodstop=<?=$selectedFoodStopId?>&listingId=<?=$listing->listingId?>'">Edit
                     </button>
                     <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
                             data-bs-id="<?= $listing->listingId ?>">Delete

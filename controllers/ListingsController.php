@@ -26,13 +26,26 @@ class ListingsController {
         if (isset($id) && $param == "image") {
             $data = ListingsModel::getListingImage($id);
             return new Response(base64_encode($data));
-        } else if (isset($id) && $param == "foodstop") {
+        }
+        else if (isset($id) && $param == "foodstop") {
             if (AuthorizationModel::isFoodStopManager($request->userId, $id) || AuthorizationModel::isAdmin($request->userId)) {
                 $listings = ListingsModel::getListings($id);
-            } else {
+            }
+            else {
                 return new Response(null, null, 1);
             }
-        } else {
+        }
+        else if (isset($id)) {
+            $listing = ListingsModel::getListing($id);
+
+            if (AuthorizationModel::isFoodStopManager($request->userId, $listing->foodStopId) || AuthorizationModel::isAdmin($request->userId)) {
+                return new Response($listing);
+            }
+            else {
+                return new Response(null, null, 1);
+            }
+        }
+        else {
             $listings = ListingsModel::getListings();
         }
 
@@ -51,10 +64,10 @@ class ListingsController {
         $listing = new Listing($request->data);
         $listing->userId = $request->userId;
 
-        if (! isset($listing->creationTime)) {
+        if (!isset($listing->creationTime)) {
             $listing->creationTime = time();
         }
-        if (! isset($listing->expirationTime)) {
+        if (!isset($listing->expirationTime)) {
             $listing->expirationTime = time() + (60 * 60 * 24 * 2); // 2 Days expire by default
         }
 
@@ -64,7 +77,38 @@ class ListingsController {
             if (ListingsModel::createListing($listing)) {
                 $status = 0;
             }
-        } else {
+        }
+        else {
+            // Return Unauthorized
+            $status = 401;
+        }
+        return new Response(null, null, $status);
+    }
+
+    /**
+     * Allows the update of a food listing
+     * @param Request $request
+     * @return Response status code contains success
+     */
+    static public function put(Request $request): Response {
+        $listing = new Listing($request->data);
+        $listing->userId = $request->userId;
+
+        if (!isset($listing->creationTime)) {
+            $listing->creationTime = time();
+        }
+        if (!isset($listing->expirationTime)) {
+            $listing->expirationTime = time() + (60 * 60 * 24 * 2); // 2 Days expire by default
+        }
+
+        $status = 1;
+
+        if (AuthorizationModel::isFoodStopManager($request->userId, $listing->foodStopId) || AuthorizationModel::isAdmin($request->userId)) {
+            if (ListingsModel::updateListing($listing)) {
+                $status = 0;
+            }
+        }
+        else {
             // Return Unauthorized
             $status = 401;
         }
@@ -72,6 +116,11 @@ class ListingsController {
     }
 
 
+    /**
+     * Deletes a listing as long as there are not fulfilled reservations
+     * @param Request $request
+     * @return Response
+     */
     static public function delete(Request $request): Response {
         $listing = new Listing($request->data);
         $listingId = $listing->listingId;
