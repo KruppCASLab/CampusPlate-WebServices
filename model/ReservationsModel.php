@@ -44,5 +44,19 @@ class ReservationsModel {
     return $results;
   }
 
+  static public function getFulfilledReservations(int $listingId) : array {
+    $sql = "SELECT * from tblReservations where listingId = ? AND (status = ? OR status = ?)";
+    return Database::executeSql($sql, "iii", array($listingId, Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
+  }
+
+  static public function deleteReservationsFromListing(int $listingId) : bool{
+    $sql = "DELETE from tblReservations where listingId = ?";
+    Database::executeSql($sql, "i", array($listingId));
+
+    return ! isset(Database::$lastError);
+  }
+
+
+
 
 }

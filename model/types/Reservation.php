@@ -1,4 +1,7 @@
 <?php
+
+require_once(__DIR__ . "/Base.php");
+
 class Reservation extends Base {
   public $reservationId, $userId, $listingId, $quantity, $status, $code, $timeCreated, $timeExpired;
 

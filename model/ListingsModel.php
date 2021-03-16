@@ -72,4 +72,11 @@ class ListingsModel {
   }
 
 
+  static public function deleteListing($id) : bool {
+    $sql = "DELETE from tblListings where listingId = ?";
+    Database::executeSql($sql, "i", array($id));
+    return ! isset(Database::$lastError);
+  }
+
+
 }
