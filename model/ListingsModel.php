@@ -43,12 +43,12 @@ class ListingsModel {
      */
     static public function getListings(int $foodStopId = null): array {
         if (isset($foodStopId)) {
-            $sql = "SELECT * from tblListings WHERE foodStopId = ? ORDER BY creationTime DESC ";
-            $results = Database::executeSql($sql, "i", array($foodStopId));
+            $sql = "SELECT * from tblListings WHERE foodStopId = ? AND expirationTime > ? ORDER BY creationTime DESC ";
+            $results = Database::executeSql($sql, "ii", array($foodStopId, time()));
         }
         else {
-            $sql = "SELECT * from tblListings ORDER BY creationTime DESC";
-            $results = Database::executeSql($sql);
+            $sql = "SELECT * from tblListings WHERE expirationTime > ? ORDER BY creationTime DESC";
+            $results = Database::executeSql($sql, "i", array(time()));
         }
         $listings = array();
         foreach ($results as $result) {
