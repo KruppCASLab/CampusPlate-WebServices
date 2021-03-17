@@ -45,8 +45,8 @@ class UsersController {
 
             $url = 'https://www.krupp.dev/food/mail.php';
             $data["key"] = Config::getConfigValue("email", "appkey");
-            $data["email"] = "briankrupp@icloud.com";
-            $data["pin"] = "340132";
+            $data["email"] = $user->userName;
+            $data["pin"] = $user->pin;
 
             $options = array(
                 'http' => array(
