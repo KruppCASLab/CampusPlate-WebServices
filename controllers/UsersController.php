@@ -4,6 +4,7 @@ require_once(__DIR__ . "/../model/types/User.php");
 require_once(__DIR__ . "/../model/UsersModel.php");
 require_once(__DIR__ . "/../lib/Mail.php");
 require_once(__DIR__ . "/../lib/Security.php");
+require_once(__DIR__ . "/../lib/Config.php");
 require_once(__DIR__ . "/../model/types/Response.php");
 require_once(__DIR__ . "/../model/types/Request.php");
 
@@ -40,7 +41,24 @@ class UsersController {
 
     // If we created the user or updated their pin, send an email
     if ($status == 0 || $status == 2) {
-      Mail::sendPinEmail($user->userName, $user->pin);
+        // Unable to use built in Mail library due to IT blocking outgoing mail since Spring '21 Cyberattack
+        // In place, using service at home and calling that from this.
+
+        $url = 'https://www.krupp.dev/food/mail.php';
+        $data["key"] = Config::getConfigValue("email", "appkey");
+        $data["email"] = "briankrupp@icloud.com";
+        $data["pin"] = "340132";
+
+        $options = array(
+            'http' => array(
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => 'POST',
+                'content' => json_encode($data)
+            )
+        );
+        $context = stream_context_create($options);
+        file_get_contents($url, false, $context);
+      //Mail::sendPinEmail($user->userName, $user->pin);
     }
 
     return new Response(null, null, $status);;
