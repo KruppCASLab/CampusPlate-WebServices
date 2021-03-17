@@ -13,8 +13,8 @@ if (isset($username) && isset($password)) {
     if ($userId != -1) {
         Session::setSessionUserId($userId);
         // Set session
-      header('Location: '. "dashboard.php");
-      die();
+        header('Location: ' . "dashboard.php");
+        die();
     }
 }
 
@@ -33,8 +33,8 @@ if (isset($username) && isset($password)) {
 <div class="container min-vh-100 h-100" id="login">
     <div class="mx-auto" style="width: 500px;">
 
-        <h1><img class="img-fluid" style="height:80px" src="images/icon.png" />Campus Plate | Manage</h1>
-        <form action="<?=$_SERVER['PHP_SELF']?>" method="post">
+        <h1><img class="img-fluid" style="height:80px" src="images/icon.png"/>Campus Plate | Manage</h1>
+        <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="email" class="form-control" name="username" aria-describedby="loginHelp">
@@ -48,10 +48,11 @@ if (isset($username) && isset($password)) {
             <div class="mb-3">
                 <button type="submit" class="btn btn-primary">Login</button>
             </div>
-            <div class="alert alert-danger" role="alert" id="invalidAlert" style="display:<?=($loginAttempt) ? "block" : "none"?>">
+            <div class="alert alert-danger" role="alert" id="invalidAlert"
+                 style="display:<?= ($loginAttempt) ? "block" : "none" ?>">
                 Invalid login, please try again.
             </div>
-            <div ></div>
+            <div></div>
             <hr class="m-lg-5"/>
             If you do not remember your account, please contact the administrator.
         </form>

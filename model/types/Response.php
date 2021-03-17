@@ -2,16 +2,16 @@
 
 
 class Response {
-  public $data, $status, $error;
+    public $data, $status, $error;
 
-  public function __construct($data = null, $error = null, $status = 0) {
-    $this->data = $data;
-    $this->error = $error;
-    $this->status = $status;
+    public function __construct($data = null, $error = null, $status = 0) {
+        $this->data = $data;
+        $this->error = $error;
+        $this->status = $status;
 
-    // If we had an error and the status is 0, we need to overwrite it
-    if ($error !== null && $status === 0) {
-        $this->status = -1;
+        // If we had an error and the status is 0, we need to overwrite it
+        if ($error !== null && $status === 0) {
+            $this->status = -1;
+        }
     }
-  }
 }

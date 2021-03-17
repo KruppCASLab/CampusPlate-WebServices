@@ -1,7 +1,6 @@
 <?php
 
-class Config
-{
+class Config {
     static private function loadConfig() {
         $config = parse_ini_file("/var/www/food/config.cfg", true);
         return $config;

@@ -34,7 +34,7 @@ if (isset($_POST["action"])) {
     $listing->expirationTime = $expirationDate;
     $listing->quantity = $_POST["quantity"];
 
-    if (! (isset($listing->title) && is_numeric($listing->quantity) && is_numeric($listing->creationTime) && is_numeric($listing->expirationTime))) {
+    if (!(isset($listing->title) && is_numeric($listing->quantity) && is_numeric($listing->creationTime) && is_numeric($listing->expirationTime))) {
         $error = "Could not create or edit listing. Please check to make sure all fields.";
     }
     else {
@@ -119,7 +119,7 @@ if ($action == "update") {
     <div class="row">
         <h1 class="display-4">
             <img class="img-fluid" style="height:80px"
-                 src="images/icon.png"/> <?= ucfirst($action)?> Listing
+                 src="images/icon.png"/> <?= ucfirst($action) ?> Listing
             <div class="float-end">
             <span class="display-6">
             <span class="subtitle"
@@ -146,57 +146,61 @@ if ($action == "update") {
     ?>
     <div class="row mt-3">
         <form action="listing.php" method="post">
-            <input type="hidden" name="foodStopId" value="<?=$selectedFoodStopId?>" />
-            <input type="hidden" name="listingId" value="<?=$listingId?>" />
-            <input type="hidden" name="action" value="<?=$action?>" />
+            <input type="hidden" name="foodStopId" value="<?= $selectedFoodStopId ?>"/>
+            <input type="hidden" name="listingId" value="<?= $listingId ?>"/>
+            <input type="hidden" name="action" value="<?= $action ?>"/>
             <div class="col-lg-6">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" value="<?=$listing->title?>">
+                    <input type="text" class="form-control" id="title" name="title" value="<?= $listing->title ?>">
                 </div>
             </div>
             <div class="col-2">
                 <div class="mb-3">
                     <label for="quantity" class="form-label">Quantity</label>
-                    <input type="text" class="form-control" id="quantity" name="quantity" value="<?=$listing->quantity?>">
+                    <input type="text" class="form-control" id="quantity" name="quantity"
+                           value="<?= $listing->quantity ?>">
                 </div>
             </div>
             <div class="col-lg-12">
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea type="text" class="form-control" id="description" name="description"><?=$listing->description?></textarea>
+                    <textarea type="text" class="form-control" id="description"
+                              name="description"><?= $listing->description ?></textarea>
                 </div>
             </div>
 
 
             <div class="row">
-            <div class="col-4">
-                <div class="mb-3">
-                    <label for="creationDate" class="form-label">Creation Date and Time</label> <br/>
+                <div class="col-4">
+                    <div class="mb-3">
+                        <label for="creationDate" class="form-label">Creation Date and Time</label> <br/>
 
-                    <input type="text" class="form-control dateControl" id="creationDate" name="creationDate"
-                           value="<?= date("m/d/Y", $creationDate) ?>"
-                           placeholder="<?= date("m/d/Y", $creationDate) ?>"/>
-                    <input type="text" class="form-control dateControl" id="creationTime" name="creationTime"
-                           style="max-width:150px;display: inline-block" value="<?=date("H:i", $creationDate) ?>"/>
-                    <div class="form-text mt-3">Time is in 24 hour format, for example: 8:24pm would be 20:24</div>
+                        <input type="text" class="form-control dateControl" id="creationDate" name="creationDate"
+                               value="<?= date("m/d/Y", $creationDate) ?>"
+                               placeholder="<?= date("m/d/Y", $creationDate) ?>"/>
+                        <input type="text" class="form-control dateControl" id="creationTime" name="creationTime"
+                               style="max-width:150px;display: inline-block" value="<?= date("H:i", $creationDate) ?>"/>
+                        <div class="form-text mt-3">Time is in 24 hour format, for example: 8:24pm would be 20:24</div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-4">
-                <div class="mb-3">
-                    <label for="expirationDate" class="form-label">Expiration Date and Time</label> <br/>
-                    <input type="text" class="form-control dateControl" id="expirationDate" name="expirationDate"
-                           value="<?= date("m/d/Y", $expirationDate) ?>"
-                           placeholder="<?= date("m/d/Y", $expirationDate) ?>"/>
-                    <input type="text" class="form-control dateControl" id="expirationTime" name="expirationTime"
-                           style="max-width:150px;display: inline-block" value="<?=date("H:i", $expirationDate) ?>"/>
+                <div class="col-4">
+                    <div class="mb-3">
+                        <label for="expirationDate" class="form-label">Expiration Date and Time</label> <br/>
+                        <input type="text" class="form-control dateControl" id="expirationDate" name="expirationDate"
+                               value="<?= date("m/d/Y", $expirationDate) ?>"
+                               placeholder="<?= date("m/d/Y", $expirationDate) ?>"/>
+                        <input type="text" class="form-control dateControl" id="expirationTime" name="expirationTime"
+                               style="max-width:150px;display: inline-block"
+                               value="<?= date("H:i", $expirationDate) ?>"/>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-12 mt-4">
-                <button type="reset" class="btn btn-danger" onclick="window.location.href='dashboard.php'">Cancel</button>
-                <button type="submit" class="btn btn-primary ms-3">Submit</button>
-            </div>
+                <div class="col-lg-12 mt-4">
+                    <button type="reset" class="btn btn-danger" onclick="window.location.href='dashboard.php'">Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary ms-3">Submit</button>
+                </div>
         </form>
     </div>
 </div>
