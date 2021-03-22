@@ -14,7 +14,7 @@ require_once(__DIR__ . "/../lib/Security.php");
 $path = explode("/", $_SERVER["PATH_INFO"]);
 $method = strtolower($_SERVER["REQUEST_METHOD"]);
 
-$resource = $path[1];
+$resource = strtolower($path[1]);
 $controller = ucfirst($resource) . "Controller";
 
 $userId = -1;
