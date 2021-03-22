@@ -67,7 +67,10 @@ class ListingsController {
         if (!isset($listing->creationTime)) {
             $listing->creationTime = time();
         }
-        if (!isset($listing->expirationTime)) {
+        else if ($listing->creationTime < time()) {
+            $listing->creationTime = time();
+        }
+        if (!isset($listing->expirationTime) || $listing->expirationTime <= time()) {
             $listing->expirationTime = time() + (60 * 60 * 24 * 2); // 2 Days expire by default
         }
 
