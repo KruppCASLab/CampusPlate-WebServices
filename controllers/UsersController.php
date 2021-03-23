@@ -27,6 +27,11 @@ class UsersController {
 
         $status = 0;
 
+        // Make sure they are at BW by checking if the address ends with a 0
+        if (preg_match("/.*?@bw\.edu/", $user->userName) === 0) {
+            return new Response(null, null, 3);
+        }
+
         if (UsersModel::doesUserExist($user->userName)) {
             UsersModel::updatePin($user);
             UsersModel::updateVerifiedFlag($user, false);
