@@ -77,12 +77,13 @@ switch ($action) {
 $baseRequest = new Request(null, null, null, Session::getSessionUserId());
 
 $foodStops = FoodStopsController::get($baseRequest)->data;
+$foodStopsManaged = FoodStopsController::get(new Request(null, null, "manage", Session::getSessionUserId()))->data;
 $user = new User(UsersController::get(new Request($baseRequest))->data);
 
 
 // Default to first food stop
 if (isset($selectedFoodStopId)) {
-    foreach ($foodStops as $foodStop) {
+    foreach ($foodStopsManaged as $foodStop) {
         $foodStop = new FoodStop($foodStop);
         if ($foodStop->foodStopId == $selectedFoodStopId) {
             $selectedFoodStop = $foodStop;
@@ -90,7 +91,7 @@ if (isset($selectedFoodStopId)) {
     }
 }
 else {
-    $selectedFoodStop = new FoodStop($foodStops[0]);
+    $selectedFoodStop = new FoodStop($foodStopsManaged[0]);
     $selectedFoodStopId = $selectedFoodStop->foodStopId;
 }
 $reservationRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstop", Session::getSessionUserId());
@@ -113,13 +114,44 @@ $listings = ListingsController::get($listingRequest)->data;
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/main.css">
     <title>CampusPlate | Manage</title>
+    <script>
+        function changeFoodStop(foodStopId) {
+            window.location = 'dashboard.php?foodstop=' + foodStopId;
+        }
+    </script>
 </head>
 <body>
 
 <div class="container min-vh-100 h-100" id="login">
+    <?php
+    // Only show the selector 
+    if (sizeof($foodStopsManaged) > 1) {
+        ?>
+        <div class="row">
+            <div class="col-12">
+                <div class="float-lg-end">
+                    <select class="form-select w-auto d-inline-block" onchange="changeFoodStop(this.value)">
+                        <?php
+                        foreach ($foodStopsManaged as $foodStop) {
+                            $foodStop = new FoodStop($foodStop);
+                            ?>
+                            <option <?= ($selectedFoodStopId == $foodStop->foodStopId) ? "selected" : "" ?>
+                                    value="<?= $foodStop->foodStopId ?>"><?= $foodStop->name ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+    ?>
     <div class="row">
         <h1 class="display-4">
             <img class="img-fluid" style="height:80px" src="images/icon.png"/> Dashboard
+
+
             <div class="float-end">
             <span class="display-6">
             <span class="subtitle"
@@ -128,6 +160,7 @@ $listings = ListingsController::get($listingRequest)->data;
                   style="background-color:#<?= $selectedFoodStop->hexColor ?>; border-radius:50%"><?= $selectedFoodStop->foodStopNumber ?></span>
                 </span>
             </div>
+
         </h1>
         <div>
 
@@ -142,7 +175,7 @@ $listings = ListingsController::get($listingRequest)->data;
                 </button>
 
                 <button class="btn btn-primary"
-                        onclick="window.location='dashboard.php?foodstop=<?= $selectedFoodStop->foodStopId ?>'">
+                        onclick="changeFoodStop(<?= $selectedFoodStop->foodStopId ?>)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
