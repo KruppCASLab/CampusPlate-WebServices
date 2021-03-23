@@ -33,6 +33,7 @@ if (isset($_POST["action"])) {
     $listing->creationTime = $creationDate;
     $listing->expirationTime = $expirationDate;
     $listing->quantity = $_POST["quantity"];
+    $listing->weightOunces = $_POST["weightOunces"];
 
     if (!(isset($listing->title) && is_numeric($listing->quantity) && is_numeric($listing->creationTime) && is_numeric($listing->expirationTime))) {
         $error = "Could not create or edit listing. Please check to make sure all fields.";
@@ -155,13 +156,23 @@ if ($action == "update") {
                     <input type="text" class="form-control" id="title" name="title" value="<?= $listing->title ?>">
                 </div>
             </div>
-            <div class="col-2">
-                <div class="mb-3">
-                    <label for="quantity" class="form-label">Quantity</label>
-                    <input type="text" class="form-control" id="quantity" name="quantity"
-                           value="<?= $listing->quantity ?>">
+            <div class="row">
+                <div class="col-2">
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="text" class="form-control" id="quantity" name="quantity"
+                               value="<?= $listing->quantity ?>">
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="mb-3">
+                        <label for="weight" class="form-label">Weight (Ounces Per Item)</label>
+                        <input type="text" class="form-control" id="weightOunces" name="weightOunces"
+                               value="<?= $listing->weightOunces ?>">
+                    </div>
                 </div>
             </div>
+
             <div class="col-lg-12">
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>

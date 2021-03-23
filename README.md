@@ -35,7 +35,7 @@ A status of 0 indicates success, any other number can mean an error or some othe
 * Request:
 ```json
 {
-	"pin": 289759
+  "pin": 289759
 }
 ```
 * Response:
@@ -56,53 +56,63 @@ A status of 0 indicates success, any other number can mean an error or some othe
 ## Listings
 ### Create a Listing
 * Description: Creates a listing. The userId will be from the user authenticated and the time will be from when the server receives the listing.
+	* When creating a listing, the default post date is the current date and the default expiration date is a set amount past that.
 * Path: `https://<baseurl>/listings/`
 * Method: POST
 * Request:
 	* Please note: the image property is optional. If submitting an image with the listing, the image data should be base64_encoded.
 ```json
 {
-	"foodStopId": 1,
-	"title": "Sandwiches",
-	"description": "Cold cut and PB&J",
-	"quantity": 10,
-	"image": "REPLACE_WITH_BASE_64_ENCODING_OF_IMAGE"
+    "foodStopId": 1,
+    "title": "Sandwiches",
+    "description": "Cold cut and PB&J",
+    "quantity": 10,
+	  "weightOunces": 12,
+    "creationDate": 1616526584, // Timestamp of date
+    "expirationDate": 1616528584, // Timestamp of expiration
+    "image": "REPLACE_WITH_BASE_64_ENCODING_OF_IMAGE"
 }
 ```
 * Response: 0 on success, failure otherwise
 
 ### Get Listings
 * Description: Returns a list of listings for all food stops. The userId will be from the user authenticated and the time will be from when the server receives the listing. **Please note: Images are not returned with getListings, a different service is used for the image (see below)**
-  **Please note: Listings also return the quantity remaining. This is based off of what has been reserved or fulfilled.**
-* Path: `https://<baseurl>/listings/`
+	* It only returns listings that have not expired yet
+	  **Please note: Listings also return the quantity remaining. This is based off of what has been reserved or fulfilled.**
+* Path: `https://<baseurl>/listings/` (Gets all listings)
+	* Path: `https://<baseurl>/listings/1/foodstop` (Returns listings from a specific food stop, in this case, food stop with id 1)
 * Method: GET
 * Response: Array of listings within data field, status = 0 on success, failure otherwise
 ```json
-{
+
     "data": [
         {
-            "listingId": 167,
+            "listingId": 214,
             "foodStopId": 1,
-            "userId": 343,
-            "title": "Beans",
-            "description": "",
-            "creationTime": 1614366300,
-            "quantity": 4,
+            "userId": 339,
+            "title": "Cheese Puffs",
+            "description": "Dan's Favourite",
+            "creationTime": 1616526180,
+            "expirationTime": 1616698920,
+            "quantity": 24,
+            "weightOunces": 13,
             "image": null,
-            "quantityRemaining": 0
+            "quantityRemaining": 24
         },
         {
-            "listingId": 165,
+            "listingId": 213,
             "foodStopId": 1,
-            "userId": 336,
-            "title": "Salmon",
-            "description": "Yummy",
-            "creationTime": 1614112873,
-            "quantity": 5,
+            "userId": 339,
+            "title": "Sandwiches",
+            "description": "Cold cut and PB&J",
+            "creationTime": 1616525969,
+            "expirationTime": 1616698769,
+            "quantity": 10,
+            "weightOunces": 12,
             "image": null,
-            "quantityRemaining": 5
-        },
-    ],
+            "quantityRemaining": 10
+        }
+	  ],
     "status": 0,
     "error": null
 }

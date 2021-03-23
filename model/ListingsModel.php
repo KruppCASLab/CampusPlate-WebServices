@@ -15,8 +15,8 @@ class ListingsModel {
      * @return bool true on success, false otherwise
      */
     static public function createListing(Listing $listing): bool {
-        $sql = "INSERT INTO tblListings(userId, foodStopId, title, description, quantity, creationTime, expirationTime) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $id = Database::executeSql($sql, "iissiii", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, $listing->creationTime, $listing->expirationTime));
+        $sql = "INSERT INTO tblListings(userId, foodStopId, title, description, quantity, creationTime, expirationTime, weightOunces) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $id = Database::executeSql($sql, "iissiiii", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, $listing->creationTime, $listing->expirationTime, $listing->weightOunces));
 
         if (isset($listing->image)) {
             Filesystem::saveFile($id, base64_decode($listing->image));
@@ -31,9 +31,9 @@ class ListingsModel {
      * @return bool true on success, false otherwise
      */
     static public function updateListing(Listing $listing): bool {
-        $sql = "UPDATE tblListings SET userId = ?, foodStopId = ?, title = ?, description = ?, quantity = ?, creationTime = ?, expirationTime = ? WHERE listingId = ?";
+        $sql = "UPDATE tblListings SET userId = ?, foodStopId = ?, title = ?, description = ?, quantity = ?, creationTime = ?, expirationTime = ?, weightOunces = ? WHERE listingId = ?";
 
-        $id = Database::executeSql($sql, "iissiiii", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, $listing->creationTime, $listing->expirationTime, $listing->listingId));
+        $id = Database::executeSql($sql, "iissiiiii", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, $listing->creationTime, $listing->expirationTime, $listing->weightOunces, $listing->listingId));
         return !isset(Database::$lastError);
     }
 
