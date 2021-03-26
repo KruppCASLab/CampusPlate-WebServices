@@ -31,8 +31,8 @@ class UsersModel {
      * @return int
      */
     static public function authenticateUser($username, $password): int {
-        $sql = "SELECT userId, password FROM tblUsers WHERE userName = ?";
-        $results = Database::executeSql($sql, "s", array($username));
+        $sql = "SELECT userId, password FROM tblUsers WHERE userName = ? AND accountValidated = ?";
+        $results = Database::executeSql($sql, "si", array($username, 1));
 
         // If we get nothing back, user does not exist
         if (sizeof($results) == 0) {
@@ -46,6 +46,12 @@ class UsersModel {
         else {
             return -1;
         }
+    }
+
+
+    static public function setPassword($username, $password) {
+        $sql = "UPDATE tblUsers set password = ? where userName = ?";
+        Database::executeSql($sql, "ss", array(password_hash($password, PASSWORD_DEFAULT), $username));
     }
 
 

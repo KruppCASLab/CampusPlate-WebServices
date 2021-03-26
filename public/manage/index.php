@@ -33,7 +33,7 @@ if (isset($username) && isset($password)) {
 <div class="container min-vh-100 h-100" id="login">
     <div class="mx-auto" style="width: 500px;">
 
-        <h1><img class="img-fluid" style="height:80px" src="images/icon.png"/>Campus Plate | Manage</h1>
+        <h1><img class="img-fluid" style="height:80px" src="../images/icon.png"/>Campus Plate | Manage</h1>
         <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>

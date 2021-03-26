@@ -120,7 +120,7 @@ if ($action == "update") {
     <div class="row">
         <h1 class="display-4">
             <img class="img-fluid" style="height:80px"
-                 src="images/icon.png"/> <?= ucfirst($action) ?> Listing
+                 src="../images/icon.png"/> <?= ucfirst($action) ?> Listing
             <div class="float-end">
             <span class="display-6">
             <span class="subtitle"

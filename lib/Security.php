@@ -30,7 +30,6 @@ class Security {
         return UsersModel::authenticateUserDevice($username, $deviceToken);
     }
 
-
     /**
      * Authenticates a user given a username and a password, returns valid userId or -1 otherwise
      * @param $username
@@ -39,6 +38,13 @@ class Security {
      */
     static function authenticateUser($username, $password): int {
         return UsersModel::authenticateUser($username, $password);
+    }
+
+    static function resetPassword($username, $password) {
+        $user = new User(null);
+        $user->userName = $username;
+        UsersModel::updateVerifiedFlag($user, true);
+        UsersModel::setPassword($username, $password);
     }
 
     /**
@@ -57,4 +63,13 @@ class Security {
     static public function generateGUID() {
         return bin2hex(openssl_random_pseudo_bytes(16));
     }
+
+    static public function verifyUserPin($username, $pin) {
+        $user = new User(null);
+        $user->userName = $username;
+        $user->pin = $pin;
+        return UsersModel::verifyPin($user);
+    }
+
+
 }

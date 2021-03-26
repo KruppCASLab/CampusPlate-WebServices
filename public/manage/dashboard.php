@@ -152,7 +152,7 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
     ?>
     <div class="row">
         <h1 class="display-4">
-            <img class="img-fluid" style="height:80px" src="images/icon.png"/> Dashboard
+            <img class="img-fluid" style="height:80px" src="../images/icon.png"/> Dashboard
 
 
             <div class="float-end">
