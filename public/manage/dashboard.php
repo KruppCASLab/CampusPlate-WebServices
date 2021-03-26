@@ -114,8 +114,8 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
             crossorigin="anonymous"></script>
 
     <script src="js/main.js"></script>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/main.css">
     <title>CampusPlate | Manage</title>
     <script>
         function changeFoodStop(foodStopId) {
