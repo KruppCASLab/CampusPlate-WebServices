@@ -38,18 +38,49 @@ class ListingsModel {
     }
 
     /**
+     * Gets all listings that have not expired
+     * @return Listing[] Array contains array of Listing objects
+     */
+    static public function getListings(): array {
+        $sql = "SELECT * from tblListings WHERE expirationTime > ? ORDER BY creationTime DESC";
+        $results = Database::executeSql($sql, "i", array(time()));
+
+        $listings = array();
+        foreach ($results as $result) {
+            array_push($listings, new Listing($result));
+        }
+
+        return $listings;
+    }
+
+    /**
+     * Gets all listings that have not expired
      * @param int|null $foodStopId
      * @return Listing[] Array contains array of Listing objects
      */
-    static public function getListings(int $foodStopId = null): array {
-        if (isset($foodStopId)) {
-            $sql = "SELECT * from tblListings WHERE foodStopId = ? AND expirationTime > ? ORDER BY creationTime DESC ";
-            $results = Database::executeSql($sql, "ii", array($foodStopId, time()));
+    static public function getFoodStopListings(int $foodStopId ): array {
+        $sql = "SELECT * from tblListings WHERE foodStopId = ? AND expirationTime > ? ORDER BY creationTime DESC ";
+        $results = Database::executeSql($sql, "ii", array($foodStopId, time()));
+
+        $listings = array();
+        foreach ($results as $result) {
+            array_push($listings, new Listing($result));
         }
-        else {
-            $sql = "SELECT * from tblListings WHERE expirationTime > ? ORDER BY creationTime DESC";
-            $results = Database::executeSql($sql, "i", array(time()));
-        }
+
+        return $listings;
+    }
+
+
+    /**
+     * Gets the listings that have recently expired from a food stop
+     * @param int $foodStopId
+     * @return array
+     */
+    static public function getRecentlyExpiredFoodStopListings(int $foodStopId, int $limitInHours): array {
+        $sql = "SELECT * from tblListings WHERE foodStopId = ? AND expirationTime > ? AND expirationTime < ? ORDER BY creationTime DESC ";
+        $startTime = time() - ($limitInHours * 60 * 60);
+        $results = Database::executeSql($sql, "iii", array($foodStopId, $startTime, time()));
+
         $listings = array();
         foreach ($results as $result) {
             array_push($listings, new Listing($result));

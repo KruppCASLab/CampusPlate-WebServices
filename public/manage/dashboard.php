@@ -99,6 +99,9 @@ $listingRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstop", S
 
 $reservations = ReservationsController::get($reservationRequest)->data;
 $listings = ListingsController::get($listingRequest)->data;
+
+$recentlyExpiredListingRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstoprecentlyexpired", Session::getSessionUserId());
+$recentlyExpiredListings = ListingsController::get($recentlyExpiredListingRequest)->data;
 ?>
 
 <!DOCTYPE html>
@@ -124,7 +127,7 @@ $listings = ListingsController::get($listingRequest)->data;
 
 <div class="container min-vh-100 h-100" id="login">
     <?php
-    // Only show the selector 
+    // Only show the selector
     if (sizeof($foodStopsManaged) > 1) {
         ?>
         <div class="row">
@@ -438,7 +441,7 @@ $listings = ListingsController::get($listingRequest)->data;
     </table>
     <div style="height:50px"></div>
 
-    <h3>Food Listings
+    <h3>Active Food Listings
         <div class="float-end">
             <button class="btn btn-success"
                     onclick="window.location.href='listing.php?action=create&foodstop=<?= $selectedFoodStopId ?>'">
@@ -487,6 +490,40 @@ $listings = ListingsController::get($listingRequest)->data;
                             data-bs-id="<?= $listing->listingId ?>">Delete
                     </button>
                 </td>
+            </tr>
+            <?php
+        }
+        ?>
+        </tbody>
+    </table>
+    <div style="height:50px"></div>
+    <hr />
+    <div style="height:50px"></div>
+
+    <h3>Food Listings (Expired Past 72 Hours)</h3>
+    <p>
+        This food is no longer available to serve on CampusPlate and should be physically removed from the food stop if any quantity is remaining.
+    </p>
+    <table class="table table-sm table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Description</th>
+            <th scope="col">Quantity Remaining</th>
+            <th scope="col">Date Expired</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        foreach ($recentlyExpiredListings as $listing) {
+            $listing = new Listing($listing);
+            ?>
+            <tr>
+                <th scope="row"><?= $listing->title ?></th>
+                <td><?= $listing->description ?></td>
+                <td><?= $listing->quantityRemaining ?>/<?= $listing->quantity ?></td>
+                <td><?= date("M jS g:ia", $listing->expirationTime) ?></td>
+
             </tr>
             <?php
         }

@@ -29,7 +29,15 @@ class ListingsController {
         }
         else if (isset($id) && $param == "foodstop") {
             if (AuthorizationModel::isFoodStopManager($request->userId, $id) || AuthorizationModel::isAdmin($request->userId)) {
-                $listings = ListingsModel::getListings($id);
+                $listings = ListingsModel::getFoodStopListings($id);
+            }
+            else {
+                return new Response(null, null, 1);
+            }
+        }
+        else if (isset($id) && $param == "foodstoprecentlyexpired") {
+            if (AuthorizationModel::isFoodStopManager($request->userId, $id) || AuthorizationModel::isAdmin($request->userId)) {
+                $listings = ListingsModel::getRecentlyExpiredFoodStopListings($id, 72);
             }
             else {
                 return new Response(null, null, 1);
