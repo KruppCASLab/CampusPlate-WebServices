@@ -5,7 +5,6 @@ require_once(__DIR__ . "/../model/types/Request.php");
 require_once(__DIR__ . "/../model/types/Listing.php");
 require_once(__DIR__ . "/../model/ListingsModel.php");
 require_once(__DIR__ . "/../model/ReservationsModel.php");
-require_once(__DIR__ . "/../lib/Geofence.php");
 require_once(__DIR__ . "/../model/AuthorizationModel.php");
 
 abstract class ListingsResponseCode {
