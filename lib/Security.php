@@ -40,6 +40,10 @@ class Security {
         return UsersModel::authenticateUser($username, $password);
     }
 
+    /**
+     * @param $username
+     * @param $password
+     */
     static function resetPassword($username, $password) {
         $user = new User(null);
         $user->userName = $username;
@@ -64,11 +68,30 @@ class Security {
         return bin2hex(openssl_random_pseudo_bytes(16));
     }
 
+    /**
+     * @param $username
+     * @param $pin
+     * @return bool
+     */
     static public function verifyUserPin($username, $pin) {
         $user = new User(null);
         $user->userName = $username;
         $user->pin = $pin;
         return UsersModel::verifyPin($user);
+    }
+
+
+    /**
+     * Removes XSS attacks from input
+     * @param array $input
+     * @return array Array data will have HTML and JavaScript attacks removed
+     */
+    static public function sanitizeArrayInput(array $input) : array {
+        $sanitized = array();
+        foreach($input as $element) {
+            array_push($sanitized, htmlentities($element));
+        }
+        return $sanitized;
     }
 
 
