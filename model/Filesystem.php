@@ -36,6 +36,22 @@ class Filesystem {
         return true;
     }
 
+
+    /**
+     * Removes files given an ID
+     * @param $id - ID of the image to remove
+     * @return bool
+     */
+    static public function removeFile($id): bool {
+        $basedir = self::getBaseDir();
+        $path = $basedir . "/" . $id;
+        if (unlink($path) === FALSE) {
+            Logger::log("Filesystem Library", "Unable to remove file: $path");
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Gets a file based on the ID of the image
      * @param $id - ID of the image
