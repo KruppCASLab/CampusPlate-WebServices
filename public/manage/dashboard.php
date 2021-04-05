@@ -26,6 +26,9 @@ $errorSubDescription = "";
 $action = $_GET["action"];
 // Based on the action, fullfill reservations, update listings, or delete listings
 switch ($action) {
+    case "ping":
+        $response["time"] = time();
+        die(json_encode($response));
     case "delete":
         $listingId = $_GET["listingId"];
         $listing = new Listing();
@@ -121,19 +124,35 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
         function changeFoodStop(foodStopId) {
             window.location = 'dashboard.php?foodstop=' + foodStopId;
         }
+
+        function checkListings() {
+            fetch('dashboard.php?action=ping')
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Keep food manager session alive
+        window.setInterval(checkListings, 10000);
     </script>
 </head>
 <body>
 
 <div class="container min-vh-100 h-100" id="login">
     <?php
-    // Only show the selector
+    if (sizeof($foodStopsManaged) == 0) {
+        die("Error: You are currently not authorized as a manager of food stops.");
+    }
+    // Only show the selector if there are multiple food stops that are managed
     if (sizeof($foodStopsManaged) > 1) {
         ?>
         <div class="row">
             <div class="col-12">
                 <div class="float-lg-end">
-                    <select class="form-select w-auto d-inline-block" onchange="changeFoodStop(this.value)">
+                    <span class="fw-lighter">Change Food Stop:</span>
+                    <select class="form-select-sm w-auto d-inline-block fw-lighter" onchange="changeFoodStop(this.value)">
                         <?php
                         foreach ($foodStopsManaged as $foodStop) {
                             $foodStop = new FoodStop($foodStop);
@@ -497,12 +516,13 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
         </tbody>
     </table>
     <div style="height:50px"></div>
-    <hr />
+    <hr/>
     <div style="height:50px"></div>
 
     <h3>Food Listings (Expired Past 72 Hours)</h3>
     <p>
-        This food is no longer available to serve on CampusPlate and should be physically removed from the food stop if any quantity is remaining.
+        This food is no longer available to serve on CampusPlate and should be physically removed from the food stop if
+        any quantity is remaining.
     </p>
     <table class="table table-sm table-hover">
         <thead>
