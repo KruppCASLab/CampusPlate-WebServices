@@ -37,6 +37,10 @@ if (isset($_POST["action"])) {
 
     if (!(isset($listing->title) && is_numeric($listing->quantity) && is_numeric($listing->creationTime) && is_numeric($listing->expirationTime))) {
         $error = "Could not create or edit listing. Please check to make sure all fields.";
+
+        // Need to set the fields that may have bene lost
+        $action = $_POST["action"];
+        $selectedFoodStopId = $listing->foodStopId;
     }
     else {
         if ($_POST["action"] == "create") {
