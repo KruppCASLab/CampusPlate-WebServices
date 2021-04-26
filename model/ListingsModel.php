@@ -111,7 +111,7 @@ class ListingsModel {
      * @return string Returns the image data for a specific listing
      */
     static public function getListingImage($id): string {
-        return Filesystem::getFile($id);
+        return base64_encode(Filesystem::getFile($id));
     }
 
     /**

@@ -24,7 +24,7 @@ class ListingsController {
 
         if (isset($id) && $param == "image") {
             $data = ListingsModel::getListingImage($id);
-            return new Response(base64_encode($data));
+            return new Response($data);
         }
         else if (isset($id) && $param == "foodstop") {
             if (AuthorizationModel::isFoodStopManager($request->userId, $id) || AuthorizationModel::isAdmin($request->userId)) {
@@ -44,6 +44,7 @@ class ListingsController {
         }
         else if (isset($id)) {
             $listing = ListingsModel::getListing($id);
+            $listing->quantityRemaining = ($listing->quantity - ReservationsModel::getReservationQuantity($listing->listingId));
 
             if (AuthorizationModel::isFoodStopManager($request->userId, $listing->foodStopId) || AuthorizationModel::isAdmin($request->userId)) {
                 return new Response($listing);
@@ -121,6 +122,25 @@ class ListingsController {
         else {
             // Return Unauthorized
             $status = 401;
+        }
+        return new Response(null, null, $status);
+    }
+
+    static public function patch(Request $request): Response {
+        $status = 0;
+        if ($request->param == "move") {
+            $listing = ListingsModel::getListing($request->id);
+            $newListing = new Listing($request->data);
+            $newListing->image = ListingsModel::getListingImage($listing->listingId);
+            if (AuthorizationModel::isFoodStopManager($request->userId, $listing->foodStopId) || AuthorizationModel::isAdmin($request->userId)) {
+                // Update the existing listing
+                $listing->quantity -= $newListing->quantity;
+                ListingsModel::updateListing($listing);
+                ListingsModel::createListing($newListing);
+            }
+            else {
+                $status = 401;
+            }
         }
         return new Response(null, null, $status);
     }

@@ -24,35 +24,58 @@ if (isset($_POST["action"])) {
     $creationDate = strtotime($_POST["creationDate"] . " " . $_POST["creationTime"]);
     $expirationDate = strtotime($_POST["expirationDate"] . " " . $_POST["expirationTime"]);
 
-    $listing = new Listing();
-    $listing->listingId = $_POST["listingId"];
-    $listing->title = $_POST["title"];
-    $listing->foodStopId = $_POST["foodStopId"];
-    $listing->description = $_POST["description"];
-    $listing->userId = Session::getSessionUserId();
-    $listing->creationTime = $creationDate;
-    $listing->expirationTime = $expirationDate;
-    $listing->quantity = $_POST["quantity"];
-    $listing->weightOunces = $_POST["weightOunces"];
+    // Need to set the fields that may have been lost
+    $action = $_POST["action"];
+    $selectedFoodStopId = $_POST["foodStopId"];
+    $listingId = $_POST["listingId"];
 
-    if (!(isset($listing->title) && is_numeric($listing->quantity) && is_numeric($listing->creationTime) && is_numeric($listing->expirationTime))) {
-        $error = "Could not create or edit listing. Please check to make sure all fields.";
+    if ($_POST["action"] == "move") {
+        // Get the listing where we are moving food
+        $request = new Request(null, $listingId, null, Session::getSessionUserId());
+        $response = ListingsController::get($request);
+        $listing = new Listing($response->data);
 
-        // Need to set the fields that may have bene lost
-        $action = $_POST["action"];
-        $selectedFoodStopId = $listing->foodStopId;
+        // Quantity to be moved
+        $quantityToMove = $_POST["quantity"];
+        $listing->quantity = $quantityToMove;
+        $listing->foodStopId = $_POST["destinationFoodStop"];
+
+        if ($quantityToMove > $listing->quantityRemaining) {
+            $error = "Unable to move more quantity than what is available. Please check the quantity you are attempting to move.";
+        }
+        else {
+            $request = new Request($listing, $listingId, "move", Session::getSessionUserId());
+            $response = ListingsController::patch($request);
+            header("Location: " . "dashboard.php?foodstop=" . $listing->foodStopId);
+            die();
+        }
     }
     else {
-        if ($_POST["action"] == "create") {
-            $request = new Request($listing, null, null, Session::getSessionUserId());
-            $response = ListingsController::post($request);
+        $listing = new Listing();
+        $listing->listingId = $_POST["listingId"];
+        $listing->title = $_POST["title"];
+        $listing->foodStopId = $_POST["foodStopId"];
+        $listing->description = $_POST["description"];
+        $listing->userId = Session::getSessionUserId();
+        $listing->creationTime = $creationDate;
+        $listing->expirationTime = $expirationDate;
+        $listing->quantity = $_POST["quantity"];
+        $listing->weightOunces = $_POST["weightOunces"];
+        if (!(isset($listing->title) && is_numeric($listing->quantity) && is_numeric($listing->creationTime) && is_numeric($listing->expirationTime))) {
+            $error = "Could not create or edit listing. Please check to make sure all fields.";
         }
-        else if ($_POST["action"] == "update") {
-            $request = new Request($listing, $listing->listingId, null, Session::getSessionUserId());
-            $response = ListingsController::put($request);
+        else {
+            if ($_POST["action"] == "create") {
+                $request = new Request($listing, null, null, Session::getSessionUserId());
+                $response = ListingsController::post($request);
+            }
+            else if ($_POST["action"] == "update") {
+                $request = new Request($listing, $listing->listingId, null, Session::getSessionUserId());
+                $response = ListingsController::put($request);
+            }
+            header("Location: " . "dashboard.php?foodstop=" . $listing->foodStopId);
+            die();
         }
-        header("Location: " . "dashboard.php?foodstop=" . $listing->foodStopId);
-        die();
     }
 }
 
@@ -75,9 +98,8 @@ $creationDate = time();
 $expirationDate = time() + 60 * 60 * 24 * 2;// Two days ahead
 
 
-$listing = null;
-if ($action == "update") {
-    $listingId = $_GET["listingId"];
+
+if ($action == "update" || $action == "move") {
     $request = new Request(null, $listingId, null, Session::getSessionUserId());
     $response = ListingsController::get($request);
 
@@ -152,22 +174,52 @@ if ($action == "update") {
     <div class="row mt-3">
         <form action="listing.php" method="post">
             <input type="hidden" name="foodStopId" value="<?= $selectedFoodStopId ?>"/>
-            <input type="hidden" name="listingId" value="<?= $listingId ?>"/>
+            <input type="hidden" name="listingId" value="<?=$listingId ?>"/>
             <input type="hidden" name="action" value="<?= $action ?>"/>
             <div class="col-lg-6">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" value="<?= $listing->title ?>">
+                    <input type="text" class="form-control" id="title" name="title" value="<?= $listing->title ?>" <?=($action == "move")? "disabled" : ""?>>
                 </div>
             </div>
             <div class="row">
-                <div class="col-2">
+                <div class="col-4">
                     <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantity</label>
+                        <label for="quantity" class="form-label">Quantity<?=($action == "move") ? " to Move to Food Stop ( " . $listing->quantityRemaining. " Available to Move)" : ""?></label>
                         <input type="text" class="form-control" id="quantity" name="quantity"
-                               value="<?= $listing->quantity ?>">
+                               value="<?= ($action == "move") ? 1 : $listing->quantity ?>">
                     </div>
                 </div>
+            </div>
+            <?php
+            if ($action == "move") {
+            ?>
+                <div class="row">
+                    <div class="col-8">
+                        <label for="destinationFoodStop" class="form-label">Select Destination Food Stop</label>
+                        <select class="form-select" id="destinationFoodStop" name="destinationFoodStop">
+                            <?php
+                            foreach($foodStops as $foodStop) {
+                                $foodStop = new FoodStop($foodStop);
+
+                                // Skip because the destination should be different
+                                if ($selectedFoodStopId == $foodStop->foodStopId) {
+                                    continue;
+                                }
+                                ?>
+                                <option value="<?=$foodStop->foodStopId?>"><?=$foodStop->name?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <?php
+            }
+            else {
+            ?>
+            <div class="row">
                 <div class="col-2">
                     <div class="mb-3">
                         <label for="weight" class="form-label">Weight (Ounces Per Item)</label>
@@ -176,6 +228,7 @@ if ($action == "update") {
                     </div>
                 </div>
             </div>
+
 
             <div class="col-lg-12">
                 <div class="mb-3">
@@ -211,6 +264,9 @@ if ($action == "update") {
                                value="<?= date("H:i", $expirationDate) ?>"/>
                     </div>
                 </div>
+                <?php
+                }
+                ?>
                 <div class="col-lg-12 mt-4">
                     <button type="reset" class="btn btn-danger" onclick="window.location.href='dashboard.php'">Cancel
                     </button>
