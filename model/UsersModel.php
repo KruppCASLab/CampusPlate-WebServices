@@ -67,6 +67,19 @@ class UsersModel {
         return new User($results[0]);
     }
 
+    static public function getAllUsers(): array {
+        $sql = "SELECT userId, userName, role, accountValidated, requireReset FROM tblUsers";
+        $results = Database::executeSql($sql);
+
+        return $results;
+    }
+
+    static public function getFoodStopManagers(): array {
+        $sql = "SELECT users.userId, users.userName, managers.foodStopId, foodStops.name from tblFoodStopManagers as managers INNER JOIN tblUsers as users on managers.userId = users.userId INNER JOIN tblFoodStops as foodStops on foodStops.foodStopId = managers.foodStopId ORDER BY managers.foodStopId";
+        $results = Database::executeSql($sql);
+        return $results;
+    }
+
     /**
      * Checks if a user exists given a username
      * @param $username

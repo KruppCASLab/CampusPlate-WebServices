@@ -11,8 +11,18 @@ require_once(__DIR__ . "/../model/types/Request.php");
 
 class UsersController {
     static public function get(Request $request): Response {
-        $user = UsersModel::getUser($request->userId);
-        return new Response($user);
+        if ($request->param == "all") {
+            $users = UsersModel::getAllUsers();
+            return new Response($users);
+        }
+        else if ($request->param = "all_managers") {
+            $managers = UsersModel::getFoodStopManagers();
+            return new Response($managers);
+        }
+        else {
+            $user = UsersModel::getUser($request->userId);
+            return new Response($user);
+        }
     }
 
     /**

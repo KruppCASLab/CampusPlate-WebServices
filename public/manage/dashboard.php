@@ -81,7 +81,7 @@ $baseRequest = new Request(null, null, null, Session::getSessionUserId());
 
 $foodStops = FoodStopsController::get($baseRequest)->data;
 $foodStopsManaged = FoodStopsController::get(new Request(null, null, "manage", Session::getSessionUserId()))->data;
-$user = new User(UsersController::get(new Request($baseRequest))->data);
+$currentUser = new User(UsersController::get(new Request($baseRequest))->data);
 
 
 // Default to first food stop
@@ -145,6 +145,21 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
     if (sizeof($foodStopsManaged) == 0) {
         die("Error: You are currently not authorized as a manager of food stops.");
     }
+    if (AuthorizationModel::isAdmin(Session::getSessionUserId())) {
+    ?>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="dashboard.php">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Reporting</a>
+        </li>
+    </ul>
+    <?php
+    }
     // Only show the selector if there are multiple food stops that are managed
     if (sizeof($foodStopsManaged) > 1) {
         ?>
@@ -195,7 +210,6 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
                     </svg>
                     Add Order
                 </button>
-
                 <button class="btn btn-primary"
                         onclick="changeFoodStop(<?= $selectedFoodStop->foodStopId ?>)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -203,7 +217,7 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
                         <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
                         <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
                     </svg>
-                    Update
+                    Reload
                 </button>
             </div>
         </div>
@@ -478,6 +492,7 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
             <th scope="col">Title</th>
             <th scope="col">Description</th>
             <th scope="col">Quantity Remaining</th>
+            <th scope="col">Weight(oz)</th>
             <th scope="col">Date Added</th>
             <th scope="col">Date Expires</th>
             <th scope="col">Actions</th>
@@ -498,6 +513,7 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
                 <th scope="row"><?= $listing->title ?></th>
                 <td><?= $listing->description ?></td>
                 <td><?= $listing->quantityRemaining ?>/<?= $listing->quantity ?></td>
+                <td><?= $listing->weightOunces ?></td>
                 <td><?= date("M jS g:ia", $listing->creationTime) ?></td>
                 <td><?= date("M jS g:ia", $listing->expirationTime) ?></td>
                 <td>
@@ -531,6 +547,7 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
             <th scope="col">Description</th>
             <th scope="col">Quantity Remaining</th>
             <th scope="col">Date Expired</th>
+            <th scope="col">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -543,7 +560,12 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
                 <td><?= $listing->description ?></td>
                 <td><?= $listing->quantityRemaining ?>/<?= $listing->quantity ?></td>
                 <td><?= date("M jS g:ia", $listing->expirationTime) ?></td>
-
+                <td>
+                    <button class="btn btn-outline-secondary btn-sm"
+                            onclick="window.location.href='listing.php?action=update&foodstop=<?= $selectedFoodStopId ?>&listingId=<?= $listing->listingId ?>'">
+                        Edit
+                    </button>
+                </td>
             </tr>
             <?php
         }
