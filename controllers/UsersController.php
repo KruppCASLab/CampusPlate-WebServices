@@ -58,7 +58,7 @@ class UsersController {
             // Unable to use built in Mail library due to IT blocking outgoing mail since Spring '21 Cyberattack
             // In place, using service at home and calling that from this.
 
-            $url = 'https://www.krupp.dev/food/mail.php';
+            $url = 'https://krupp.dev/food/mail.php';
             $data["key"] = Config::getConfigValue("email", "appkey");
             $data["email"] = $user->userName;
             $data["pin"] = $user->pin;
