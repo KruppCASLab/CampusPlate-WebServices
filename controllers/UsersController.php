@@ -71,8 +71,8 @@ class UsersController {
                 )
             );
             $context = stream_context_create($options);
-            file_get_contents($url, false, $context);
-            //Mail::sendPinEmail($user->userName, $user->pin);
+            //file_get_contents($url, false, $context);
+            Mail::sendPinEmail($user->userName, $user->pin);
         }
 
         return new Response(null, null, $status);;
