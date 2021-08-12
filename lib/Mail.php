@@ -12,11 +12,6 @@ use PHPMailer\PHPMailer\PHPMailer;
 class Mail
 {
     static function sendPinEmail($email, $pin) {
-        // Check if they are a BW student, later we will remove this restriction
-        /*if (strpos($email, "bw.edu") === false) {
-            //TODO: Build error
-        }*/
-
         $config = new Config();
 
         $emailText = "
@@ -30,7 +25,7 @@ class Mail
                 
                 <br /><br />
                 
-               Please enter the following PIN within the mobile application to confirm your account: <pre>$pin</pre>
+               Please use the following PIN to confirm your account: <pre>$pin</pre>
 
             </p>
           </body>
