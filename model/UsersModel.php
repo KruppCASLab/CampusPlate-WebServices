@@ -147,7 +147,7 @@ class UsersModel {
      * @param User $user
      * @return int credentialId if there is a match, otherwise, -1
      */
-    static public function verifyPin($userId, $pin): bool {
+    static public function verifyPin($userId, $pin): int {
         $db = new Database();
         $sql = "SELECT credentialId FROM tblCredentials WHERE userId = ? AND pin = ?";
 
@@ -155,7 +155,6 @@ class UsersModel {
 
         // Pin and Username combo don't exist
         if (sizeof($results) == 0) {
-            echo "REturning -1";
             return -1;
         }
         else {
