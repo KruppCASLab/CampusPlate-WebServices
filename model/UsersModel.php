@@ -3,6 +3,7 @@
 require_once(__DIR__ . "/Database.php");
 require_once(__DIR__ . "/types/Listing.php");
 require_once(__DIR__ . "/types/User.php");
+require_once(__DIR__ . "/types/Credential.php");
 require_once(__DIR__ . "/types/Response.php");
 
 class UsersModel {
@@ -49,10 +50,7 @@ class UsersModel {
     }
 
 
-    static public function setPassword($username, $password) {
-        $sql = "UPDATE tblUsers set password = ? where userName = ?";
-        Database::executeSql($sql, "ss", array(password_hash($password, PASSWORD_DEFAULT), $username));
-    }
+
 
 
     /**
@@ -83,23 +81,54 @@ class UsersModel {
     /**
      * Checks if a user exists given a username
      * @param $username
-     * @return bool true if user exists, false otherwise
+     * @return int userId if user exists, otherwise -1
      */
-    static public function doesUserExist($username): bool {
+    static public function getUserId($username): int {
         $sql = "SELECT userId FROM tblUsers WHERE userName = ?";
         $result = Database::executeSql($sql, "s", array($username));
-        return sizeof($result) > 0;
+        if (sizeof($result) > 0) {
+            return $result[0]["userId"];
+        }
+        else {
+            return -1;
+        }
     }
 
     /**
-     * Creates a user give a username and a pin
+     * Creates a user give a username and a credential
      * @param User $user
-     * @return bool true on success, false otherwise
+     * @return int userId on success, -1 otherwise
      */
-    static public function createUser(User $user): bool {
-        $sql = "INSERT INTO tblUsers(userName, pin) VALUES (?, ?)";
-        Database::executeSql($sql, "ss", array($user->userName, $user->pin));
-        return !isset(Database::$lastError);
+    static public function createUser(User $user): int {
+        $sql = "INSERT INTO tblUsers(userName) VALUES (?)";
+        $userId = Database::executeSql($sql, "s", array($user->userName));
+
+        if (isset(Database::$lastError)) {
+            return -1;
+        }
+        else {
+            return $userId;
+        }
+    }
+
+
+    /**
+     * @param Credential $credential
+     * @return int credentialId on success, -1 otherwise
+     */
+    static public function createCredential(Credential $credential): int {
+        $credential->created = time();
+        $credential->lastUsed = time();
+
+        $sql = "INSERT INTO tblCredentials(userId, type, pin, label, created, lastUsed) values (?, ?, ?, ?, ?, ?)";
+        $credentialId = Database::executeSql($sql, "ddssdd", array($credential->userId, $credential->type, $credential->pin, $credential->label,$credential->created, $credential->lastUsed));
+
+        if (isset(Database::$lastError)) {
+            return -1;
+        }
+        else {
+            return $credentialId;
+        }
     }
 
     /**
@@ -116,52 +145,44 @@ class UsersModel {
     /**
      *
      * @param User $user
-     * @return bool true if uusername and pin combination exists, false otherwise
+     * @return int credentialId if there is a match, otherwise, -1
      */
-    static public function verifyPin(User $user): bool {
-        $response = new Response();
+    static public function verifyPin($userId, $pin): bool {
         $db = new Database();
 
-        $sql = "SELECT userId FROM tblUsers WHERE userName = ? AND pin = ?";
+        $sql = "SELECT credentialId FROM tblCredentials WHERE userId = ? AND pin = ?";
 
-        $results = $db->executeSql($sql, "si", array($user->userName, $user->pin));
+        $results = $db->executeSql($sql, "si", array($userId, $pin));
 
         // Pin and Username combo don't exist
         if (sizeof($results) == 0) {
-            return false;
+            return -1;
         }
         else {
-            return true;
+            return $results[0]["credentialId"];
         }
     }
 
     /**
-     * Sets whether or not a user is verified.
-     * @param User $user
+     * Updates the verified flag on a credential
+     * @param int $credentialId
      * @param bool $isVerified
      * @return bool true on success, false otherwise
      */
-    static public function updateVerifiedFlag(User $user, bool $isVerified): bool {
+    static public function updateVerifiedFlag(int $credentialId, bool $isVerified): bool {
         $verified = 0;
         if ($isVerified) {
             $verified = 1;
         }
 
-        $sql = "UPDATE tblUsers SET accountValidated = ? WHERE userName = ?";
-        Database::executeSql($sql, "is", array($verified, $user->userName));
+        $sql = "UPDATE tblCredentials SET status = ? WHERE credentialId = ?";
+        Database::executeSql($sql, "is", array($verified, $credentialId));
         return !isset(Database::$lastError);
     }
 
-    /**
-     * Sets the GUID for a given user
-     * @param User $user
-     * @param $GUID
-     * @return bool true on success, false otherwise
-     */
-    static public function setGUID(User $user, $GUID): bool {
-        $sql = "UPDATE tblUsers SET GUID = ? WHERE userName = ?";
-        Database::executeSql($sql, "ss", array($GUID, $user->userName));
-        return !isset(Database::$lastError);
+    static public function setPassword($credentialId, $password) {
+        $sql = "UPDATE tblCredentials set password = ? where credentialId = ?";
+        Database::executeSql($sql, "ss", array(password_hash($password, PASSWORD_DEFAULT), $credentialId));
     }
 
 }

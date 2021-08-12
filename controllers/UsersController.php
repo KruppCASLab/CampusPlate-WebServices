@@ -1,6 +1,7 @@
 <?php
 
 require_once(__DIR__ . "/../model/types/User.php");
+require_once(__DIR__ . "/../model/types/Credential.php");
 require_once(__DIR__ . "/../model/UsersModel.php");
 require_once(__DIR__ . "/../lib/Mail.php");
 require_once(__DIR__ . "/../lib/Security.php");
@@ -32,47 +33,60 @@ class UsersController {
      */
     static public function post(Request $request): Response {
         $user = new User($request->data);
+        $credential = new Credential($user->credential);
+
         $user->userId = $request->userId;
-        $user->pin = Security::getRandomPin();
+        $credential->pin = Security::getRandomPin();
 
         $status = 0;
 
-        // Make sure they are at BW by checking if the address ends with a 0
+        // Make sure they are at BW by checking if the address ends with ab @bw email
         if (preg_match("/.*?@bw\.edu/", $user->userName) === 0) {
             return new Response(null, null, 3);
         }
 
-        if (UsersModel::doesUserExist($user->userName)) {
-            UsersModel::updatePin($user);
-            UsersModel::updateVerifiedFlag($user, false);
+        // If user exists, create a new credential, otherwise, create a new user and credential
+        $userId = UsersModel::getUserId($user->userName);
+
+        if ($userId != -1) {
+            $credential->userId = $userId;
+            UsersModel::createCredential($credential);
             $status = 2;
         }
         else {
-            if (!UsersModel::createUser($user)) {
+            $userId = UsersModel::createUser($user);
+
+            // Check if we had an error, otherwise, create the credential
+            if ($userId == -1) {
                 $status = 1;
+            }
+            else {
+                // Take the userId that was created and create the credential
+                $credential->userId = $userId;
+                UsersModel::createCredential($credential);
             }
         }
 
         // If we created the user or updated their pin, send an email
         if ($status == 0 || $status == 2) {
-            // Unable to use built in Mail library due to IT blocking outgoing mail since Spring '21 Cyberattack
+            // Previously was unable to use built in Mail library due to IT blocking outgoing mail since Spring '21 Cyberattack
             // In place, using service at home and calling that from this.
+            // $url = 'https://krupp.dev/food/mail.php';
 
-            $url = 'https://krupp.dev/food/mail.php';
-            $data["key"] = Config::getConfigValue("email", "appkey");
-            $data["email"] = $user->userName;
-            $data["pin"] = $user->pin;
+//            $data["key"] = Config::getConfigValue("email", "appkey");
+//            $data["email"] = $user->userName;
+//            $data["pin"] = $credential->pin;
 
-            $options = array(
-                'http' => array(
-                    'header' => "Content-type: application/json\r\n",
-                    'method' => 'POST',
-                    'content' => json_encode($data)
-                )
-            );
-            $context = stream_context_create($options);
-            //file_get_contents($url, false, $context);
-            Mail::sendPinEmail($user->userName, $user->pin);
+//            $options = array(
+//                'http' => array(
+//                    'header' => "Content-type: application/json\r\n",
+//                    'method' => 'POST',
+//                    'content' => json_encode($data)
+//                )
+//            );
+//            $context = stream_context_create($options);
+//            file_get_contents($url, false, $context);
+            Mail::sendPinEmail($user->userName, $credential->pin);
         }
 
         return new Response(null, null, $status);;
@@ -85,19 +99,20 @@ class UsersController {
      */
     static public function patch(Request $request) {
         $userName = $request->id;
+        $userId = UsersModel::getUserId($userName);
 
-        $user = new User($request->data);
-        $user->userId = $request->userId;
-        $user->userName = $userName;
+        $credential = new Credential($request->data);
+        $pin = $credential->pin;
 
         $response = new Response();
 
-        if ($user->pin != null) {
-            if (UsersModel::verifyPin($user)) {
-                UsersModel::updateVerifiedFlag($user, true);
+        if ($pin != null) {
+            $credentialId = UsersModel::verifyPin($userId, $pin);
+            if ($credentialId != -1) {
+                UsersModel::updateVerifiedFlag($credentialId, true);
 
                 $GUID = Security::generateGUID();
-                UsersModel::setGUID($user, $GUID);
+                UsersModel::setPassword($credentialId, $GUID);
 
                 $data["GUID"] = $GUID;
                 $response->data = $data;
