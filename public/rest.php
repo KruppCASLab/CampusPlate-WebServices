@@ -24,7 +24,7 @@ if (Security::isAuthenticationRequired($resource, $method)) {
     $username = $_SERVER['PHP_AUTH_USER'];
     $password = $_SERVER['PHP_AUTH_PW'];
 
-    $userId = Security::authenticateDevice($username, $password);
+    $userId = Security::authenticateUser($username, $password);
 
     if ($userId == -1) {
         http_response_code(401);

@@ -21,16 +21,6 @@ class Security {
     }
 
     /**
-     * Authenticates a user's device given a username and a device token, returns valid userId or -1 otherwise
-     * @param $username
-     * @param $deviceToken
-     * @return int
-     */
-    static function authenticateDevice($username, $deviceToken): int {
-        return UsersModel::authenticateUserDevice($username, $deviceToken);
-    }
-
-    /**
      * Authenticates a user given a username and a password, returns valid userId or -1 otherwise
      * @param $username
      * @param $password
@@ -74,10 +64,8 @@ class Security {
      * @return bool
      */
     static public function verifyUserPin($username, $pin) {
-        $user = new User(null);
-        $user->userName = $username;
-        $user->pin = $pin;
-        return UsersModel::verifyPin($user);
+        $userId = UsersModel::getUserId($username);
+        return UsersModel::verifyPin($userId, $pin);
     }
 
 

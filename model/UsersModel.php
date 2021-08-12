@@ -8,50 +8,31 @@ require_once(__DIR__ . "/types/Response.php");
 
 class UsersModel {
     /**
-     * Authenticates user device and returns userId
-     * @param $username
-     * @param $deviceToken
-     * @return int userId of user, -1 if authentication failed
-     */
-    static public function authenticateUserDevice($username, $deviceToken): int {
-        $sql = "SELECT userId FROM tblUsers WHERE userName = ? AND GUID = ?";
-        $results = Database::executeSql($sql, "ss", array($username, $deviceToken));
-        if (sizeof($results) > 0) {
-            $user = new User($results[0]);
-            return $user->userId;
-        }
-        else {
-            return -1;
-        }
-    }
-
-    /**
      * Authenticates user and returns userId
      * @param $username
      * @param $password
      * @return int
      */
-    static public function authenticateUser($username, $password): int {
-        $sql = "SELECT userId, password FROM tblUsers WHERE userName = ? AND accountValidated = ?";
+    static public function authenticate($username, $password): int {
+        $sql = "SELECT * from tblCredentials as credentials INNER JOIN tblUsers as users ON users.userId = credentials.userId WHERE users.userName = ? AND credentials.status = ?";
         $results = Database::executeSql($sql, "si", array($username, 1));
 
         // If we get nothing back, user does not exist
         if (sizeof($results) == 0) {
             return -1;
         }
-        $user = new User($results[0]);
 
-        if (password_verify($password, $user->password)) {
-            return $user->userId;
+        // Go through results and if we have a match, then return the user
+        foreach($results as $result) {
+            $credential = new Credential($result);
+            if (password_verify($password, $credential->password)) {
+                return $credential->userId;
+            }
         }
-        else {
-            return -1;
-        }
+
+        // If we get out here, then we could not match
+        return -1;
     }
-
-
-
-
 
     /**
      * Returns a User given a userId.
