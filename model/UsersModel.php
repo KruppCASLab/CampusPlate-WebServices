@@ -149,12 +149,9 @@ class UsersModel {
      */
     static public function verifyPin($userId, $pin): bool {
         $db = new Database();
-
         $sql = "SELECT credentialId FROM tblCredentials WHERE userId = ? AND pin = ?";
 
         $results = $db->executeSql($sql, "is", array($userId, $pin));
-
-        print_r($results);
 
         // Pin and Username combo don't exist
         if (sizeof($results) == 0) {

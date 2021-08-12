@@ -108,6 +108,7 @@ class UsersController {
 
         if ($pin != null) {
             $credentialId = UsersModel::verifyPin($userId, $pin);
+            echo "Received Credential Id $credentialId";
             if ($credentialId != -1) {
                 UsersModel::updateVerifiedFlag($credentialId, true);
 
