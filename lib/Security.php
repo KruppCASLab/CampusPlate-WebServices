@@ -2,6 +2,7 @@
 require_once(__DIR__ . "/Config.php");
 require_once(__DIR__ . "/../model/UsersModel.php");
 require_once(__DIR__ . "/../model/types/User.php");
+require_once(__DIR__ . "/../model/types/Credential.php");
 
 class Security {
 
@@ -35,10 +36,11 @@ class Security {
      * @param $password
      */
     static function resetPassword($username, $password) {
-        $user = new User(null);
-        $user->userName = $username;
-        UsersModel::updateVerifiedFlag($user, true);
-        UsersModel::setPassword($username, $password);
+        $userId = UsersModel::getUserId($username);
+        $webcredential = new Credential(UsersModel::getWebCredential($userId));
+
+        UsersModel::updateVerifiedFlag($webcredential->credentialId, true);
+        UsersModel::setPassword($webcredential->credentialId, $password);
     }
 
     /**
@@ -63,9 +65,15 @@ class Security {
      * @param $pin
      * @return bool
      */
-    static public function verifyUserPin($username, $pin) {
+    static public function verifyUserPin($username, $pin) : bool {
         $userId = UsersModel::getUserId($username);
-        return UsersModel::verifyPin($userId, $pin);
+        $credentialId = UsersModel::verifyPin($userId, $pin);
+        if ($credentialId == -1) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
 

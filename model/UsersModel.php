@@ -26,12 +26,18 @@ class UsersModel {
         foreach($results as $result) {
             $credential = new Credential($result);
             if (password_verify($password, $credential->password)) {
+                self::updateAuthTimestamp($credential->credentialId);
                 return $credential->userId;
             }
         }
 
         // If we get out here, then we could not match
         return -1;
+    }
+
+    static public function updateAuthTimestamp($credentialId) {
+        $sql = "UPDATE lastUsed = ? where credentialId = ?";
+        Database::executeSql($sql, "ii", array($credentialId, time()));
     }
 
     /**
@@ -92,6 +98,16 @@ class UsersModel {
         }
     }
 
+    static public function getWebCredential($userId) {
+        $sql = "SELECT * from tblCredentials where userId = ? and type = ?";
+        $credentials = Database::executeSql($sql, "ii", array($userId, 1));
+        if (sizeof($credentials) > 0) {
+            return $credentials[0];
+        }
+        else {
+            return null;
+        }
+    }
 
     /**
      * @param Credential $credential
@@ -112,14 +128,16 @@ class UsersModel {
         }
     }
 
+
     /**
-     * Updates a user pin to a new value
-     * @param User $user
-     * @return bool true on success, false otherwise
+     * Updates the credential with a new pin
+     * @param $credentialId
+     * @param $pin
+     * @return bool
      */
-    static public function updatePin(User $user): bool {
-        $sql = "UPDATE tblUsers SET pin = ? WHERE userName = ?";
-        Database::executeSql($sql, "ss", array($user->pin, $user->userName));
+    static public function updatePin($credentialId, $pin): bool {
+        $sql = "UPDATE tblCredentials SET pin = ? WHERE credentialId = ?";
+        Database::executeSql($sql, "si", array($pin, $credentialId));
         return !isset(Database::$lastError);
     }
 

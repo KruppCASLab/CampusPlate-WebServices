@@ -1,6 +1,9 @@
 <?php
 require_once(__DIR__ . "/../lib/Security.php");
 require_once(__DIR__ . "/../lib/Session.php");
+require_once(__DIR__ . "/../controllers/UsersController.php");
+require_once(__DIR__ . "/../model/types/Response.php");
+require_once(__DIR__ . "/../model/types/Request.php");
 
 // Step 1 - Username and pin
 $username = $_POST["username"];
@@ -22,44 +25,57 @@ $passwordResetComplete = false;
 $errors = array();
 
 if (isset($password) && isset($passwordVerify)) {
-    $passwordStrengthValid = true;
-    if ($password != $passwordVerify) {
-        array_push($errors, "Passwords do not match");
-    }
-    if (strlen($password) < 10) {
-        array_push($errors, "Password too short");
-    }
-    if (!preg_match("#[0-9]+#", $password)) {
-        array_push($errors, "Password must include at least one number");
-    }
-    if (!preg_match("#[a-z]+#", $password)) {
-        array_push($errors, "Password must include at least one lower case letter");
-    }
-    if (!preg_match("#[A-Z]+#", $password)) {
-        array_push($errors, "Password must include at least one upper case letter");
-    }
-
-    if (sizeof($errors) > 0) {
-        $passwordStrengthValid = false;
-        $showPasswordForm = true;
-    }
-    else {
-        // Passwords are good, verify pin again and set password
-        $pinVerified = Security::verifyUserPin($username, $pin);
-        if ($pinVerified) {
-            Security::resetPassword($username, $password);
-            $passwordResetComplete = true;
-        }
-    }
-}
-else if (isset($username) && isset($pin)) {
     $pinVerified = Security::verifyUserPin($username, $pin);
     if ($pinVerified === false) {
         sleep(5);
-    }
-    else {
         $showPasswordForm = true;
     }
+    else {
+        $passwordStrengthValid = true;
+        if ($password != $passwordVerify) {
+            array_push($errors, "Passwords do not match");
+        }
+        if (strlen($password) < 10) {
+            array_push($errors, "Password too short");
+        }
+        if (!preg_match("#[0-9]+#", $password)) {
+            array_push($errors, "Password must include at least one number");
+        }
+        if (!preg_match("#[a-z]+#", $password)) {
+            array_push($errors, "Password must include at least one lower case letter");
+        }
+        if (!preg_match("#[A-Z]+#", $password)) {
+            array_push($errors, "Password must include at least one upper case letter");
+        }
+
+        if (sizeof($errors) > 0) {
+            $passwordStrengthValid = false;
+            $showPasswordForm = true;
+        }
+        else {
+            // Passwords are good, verify pin again and set password
+            $pinVerified = Security::verifyUserPin($username, $pin);
+            if ($pinVerified) {
+                Security::resetPassword($username, $password);
+                $passwordResetComplete = true;
+                $showPasswordForm = false;
+            }
+        }
+    }
+}
+else if (isset($username)) {
+    $user = new User(null);
+    $user->userName = $username;
+
+    $credential = new Credential(null);
+    $credential->type = 1; // Web
+    $credential->label = "Web";
+
+    $user->credential = $credential;
+    $request = new Request($user);
+    $response = UsersController::post($request);
+
+    $showPasswordForm = true;
 }
 
 ?>
@@ -87,14 +103,24 @@ else if (isset($username) && isset($pin)) {
             if ($showPasswordForm === true) {
                 ?>
                 <input type="hidden" name="username" value="<?= $username ?>"/>
-                <input type="hidden" name="pin" value="<?= $pin ?>"/>
                 <input type="hidden" name="action" value="resetpassword"/>
                 <div class="col-lg-12">
                     <p>
-                        Enter your new password. Your password should be at least 10 characters, use at least one
-                        number,
-                        one special character, and an upper case letter.
+                        Enter the pin that you received in your email. Then, enter your new password.
+                        Your password should be at least 10 characters, use at least one
+                        number, one special character, and an upper case letter.
                     </p>
+                </div>
+                <div class="mb-3 col-lg-4">
+                    <label for="pin" class="form-label">Pin</label>
+                    <input type="text" class="form-control" name="pin" id="pin">
+                </div>
+                <?php
+
+                ?>
+                <div class="alert alert-danger" role="alert" id="invalidAlert"
+                     style="display:<?= ($pinVerified === false) ? "block" : "none" ?>">
+                    Unable to verify pin. Please verify the username and pin that you are entering.
                 </div>
 
                 <div class="mb-3 col-lg-4">
@@ -125,8 +151,7 @@ else if (isset($username) && isset($pin)) {
                 ?>
                 <div class="col-lg-12">
                     <p>
-                        Provide your username and provided pin to reset the password for your account.
-                        If you do not have a pin, please contact the administrator.
+                        Enter your username and a pin will be sent to your your email address to reset your password.
                     </p>
                 </div>
 
@@ -134,14 +159,6 @@ else if (isset($username) && isset($pin)) {
                     <label for="username" class="form-label">Username</label>
                     <input type="email" class="form-control" name="username" aria-describedby="loginHelp" id="username">
                     <div id="loginHelp" class="form-text">This is your BW email address</div>
-                </div>
-                <div class="mb-3 col-lg-4">
-                    <label for="pin" class="form-label">Pin</label>
-                    <input type="text" class="form-control" name="pin" id="pin">
-                </div>
-                <div class="alert alert-danger" role="alert" id="invalidAlert"
-                     style="display:<?= ($pinVerified === false) ? "block" : "none" ?>">
-                    Unable to verify pin. Please verify the username and pin that you are entering.
                 </div>
                 <?php
             }

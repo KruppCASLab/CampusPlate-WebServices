@@ -50,8 +50,21 @@ class UsersController {
 
         if ($userId != -1) {
             $credential->userId = $userId;
-            UsersModel::createCredential($credential);
-            $status = 2;
+
+            // Check if we are looking to create a web credential first and one does not already exist
+            // We don't want to create more than one web credential
+            if ($credential->type == 1 && UsersModel::getWebCredential($credential->userId) != null) {
+                // Update the pin
+                $webcred = UsersModel::getWebCredential($credential->userId);
+                if ($webcred != null) {
+                    $webcred = new Credential($webcred);
+                    UsersModel::updatePin($webcred->credentialId, $credential->pin);
+                }
+            }
+            else {
+                UsersModel::createCredential($credential);
+                $status = 2;
+            }
         }
         else {
             $userId = UsersModel::createUser($user);
