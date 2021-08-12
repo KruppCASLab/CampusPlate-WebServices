@@ -155,6 +155,7 @@ class UsersModel {
 
         // Pin and Username combo don't exist
         if (sizeof($results) == 0) {
+            echo "REturning -1";
             return -1;
         }
         else {
