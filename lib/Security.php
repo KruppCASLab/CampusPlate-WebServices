@@ -27,7 +27,7 @@ class Security {
      * @return int
      */
     static function authenticateUser($username, $password): int {
-        return UsersModel::authenticateUser($username, $password);
+        return UsersModel::authenticate($username, $password);
     }
 
     /**
