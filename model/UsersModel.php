@@ -60,7 +60,7 @@ class UsersModel {
      */
     static public function getUser($userId): User {
         $sql = "SELECT userId, userName, role, accountValidated, requireReset FROM tblUsers WHERE userId = ?";
-        $results = Database::executeSql($sql, "d", array($userId));
+        $results = Database::executeSql($sql, "i", array($userId));
 
         return new User($results[0]);
     }
@@ -121,7 +121,7 @@ class UsersModel {
         $credential->lastUsed = time();
 
         $sql = "INSERT INTO tblCredentials(userId, type, pin, label, created, lastUsed) values (?, ?, ?, ?, ?, ?)";
-        $credentialId = Database::executeSql($sql, "ddssdd", array($credential->userId, $credential->type, $credential->pin, $credential->label,$credential->created, $credential->lastUsed));
+        $credentialId = Database::executeSql($sql, "iissii", array($credential->userId, $credential->type, $credential->pin, $credential->label,$credential->created, $credential->lastUsed));
 
         if (isset(Database::$lastError)) {
             return -1;
@@ -150,9 +150,10 @@ class UsersModel {
     static public function verifyPin($userId, $pin): bool {
         $db = new Database();
 
+        echo "Checking $userId and $pin";
         $sql = "SELECT credentialId FROM tblCredentials WHERE userId = ? AND pin = ?";
 
-        $results = $db->executeSql($sql, "si", array($userId, $pin));
+        $results = $db->executeSql($sql, "is", array($userId, $pin));
 
         // Pin and Username combo don't exist
         if (sizeof($results) == 0) {
@@ -176,13 +177,13 @@ class UsersModel {
         }
 
         $sql = "UPDATE tblCredentials SET status = ? WHERE credentialId = ?";
-        Database::executeSql($sql, "is", array($verified, $credentialId));
+        Database::executeSql($sql, "ii", array($verified, $credentialId));
         return !isset(Database::$lastError);
     }
 
     static public function setPassword($credentialId, $password) {
         $sql = "UPDATE tblCredentials set password = ? where credentialId = ?";
-        Database::executeSql($sql, "ss", array(password_hash($password, PASSWORD_DEFAULT), $credentialId));
+        Database::executeSql($sql, "si", array(password_hash($password, PASSWORD_DEFAULT), $credentialId));
     }
 
 }
