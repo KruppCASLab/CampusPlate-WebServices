@@ -36,8 +36,8 @@ class UsersModel {
     }
 
     static public function updateAuthTimestamp($credentialId) {
-        $sql = "UPDATE lastUsed = ? where credentialId = ?";
-        Database::executeSql($sql, "ii", array($credentialId, time()));
+        $sql = "UPDATE tblCredentials SET lastUsed = ? where credentialId = ?";
+        Database::executeSql($sql, "ii", array(time(),$credentialId));
     }
 
     /**
