@@ -14,7 +14,7 @@ class Reservation extends Base {
     static $RESERVATION_RETURN_CODE_QUANTITY_NOT_AVAILABLE = 1;
     static $RESERVATION_RETURN_CODE_LISTING_NOT_AVAILABLE = 2;
 
-    public function __construct($sourceObject) {
+    public function __construct($sourceObject = null) {
         parent::__construct($sourceObject);
     }
 }
