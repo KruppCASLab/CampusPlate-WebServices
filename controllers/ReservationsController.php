@@ -81,4 +81,17 @@ class ReservationsController {
         }
     }
 
+    static public function delete(Request $request): Response {
+        $reservationId = $request->id;
+        $userId = $request->userId;
+
+        $success = ReservationsModel::deleteReservationForUser($reservationId, $userId);
+        if ($success) {
+            return new Response(null, null, 0);
+        }
+        else {
+            return new Response(null, null, 1);
+        }
+    }
+
 }

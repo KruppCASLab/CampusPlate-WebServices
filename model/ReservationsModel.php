@@ -56,5 +56,12 @@ class ReservationsModel {
         return !isset(Database::$lastError);
     }
 
+    static public function deleteReservationForUser(int $reservationId, int $userId): bool {
+        $sql = "DELETE from tblReservations where reservationId = ? AND userId = ?";
+        Database::executeSql($sql, "ii", array($reservationId, $userId));
+
+        return !isset(Database::$lastError);
+    }
+
 
 }
