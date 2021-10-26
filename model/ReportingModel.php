@@ -10,13 +10,13 @@ class ReportingModel {
     }
 
     static public function getTotalItemsRecovered() : int {
-        $sql = "SELECT count(*) as total FROM tblReservations WHERE status = ? OR status = ? ";
+        $sql = "SELECT sum(tblReservations.quantity) as total FROM tblReservations WHERE status = ? OR status = ? ";
         $results = Database::executeSql($sql, "ii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
         return $results[0]["total"];
     }
 
     static public function getItemsRecoveredLastWeek() : int {
-        $sql = "SELECT count(*) as total FROM tblReservations WHERE (status = ? OR status = ?) AND timeCreated > ? ";
+        $sql = "SELECT sum(tblReservations.quantity) as total FROM tblReservations WHERE (status = ? OR status = ?) AND timeCreated > ? ";
         $lastWeekTimestamp = self::getLastWeekTimestamp();
         $results = Database::executeSql($sql, "iii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND, $lastWeekTimestamp));
         return $results[0]["total"];
