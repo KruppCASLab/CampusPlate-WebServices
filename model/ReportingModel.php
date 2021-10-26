@@ -23,7 +23,7 @@ class ReportingModel {
     }
 
     static public function getItemsPerDay() {
-        $sql = "SELECT DATE(FROM_UNIXTIME(timeCreated)) as createdDate, COUNT(*) as numPerDate FROM tblReservations WHERE status = ? or status = ? GROUP BY DATE(FROM_UNIXTIME(timeCreated)) ORDER BY createdDate";
+        $sql = "SELECT DATE(FROM_UNIXTIME(timeCreated)) as createdDate,SUM(tblReservations.quantity) as numPerDate FROM tblReservations WHERE status = ? or status = ? GROUP BY DATE(FROM_UNIXTIME(timeCreated)) ORDER BY createdDate";
         $results = Database::executeSql($sql, "ii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
         return $results;
     }
