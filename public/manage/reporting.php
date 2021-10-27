@@ -63,7 +63,7 @@ if (!Session::isSessionValid() ) {
         $lastWeek = ReportingModel::getItemsRecoveredLastWeek();
     ?>
 
-    <h1 class="mt-3">Overall Food Recovery</h1>
+    <h2 class="mt-3">Overall Food Recovery</h2>
     <div class="row mt-3">
         <div class="col-md-6 col-sm-12 text-center ">
             <h1 class="display-1 mainColor"><?=$total?></h1>
@@ -108,7 +108,49 @@ if (!Session::isSessionValid() ) {
         Plotly.newPlot("byDate", data);
     </script>
 
+    <h2 class="mt-3">User Statistics</h2>
+    <?php
+    $usersPastWeek = ReportingModel::getNumberOfUsersUsingAppInPastWeek();
+    $newAccounts = ReportingModel::getNumberOfCredentialsUsingAppInPastWeek();
+    ?>
+    <div class="row mt-3">
+        <div class="col-md-6 col-sm-12 text-center ">
+            <h1 class="display-1 mainColor"><?=$usersPastWeek?></h1>
+            <p>Number of Users in Past Week</p>
+        </div>
+        <div class="col-md-6 col-sm-12 text-center">
+            <h1 class="display-1 mainColor"><?=$newAccounts?></h1>
+            <p>New Credentials for Users Created in Past Week</p>
+        </div>
+    </div>
 
+    <h2 class="mt-3">Food Stop Managers</h2>
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-sm table-hover table-responsive-lg">
+                <thead>
+                <tr>
+                    <th scope="col">Food Stop Name</th>
+                    <th scope="col">Food Stop Manager</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                    $managers = ReportingModel::getFoodStopManagers();
+                    foreach($managers as $manager) {
+                        ?>
+                        <tr>
+                            <td><?=$manager['name']?></td>
+                            <td><?=$manager['userName']?></td>
+                        </tr>
+                        <?php
+                    }
+                ?>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 
 
     <hr/>

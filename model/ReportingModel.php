@@ -9,17 +9,37 @@ class ReportingModel {
         return time() - (7 * 24 * 60 * 60);
     }
 
+    static public function getNumberOfUsersUsingAppInPastWeek(): int {
+        $sql = "select COUNT(DISTINCT userName) as total from tblUsers INNER JOIN tblCredentials on tblCredentials.userId = tblUsers.userId where tblCredentials.lastUsed > ?";
+        $lastWeekTimestamp = self::getLastWeekTimestamp();
+        $results = Database::executeSql($sql, "i", array($lastWeekTimestamp));
+        return $results[0]["total"] ?? 0;
+    }
+
+    static public function getNumberOfCredentialsUsingAppInPastWeek(): int {
+        $sql = "select DISTINCT userName from tblUsers INNER JOIN tblCredentials on tblCredentials.userId = tblUsers.userId where tblCredentials.created > ?";
+        $lastWeekTimestamp = self::getLastWeekTimestamp();
+        $results = Database::executeSql($sql, "i", array($lastWeekTimestamp));
+        return $results[0]["total"] ?? 0;
+    }
+
+    static public function getFoodStopManagers() : array {
+        $sql = "SELECT tblUsers.userName, tblFoodStops.name FROM tblFoodStopManagers JOIN tblUsers on tblFoodStopManagers.userId = tblUsers.userId JOIN tblFoodStops on tblFoodStopManagers.foodStopId = tblFoodStops.foodStopId ORDER BY tblFoodStops.name";
+        return Database::executeSql($sql);
+    }
     static public function getTotalItemsRecovered() : int {
         $sql = "SELECT sum(tblReservations.quantity) as total FROM tblReservations WHERE status = ? OR status = ? ";
         $results = Database::executeSql($sql, "ii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
-        return $results[0]["total"];
+
+        return $results[0]["total"] ?? 0;
     }
 
     static public function getItemsRecoveredLastWeek() : int {
         $sql = "SELECT sum(tblReservations.quantity) as total FROM tblReservations WHERE (status = ? OR status = ?) AND timeCreated > ? ";
         $lastWeekTimestamp = self::getLastWeekTimestamp();
         $results = Database::executeSql($sql, "iii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND, $lastWeekTimestamp));
-        return $results[0]["total"];
+
+        return $results[0]["total"] ?? 0;
     }
 
     static public function getItemsPerDay() {
