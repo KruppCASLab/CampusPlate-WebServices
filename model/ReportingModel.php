@@ -17,10 +17,17 @@ class ReportingModel {
     }
 
     static public function getNumberOfCredentialsUsingAppInPastWeek(): int {
-        $sql = "select DISTINCT userName from tblUsers INNER JOIN tblCredentials on tblCredentials.userId = tblUsers.userId where tblCredentials.created > ?";
+        $sql = "select COUNT(DISTINCT userName) from tblUsers INNER JOIN tblCredentials on tblCredentials.userId = tblUsers.userId where tblCredentials.created > ?";
+
         $lastWeekTimestamp = self::getLastWeekTimestamp();
         $results = Database::executeSql($sql, "i", array($lastWeekTimestamp));
         return $results[0]["total"] ?? 0;
+    }
+
+    static public function getAdminUsers() : array {
+        //TODO: Change 1 to bind to a role number from model
+        $sql = "SELECT userName from tblUsers where role = 1";
+        return Database::executeSql($sql);
     }
 
     static public function getFoodStopManagers() : array {

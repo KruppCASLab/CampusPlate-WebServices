@@ -124,9 +124,23 @@ if (!Session::isSessionValid() ) {
         </div>
     </div>
 
-    <h2 class="mt-3">Food Stop Managers</h2>
+    <h2 class="mt-3">Admins and Food Stop Managers</h2>
     <div class="row">
         <div class="col-lg-12">
+            <h5>Admins</h5>
+            The following users are admins of the application and have access to each food stop:<br /><br />
+            <ul>
+            <?php
+              $admins = ReportingModel::getAdminUsers();
+              foreach($admins as $admin) {
+                  ?>
+                  <li><?=$admin["userName"]?></li>
+                  <?php
+              }
+            ?>
+            </ul>
+            <br />
+            <h5>Food Stop Managers</h5>
             <table class="table table-sm table-hover table-responsive-lg">
                 <thead>
                 <tr>
