@@ -16,8 +16,8 @@ class ReportingModel {
         return $results[0]["total"] ?? 0;
     }
 
-    static public function getNumberOfCredentialsUsingAppInPastWeek(): int {
-        $sql = "select COUNT(DISTINCT userName) from tblUsers INNER JOIN tblCredentials on tblCredentials.userId = tblUsers.userId where tblCredentials.created > ?";
+    static public function getNumberOfCredentialsCreatedInAppInPastWeek(): int {
+        $sql = "select COUNT(DISTINCT userName) as total from tblUsers INNER JOIN tblCredentials on tblCredentials.userId = tblUsers.userId where tblCredentials.created > ?";
 
         $lastWeekTimestamp = self::getLastWeekTimestamp();
         $results = Database::executeSql($sql, "i", array($lastWeekTimestamp));

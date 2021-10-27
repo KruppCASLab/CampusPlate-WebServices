@@ -111,7 +111,7 @@ if (!Session::isSessionValid() ) {
     <h2 class="mt-3">User Statistics</h2>
     <?php
     $usersPastWeek = ReportingModel::getNumberOfUsersUsingAppInPastWeek();
-    $newAccounts = ReportingModel::getNumberOfCredentialsUsingAppInPastWeek();
+    $newAccounts = ReportingModel::getNumberOfCredentialsCreatedInAppInPastWeek();
     ?>
     <div class="row mt-3">
         <div class="col-md-6 col-sm-12 text-center ">
