@@ -75,6 +75,10 @@ else if (isset($username)) {
     $request = new Request($user);
     $response = UsersController::post($request);
 
+    if ($response->status == 3) {
+        die("Please enter a valid BW email address.");
+    }
+
     $showPasswordForm = true;
 }
 
