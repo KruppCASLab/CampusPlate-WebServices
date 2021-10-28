@@ -54,7 +54,10 @@ if (isset($username) && isset($password)) {
             </div>
             <div></div>
             <hr class="m-lg-5"/>
-            If you do not remember your account, please contact the administrator.
+            <p class="text-center">
+                <a href="../passreset.php">Forgot Password? or Creating New Account?</a>
+                <p><i><small>Please note: This site is only for food stop managers and administrators.</small></i></p>
+            </p>
         </form>
     </div>
 

@@ -92,7 +92,7 @@ else if (isset($username)) {
 <div class="container min-vh-100 h-100" id="login">
     <div class="row">
         <div class="col-lg-12">
-            <h1><img class="img-fluid" style="height:80px" src="images/icon.png"/>Campus Plate | Reset Password</h1>
+            <h1><img class="img-fluid" style="height:80px" src="images/icon.png"/>Campus Plate | Reset Password or Create Account</h1>
         </div>
     </div>
     <div class="row mt-4">
@@ -151,7 +151,7 @@ else if (isset($username)) {
                 ?>
                 <div class="col-lg-12">
                     <p>
-                        Enter your username and a pin will be sent to your your email address to reset your password.
+                        Enter your username and a pin will be sent to your your email address to reset your password or create a new account.
                     </p>
                 </div>
 
