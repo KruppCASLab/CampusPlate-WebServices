@@ -22,6 +22,8 @@ class ListingsController {
         $id = $request->id;
         $param = $request->param;
 
+        $filterZeroQuantity = true;
+
         if (isset($id) && $param == "image") {
             $data = ListingsModel::getListingImage($id);
             return new Response($data);
@@ -60,6 +62,18 @@ class ListingsController {
         foreach ($listings as $listing) {
             $listing->quantityRemaining = ($listing->quantity - ReservationsModel::getReservationQuantity($listing->listingId));
         }
+
+        // Ensure that we only return listings that have more than 0 left
+        if ($filterZeroQuantity === true) {
+            $updatedListings = array();
+            foreach($listings as $listing) {
+                if ($listing->quantityRemaining > 0) {
+                    array_push($updatedListings, $listing);
+                }
+            }
+            $listings = $updatedListings;
+        }
+
         return new Response($listings);
     }
 
