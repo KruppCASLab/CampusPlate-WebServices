@@ -33,7 +33,7 @@ if (!Session::isSessionValid() ) {
 <div class="container min-vh-100 h-100" id="login">
     <?php
 
-    if (AuthorizationModel::isAdmin(Session::getSessionUserId())) {
+    if (AuthorizationModel::isAdmin(Session::getSessionUserId()) || AuthorizationModel::isAFoodStopManager(Session::getSessionUserId())) {
     ?>
     <ul class="nav nav-tabs">
         <li class="nav-item">

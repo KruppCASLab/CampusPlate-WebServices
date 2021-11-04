@@ -145,7 +145,7 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
     if (sizeof($foodStopsManaged) == 0) {
         die("Error: You are currently not authorized as a manager of food stops.");
     }
-    if (AuthorizationModel::isAdmin(Session::getSessionUserId())) {
+    if (AuthorizationModel::isAdmin(Session::getSessionUserId()) || AuthorizationModel::isAFoodStopManager(Session::getSessionUserId())) {
     ?>
     <ul class="nav nav-tabs">
         <li class="nav-item">
