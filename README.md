@@ -1,4 +1,9 @@
-# CampusPlate - Web Service Catalog
+# CampusPlate
+
+# Building Android APK
+To build the Android application APK file, go to Build -> Generate Signed Bundle or APK. Then check APK. Select the keystore path and cpkey0 as the key. If needed, generate a new key but you should use the existing. The APK will be created, take the APK and upload to server.
+
+# Web Service Catalog
 ## Introduction
 The web services listed below are used for Campus Plate. Each response is encapsulated in a response object. If a web service does not specify a return object, it can be assumed that a generic one is used. Below is an example.
 
