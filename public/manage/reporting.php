@@ -61,17 +61,22 @@ if (!Session::isSessionValid() ) {
     <?php
         $total = ReportingModel::getTotalItemsRecovered();
         $lastWeek = ReportingModel::getItemsRecoveredLastWeek();
+        $totalNotRecovered = ReportingModel::getTotalItemsNotRecovered();
     ?>
 
     <h2 class="mt-3">Overall Food Recovery</h2>
     <div class="row mt-3">
-        <div class="col-md-6 col-sm-12 text-center ">
+        <div class="col-md-4 col-sm-12 text-center ">
             <h1 class="display-1 mainColor"><?=$total?></h1>
             <p>Items Recovered Since Inception</p>
         </div>
-        <div class="col-md-6 col-sm-12 text-center">
+        <div class="col-md-4 col-sm-12 text-center">
             <h1 class="display-1 mainColor"><?=$lastWeek?></h1>
             <p>Items Recovered Last Week</p>
+        </div>
+        <div class="col-md-4 col-sm-12 text-center ">
+            <h1 class="display-1 secondaryColor"><?=$totalNotRecovered?></h1>
+            <p>Total Items Not Recovered</p>
         </div>
     </div>
     <div id="byDate">
@@ -107,7 +112,6 @@ if (!Session::isSessionValid() ) {
         ];
         Plotly.newPlot("byDate", data);
     </script>
-
     <h2 class="mt-3">User Statistics</h2>
     <?php
     $usersPastWeek = ReportingModel::getNumberOfUsersUsingAppInPastWeek();

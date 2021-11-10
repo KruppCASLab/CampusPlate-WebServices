@@ -55,4 +55,17 @@ class ReportingModel {
         return $results;
     }
 
+    static public function getTotalItemsNotRecovered() {
+        $sql = "
+            SELECT SUM(
+	        -- Take the quantity from the listing - those that were fulfilled  or picked up on demand 
+	        tblListings.quantity - (SELECT COALESCE(SUM(tblReservations.quantity),0) FROM tblReservations WHERE listingId = tblListings.listingId AND (status = ? OR status = ?) )
+                ) as total 
+            -- Only include listings that were expired
+            from tblListings WHERE expirationTime < ?";
+
+        $results = Database::executeSql($sql, "iii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND, time()));
+        return $results[0]["total"];
+    }
+
 }
