@@ -55,6 +55,12 @@ class ReportingModel {
         return $results;
     }
 
+    static public function getTotalWeightRecovered() {
+        $sql = "SELECT SUM(tblListings.weightOunces * tblReservations.quantity) as total FROM tblListings JOIN tblReservations ON tblReservations.listingId = tblListings.listingId WHERE tblListings.weightOunces > 0 AND (tblReservations.status = ? OR tblReservations.status = ?)";
+        $results = Database::executeSql($sql, "ii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
+        return $results[0]["total"];
+    }
+
     static public function getTotalItemsNotRecovered() {
         $sql = "
             SELECT SUM(
