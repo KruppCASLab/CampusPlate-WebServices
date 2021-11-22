@@ -41,7 +41,7 @@
         <div class="col-lg-6 col-sm-12">
             <h3>Install Android App</h3>
             <p class="text">
-                If you are looking to download the application and are a member of the BW community, click on the following button from a mobile device:<div class="text-center"> <a href="https://mops.bw.edu/cp/cp.apk" class="text-center"><button class="btn btn-success" href="">Install Campus Plate for Android</button></a><br /><small><i>Last Updated on 11/18/21</i></small></div>
+                If you are looking to download the application and are a member of the BW community, click on the following button from a mobile device:<div class="text-center"> <a href="https://mops.bw.edu/cp/cp.apk" class="text-center"><button class="btn btn-success" href="">Install Campus Plate for Android</button></a><br /><small><i>Last Updated on <?=date("m/d/Y", filemtime("cp.apk"));?></i></small></div>
             </p>
             <p>
                 Or, you can scan the following QR code from your Android device:
