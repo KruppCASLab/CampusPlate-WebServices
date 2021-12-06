@@ -442,12 +442,15 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
                 </script>
             <?php
 
-            $matchedListing = new Listing();
+            $matchedListing = null;
             foreach ($listings as $listing) {
                 $listing = new Listing($listing);
                 if ($listing->listingId == $reservation->listingId) {
                     $matchedListing = $listing;
                 }
+            }
+            if ($matchedListing == null) {
+                $matchedListing = ListingsController::get(new Request(null, $reservation->listingId, null, Session::getSessionUserId()))->data;
             }
             ?>
                 <tr>
