@@ -84,12 +84,13 @@ if (!Session::isSessionValid() ) {
             <p>Total Items Not Recovered</p>
         </div>
     </div>
+    <h3>Items By Day</h3>
     <div id="byDate">
     </div>
     <script>
         <?php
-            $results = ReportingModel::getItemsPerDay();
-            ?>
+        $results = ReportingModel::getItemsPerDay();
+        ?>
         let data = [
             {
                 x: [
@@ -117,6 +118,41 @@ if (!Session::isSessionValid() ) {
         ];
         Plotly.newPlot("byDate", data);
     </script>
+    <h3>Weight By Day (Ounces)</h3>
+    <div id="weightByDate">
+    </div>
+    <script>
+        <?php
+        $results = ReportingModel::getWeightRecoveredByDay();
+        ?>
+        let weightData = [
+            {
+                x: [
+                    <?php
+                    for ($i = 0; $i < sizeof($results); $i++) {
+                        echo "'" . $results[$i]["createdDate"] . "'";
+                        if ($i < sizeof($results) - 1) echo ",";
+                    }
+
+                    ?>],
+                y: [
+                    <?php
+
+                    for ($i = 0; $i < sizeof($results); $i++) {
+                        echo $results[$i]["total"];
+                        if ($i < sizeof($results) - 1) echo ",";
+                    }
+                    ?>],
+                type: 'bar',
+                marker: {
+                    color: '#EBB500'
+
+                }
+            }
+        ];
+        Plotly.newPlot("weightByDate", weightData);
+    </script>
+
     <h2 class="mt-3">User Statistics</h2>
     <?php
     $usersPastWeek = ReportingModel::getNumberOfUsersUsingAppInPastWeek();

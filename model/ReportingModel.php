@@ -61,6 +61,22 @@ class ReportingModel {
         return $results[0]["total"];
     }
 
+    static public function getWeightRecoveredByDay() {
+        $sql = "SELECT SUM(tblListings.weightOunces * tblReservations.quantity) as total, DATE(FROM_UNIXTIME(tblReservations.timeCreated)) as createdDate FROM tblListings JOIN tblReservations ON tblReservations.listingId = tblListings.listingId WHERE tblListings.weightOunces > 0 AND (tblReservations.status = ? OR tblReservations.status = ?) GROUP BY DATE(FROM_UNIXTIME(timeCreated)) ORDER BY createdDate";
+        $results = Database::executeSql($sql, "ii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
+        return $results;
+    }
+
+    static public function getTotalItemsPerFoodStop() {
+        /*
+         * select SUM(tblReservations.quantity), tblFoodStops.name, tblFoodStops.foodStopId from tblReservations INNER JOIN tblListings on tblListings.listingId = tblReservations.listingId AND (tblReservations.status = 1 OR tblReservations.status = 2) INNER JOIN tblFoodStops on tblFoodStops.foodStopId = tblListings.foodStopid GROUP BY tblFoodStops.foodStopId
+         */
+    }
+/*
+* This will return total reservations by date by food stop:
+
+select SUM(tblReservations.quantity), DATE(FROM_UNIXTIME(tblReservations.timeCreated)) as createdDate, tblFoodStops.name, tblFoodStops.foodStopId from tblReservations INNER JOIN tblListings on tblListings.listingId = tblReservations.listingId AND (tblReservations.status = 1 OR tblReservations.status = 2) INNER JOIN tblFoodStops on tblFoodStops.foodStopId = tblListings.foodStopid GROUP BY createdDate, tblFoodStops.foodStopId
+*/
     static public function getTotalItemsNotRecovered() {
         $sql = "
             SELECT SUM(
