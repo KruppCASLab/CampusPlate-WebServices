@@ -55,14 +55,14 @@ class ReportingModel {
         return $results;
     }
 
-    static public function getTotalWeightRecovered() {
-        $sql = "SELECT SUM(tblListings.weightOunces * tblReservations.quantity) as total FROM tblListings JOIN tblReservations ON tblReservations.listingId = tblListings.listingId WHERE tblListings.weightOunces > 0 AND (tblReservations.status = ? OR tblReservations.status = ?)";
+    static public function getTotalWeightRecoveredInPounds() {
+        $sql = "SELECT (SUM(tblListings.weightOunces * tblReservations.quantity) * 0.0625) as total FROM tblListings JOIN tblReservations ON tblReservations.listingId = tblListings.listingId WHERE tblListings.weightOunces > 0 AND (tblReservations.status = ? OR tblReservations.status = ?)";
         $results = Database::executeSql($sql, "ii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
         return $results[0]["total"];
     }
 
-    static public function getWeightRecoveredByDay() {
-        $sql = "SELECT SUM(tblListings.weightOunces * tblReservations.quantity) as total, DATE(FROM_UNIXTIME(tblReservations.timeCreated)) as createdDate FROM tblListings JOIN tblReservations ON tblReservations.listingId = tblListings.listingId WHERE tblListings.weightOunces > 0 AND (tblReservations.status = ? OR tblReservations.status = ?) GROUP BY DATE(FROM_UNIXTIME(timeCreated)) ORDER BY createdDate";
+    static public function getWeightRecoveredByDayInPounds() {
+        $sql = "SELECT (SUM(tblListings.weightOunces * tblReservations.quantity) * 0.0625) as total, DATE(FROM_UNIXTIME(tblReservations.timeCreated)) as createdDate FROM tblListings JOIN tblReservations ON tblReservations.listingId = tblListings.listingId WHERE tblListings.weightOunces > 0 AND (tblReservations.status = ? OR tblReservations.status = ?) GROUP BY DATE(FROM_UNIXTIME(timeCreated)) ORDER BY createdDate";
         $results = Database::executeSql($sql, "ii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
         return $results;
     }

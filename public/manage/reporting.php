@@ -62,7 +62,7 @@ if (!Session::isSessionValid() ) {
         $total = ReportingModel::getTotalItemsRecovered();
         $lastWeek = ReportingModel::getItemsRecoveredLastWeek();
         $totalNotRecovered = ReportingModel::getTotalItemsNotRecovered();
-        $weight = ReportingModel::getTotalWeightRecovered();
+        $weight = ReportingModel::getTotalWeightRecoveredInPounds();
     ?>
 
     <h2 class="mt-3">Overall Food Recovery</h2>
@@ -76,7 +76,7 @@ if (!Session::isSessionValid() ) {
             <p>Items Recovered Last Week</p>
         </div>
         <div class="col-md-3 col-sm-12 text-center">
-            <h1 class="display-1 mainColor"><?=round($weight * 0.0625, 2)?></h1>
+            <h1 class="display-1 mainColor"><?=$weight?></h1>
             <p>Total Weight (lbs) Recovered <br />(<small>For Listings Reporting Weight</small>)</p>
         </div>
         <div class="col-md-3 col-sm-12 text-center ">
@@ -118,12 +118,12 @@ if (!Session::isSessionValid() ) {
         ];
         Plotly.newPlot("byDate", data);
     </script>
-    <h3>Weight By Day (Ounces)</h3>
+    <h3>Weight By Day (Pounds)</h3>
     <div id="weightByDate">
     </div>
     <script>
         <?php
-        $results = ReportingModel::getWeightRecoveredByDay();
+        $results = ReportingModel::getWeightRecoveredByDayInPounds();
         ?>
         let weightData = [
             {
