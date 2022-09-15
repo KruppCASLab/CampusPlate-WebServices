@@ -62,7 +62,7 @@ if (isset($_POST["action"])) {
         $listing->quantity = $_POST["quantity"];
         $listing->weightOunces = $_POST["weightOunces"];
         if (!(isset($listing->title) && is_numeric($listing->quantity) && is_numeric($listing->creationTime) && is_numeric($listing->expirationTime))) {
-            $error = "Could not create or edit listing. Please check to make sure all fields.";
+            $error = "Could not create or edit listing. Please check to make sure all fields are filled in correctly.";
         }
         else {
             if ($_POST["action"] == "create") {
@@ -249,7 +249,7 @@ if ($action == "update" || $action == "move") {
                                placeholder="<?= date("m/d/Y", $creationDate) ?>"/>
                         <input type="text" class="form-control dateControl" id="creationTime" name="creationTime"
                                style="max-width:150px;display: inline-block" value="<?= date("H:i", $creationDate) ?>"/>
-                        <div class="form-text mt-3">Time is in 24 hour format, for example: 8:24pm would be 20:24</div>
+
                     </div>
                 </div>
 
@@ -263,6 +263,9 @@ if ($action == "update" || $action == "move") {
                                style="max-width:150px;display: inline-block"
                                value="<?= date("H:i", $expirationDate) ?>"/>
                     </div>
+                </div>
+                <div class="row">
+                    <div class="form-text mt-3">Time can be entered in 24 hour format, for example: 8:24pm would be 20:24, or you can use am and pm.</div>
                 </div>
                 <?php
                 }
