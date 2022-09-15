@@ -49,6 +49,14 @@ class ReportingModel {
         return $results[0]["total"] ?? 0;
     }
 
+    static public function getItemsNotRecoveredLastWeek() : int {
+        $sql = "SELECT sum(tblReservations.quantity) as total FROM tblReservations WHERE (NOT (status = ? OR status = ?)) AND timeCreated > ? ";
+        $lastWeekTimestamp = self::getLastWeekTimestamp();
+        $results = Database::executeSql($sql, "iii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND, $lastWeekTimestamp));
+
+        return $results[0]["total"] ?? 0;
+    }
+
     static public function getItemsPerDay() {
         $sql = "SELECT DATE(FROM_UNIXTIME(timeCreated)) as createdDate,SUM(tblReservations.quantity) as numPerDate FROM tblReservations WHERE status = ? or status = ? GROUP BY DATE(FROM_UNIXTIME(timeCreated)) ORDER BY createdDate";
         $results = Database::executeSql($sql, "ii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
@@ -57,6 +65,12 @@ class ReportingModel {
 
     static public function getTotalWeightRecoveredInPounds() {
         $sql = "SELECT (SUM(tblListings.weightOunces * tblReservations.quantity) * 0.0625) as total FROM tblListings JOIN tblReservations ON tblReservations.listingId = tblListings.listingId WHERE tblListings.weightOunces > 0 AND (tblReservations.status = ? OR tblReservations.status = ?)";
+        $results = Database::executeSql($sql, "ii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
+        return $results[0]["total"];
+    }
+
+    static public function getTotalWeightNotRecoveredInPounds() {
+        $sql = "SELECT (SUM(tblListings.weightOunces * tblReservations.quantity) * 0.0625) as total FROM tblListings JOIN tblReservations ON tblReservations.listingId = tblListings.listingId WHERE tblListings.weightOunces > 0 AND NOT (tblReservations.status = ? OR tblReservations.status = ?)";
         $results = Database::executeSql($sql, "ii", array(Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND));
         return $results[0]["total"];
     }

@@ -27,6 +27,11 @@ if (!Session::isSessionValid() ) {
     <link rel="stylesheet" href="../css/main.css">
     <script src='https://cdn.plot.ly/plotly-2.4.2.min.js'></script>
     <title>CampusPlate | Manage</title>
+    <style>
+        h3 {
+            margin-left:15px;
+        }
+    </style>
 </head>
 <body>
 
@@ -61,30 +66,44 @@ if (!Session::isSessionValid() ) {
     <?php
         $total = ReportingModel::getTotalItemsRecovered();
         $lastWeek = ReportingModel::getItemsRecoveredLastWeek();
+        $lastWeekNotRecovered = ReportingModel::getItemsNotRecoveredLastWeek();
         $totalNotRecovered = ReportingModel::getTotalItemsNotRecovered();
         $weight = ReportingModel::getTotalWeightRecoveredInPounds();
+        $weightNotRecovered = ReportingModel::getTotalWeightNotRecoveredInPounds();
     ?>
 
     <h2 class="mt-3">Overall Food Recovery</h2>
+    <h3>Items Recovered</h3>
     <div class="row mt-3">
-        <div class="col-md-3 col-sm-12 text-center ">
+        <div class="col-md-4 col-sm-12 text-center ">
             <h1 class="display-1 mainColor"><?=$total?></h1>
             <p>Items Recovered Since Inception</p>
         </div>
-        <div class="col-md-3 col-sm-12 text-center">
+        <div class="col-md-4 col-sm-12 text-center">
             <h1 class="display-1 mainColor"><?=$lastWeek?></h1>
             <p>Items Recovered Last Week</p>
         </div>
-        <div class="col-md-3 col-sm-12 text-center">
+        <div class="col-md-4 col-sm-12 text-center">
             <h1 class="display-1 mainColor"><?=round($weight, 0)?></h1>
             <p>Total Weight (lbs) Recovered <br />(<small>For Listings Reporting Weight</small>)</p>
         </div>
-        <div class="col-md-3 col-sm-12 text-center ">
+    </div>
+    <h3>Items Not Recovered</h3>
+    <div class="row">
+        <div class="col-md-4 col-sm-12 text-center ">
             <h1 class="display-1 secondaryColor"><?=$totalNotRecovered?></h1>
-            <p>Total Items Not Recovered</p>
+            <p>Total Items Not Recovered Since Inception</p>
+        </div>
+        <div class="col-md-4 col-sm-12 text-center">
+            <h1 class="display-1 secondaryColor"><?=$lastWeekNotRecovered?></h1>
+            <p>Items Not Recovered Last Week</p>
+        </div>
+        <div class="col-md-4 col-sm-12 text-center ">
+            <h1 class="display-1 secondaryColor"><?=round($weightNotRecovered, 0)?></h1>
+            <p>Total Weight Composted in Grind2Energy<br />(<small>For Listings Reporting Weight</small>)</p>
         </div>
     </div>
-    <h3>Items By Day</h3>
+    <h3>Items Recovered By Day</h3>
     <div id="byDate">
     </div>
     <script>
@@ -111,7 +130,7 @@ if (!Session::isSessionValid() ) {
                     ?>],
                 type: 'bar',
                 marker: {
-                    color: '#EBB500'
+                    color: 'rgb(128,190,57)'
 
                 }
             }
@@ -145,7 +164,7 @@ if (!Session::isSessionValid() ) {
                     ?>],
                 type: 'bar',
                 marker: {
-                    color: '#EBB500'
+                    color: 'rgb(128,190,57)'
 
                 }
             }
