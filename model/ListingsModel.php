@@ -16,7 +16,7 @@ class ListingsModel {
      */
     static public function createListing(Listing $listing): bool {
         $sql = "INSERT INTO tblListings(userId, foodStopId, title, description, quantity, creationTime, expirationTime, weightOunces) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $id = Database::executeSql($sql, "iissiiii", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, $listing->creationTime, $listing->expirationTime, $listing->weightOunces));
+        $id = Database::executeSql($sql, "iissiiid", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, $listing->creationTime, $listing->expirationTime, $listing->weightOunces));
 
         if (isset($listing->image)) {
             Filesystem::saveFile($id, base64_decode($listing->image));
@@ -33,7 +33,7 @@ class ListingsModel {
     static public function updateListing(Listing $listing): bool {
         $sql = "UPDATE tblListings SET userId = ?, foodStopId = ?, title = ?, description = ?, quantity = ?, creationTime = ?, expirationTime = ?, weightOunces = ? WHERE listingId = ?";
 
-        $id = Database::executeSql($sql, "iissiiiii", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, $listing->creationTime, $listing->expirationTime, $listing->weightOunces, $listing->listingId));
+        $id = Database::executeSql($sql, "iissiiidi", array($listing->userId, $listing->foodStopId, $listing->title, $listing->description, $listing->quantity, $listing->creationTime, $listing->expirationTime, $listing->weightOunces, $listing->listingId));
         return !isset(Database::$lastError);
     }
 
