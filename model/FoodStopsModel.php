@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . "/Database.php");
+require_once(__DIR__ . "/UsersModel.php");
 require_once(__DIR__ . "/types/Listing.php");
 require_once(__DIR__ . "/types/FoodStop.php");
 require_once(__DIR__ . "/types/User.php");
@@ -50,6 +51,30 @@ class FoodStopsModel {
             array_push($foodstops, new FoodStop($result));
         }
         return $foodstops;
-
     }
+
+    static public function removeUserFromFoodStopManagerRole($userId, $foodStopId) {
+        $sql = "DELETE FROM tblFoodStopManagers WHERE userId = ? AND foodStopId = ?";
+        Database::executeSql($sql, "ii", array($userId, $foodStopId));
+    }
+
+    static public function addUserToFoodStopManagerRole($email, $foodStopId) : bool {
+        $userId = UsersModel::getUserId($email);
+
+        // Check if the user did not exist, if not, return false
+        if ($userId == -1) {
+            return false;
+        }
+
+        // Check if the user is already a food stop manager before adding them
+        $sql = "SELECT userId from tblFoodStopManagers WHERE userId = ? AND foodStopId = ?";
+        $results = Database::executeSql($sql, "ii", array($userId, $foodStopId));
+        if (sizeof($results) == 0) {
+            // Add them since they are not
+            $sql = "INSERT INTO tblFoodStopManagers (userId, foodStopId) VALUES (?, ?)";
+            Database::executeSql($sql, "ii", array($userId, $foodStopId));
+        }
+        return true;
+    }
+
 }

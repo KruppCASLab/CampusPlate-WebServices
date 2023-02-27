@@ -48,7 +48,7 @@ if (!Session::isSessionValid() ) {
             <a class="nav-link active" aria-current="page" href="reporting.php">Reporting</a>
         </li>
         <li class="nav-item ">
-            <a class="nav-link disabled" href="#">Users</a>
+            <a class="nav-link" href="admin.php">Admin</a>
         </li>
     </ul>
     <?php

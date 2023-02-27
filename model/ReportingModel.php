@@ -31,7 +31,7 @@ class ReportingModel {
     }
 
     static public function getFoodStopManagers() : array {
-        $sql = "SELECT tblUsers.userName, tblFoodStops.name FROM tblFoodStopManagers JOIN tblUsers on tblFoodStopManagers.userId = tblUsers.userId JOIN tblFoodStops on tblFoodStopManagers.foodStopId = tblFoodStops.foodStopId ORDER BY tblFoodStops.name";
+        $sql = "SELECT tblUsers.userName, tblFoodStops.name, tblUsers.userId, tblFoodStops.foodStopId FROM tblFoodStopManagers JOIN tblUsers on tblFoodStopManagers.userId = tblUsers.userId JOIN tblFoodStops on tblFoodStopManagers.foodStopId = tblFoodStops.foodStopId ORDER BY tblFoodStops.name";
         return Database::executeSql($sql);
     }
     static public function getTotalItemsRecovered() : int {
