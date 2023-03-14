@@ -14,7 +14,7 @@ class UsersModel {
      * @return int
      */
     static public function authenticate($username, $password): int {
-        $sql = "SELECT * from tblCredentials as credentials INNER JOIN tblUsers as users ON users.userId = credentials.userId WHERE users.userName = ? AND credentials.status = ?";
+        $sql = "SELECT * from tblCredentials as credentials INNER JOIN tblUsers as users ON users.userId = credentials.userId WHERE users.userName = ? AND credentials.status = ? ORDER BY credentials.lastUsed DESC";
         $results = Database::executeSql($sql, "si", array($username, 1));
 
         // If we get nothing back, user does not exist
