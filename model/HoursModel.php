@@ -20,8 +20,8 @@ class HoursModel
      */
     static public function setHours(Hours $hours): bool
     {
-        $sql = "INSERT INTO  tblFoodStopHours(foodStopId, dayOFWeek, timeOpen, timeClose) VALUES (?, ?, ?, ?)";
-        Database::executeSql($sql, "iiss", array($hours->foodStopId, $hours->dayOfWeek, $hours->timeOpen, $hours->timeClose));
+        $sql = "INSERT INTO  tblFoodStopHours(foodStopId, dayOfWeek, timeOpen, timeClose) VALUES (?, ?, ?, ?)";
+        Database::executeSql($sql, "isss", array($hours->foodStopId, $hours->dayOfWeek, $hours->timeOpen, $hours->timeClose));
 
         return !isset(Database::$lastError);
     }
@@ -34,7 +34,7 @@ class HoursModel
     static public function getFoodStopHours($foodStopID): array
     {
         $sql = "SELECT * FROM tblFoodStopHours WHERE foodStopId = ?";
-        $results = Database::executeSql($sql, "i", array(foodStopId));
+        $results = Database::executeSql($sql, "i", array($foodStopID));
         $hours = array();
         foreach ($results as $result) {
             array_push($hours, new Hours($result));
