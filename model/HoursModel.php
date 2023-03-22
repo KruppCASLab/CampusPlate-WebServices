@@ -15,14 +15,16 @@ class HoursModel
 
     /**
      * Sets a new entry in the Hours Table
-     * @param Hours $hours
+     * @param Hours[] $hours
      * @return bool
      */
-    static public function setHours(Hours $hours): bool
+    static public function setHours(array $hours): bool
     {
-        $sql = "INSERT INTO  tblFoodStopHours(foodStopId, dayOfWeek, timeOpen, timeClose) VALUES (?, ?, ?, ?)";
-        Database::executeSql($sql, "isss", array($hours->foodStopId, $hours->dayOfWeek, $hours->timeOpen, $hours->timeClose));
+        foreach($hours as $newhours) {
+            $sql = "INSERT INTO  tblFoodStopHours(foodStopId, dayOfWeek, timeOpen, timeClose) VALUES (?, ?, ?, ?)";
+            Database::executeSql($sql, "isss", array($newhours->foodStopId, $newhours->dayOfWeek, $newhours->timeOpen, $newhours->timeClose));
 
+        }
         return !isset(Database::$lastError);
     }
 
@@ -41,6 +43,19 @@ class HoursModel
         }
 
         return $hours;
+    }
+
+    /**
+     * Removes all food stop hours with a certain foodStopId
+     * @param $foodStopId
+     * @return bool
+     */
+    static public function removeFoodStopHours($foodStopId): bool
+    {
+        $sql = "DELETE FROM tblFoodStopHours WHERE foodStopId = ?";
+        $results = Database::executeSql($sql, "i", array($foodStopId));
+
+        return !isset(Database::$lastError);
     }
 
 }

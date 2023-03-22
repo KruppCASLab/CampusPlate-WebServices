@@ -5,7 +5,7 @@ require_once(__DIR__ . "/../controllers/ListingsController.php");
 require_once(__DIR__ . "/../controllers/FoodStopsController.php");
 require_once(__DIR__ . "/../controllers/ReservationsController.php");
 require_once(__DIR__ . "/../controllers/UsersController.php");
-
+//require_once(__DIR__ . "/../controllers/HoursController.php");
 require_once(__DIR__ . "/../model/types/Request.php");
 require_once(__DIR__ . "/../lib/Security.php");
 
