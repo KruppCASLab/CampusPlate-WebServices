@@ -8,7 +8,7 @@ class HoursController
 {
     static public function post(Request $request): Response {
         $hours = array();
-        foreach ($request->data as $newhours) {
+        foreach ($request->data->hours as $newhours) {
             array_push($hours, new Hours($newhours));
         }
 
@@ -36,7 +36,7 @@ class HoursController
      */
     static public function get(Request $request): Response {
 
-        $foodstophours = HoursModel::getFoodStopHours($request->data->foodStopId);
+        $foodstophours = HoursModel::getFoodStopHours($request->id);
 
         return new Response($foodstophours);
     }
