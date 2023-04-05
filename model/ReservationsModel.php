@@ -6,6 +6,8 @@ require_once(__DIR__ . "/types/User.php");
 require_once(__DIR__ . "/types/Listing.php");
 require_once(__DIR__ . "/types/User.php");
 require_once(__DIR__ . "/types/Response.php");
+require_once(__DIR__ . "/types/Listing.php");
+require_once(__DIR__ . "/ListingsModel.php");
 
 
 class ReservationsModel {
@@ -34,7 +36,13 @@ class ReservationsModel {
         // Only return reservations that were placed and not expired
         $sql = "SELECT * from tblReservations where userId = ? AND ? < timeExpired AND status = ? ";
         $results = Database::executeSql($sql, "iii", array($userId, time(), Reservation::$RESERVATION_STATUS_PLACED));
-        return $results;
+
+        $updatedResults = array();
+        foreach($results as $result) {
+            $result["listing"] = ListingsModel::getListing($result["listingId"]);
+            array_push($updatedResults, $result);
+        }
+        return $updatedResults;
     }
 
     static public function getFoodStopReservations(int $foodStopId) {

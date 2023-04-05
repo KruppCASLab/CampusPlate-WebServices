@@ -3,7 +3,7 @@
 require_once(__DIR__ . "/Base.php");
 
 class Reservation extends Base {
-    public $reservationId, $userId, $listingId, $quantity, $status, $code, $timeCreated, $timeExpired;
+    public $reservationId, $userId, $listingId, $quantity, $status, $code, $timeCreated, $timeExpired, $listing;
 
     static $RESERVATION_STATUS_PLACED = 0;
     static $RESERVATION_STATUS_FULFILLED = 1;
