@@ -23,6 +23,26 @@ $errorTitle = "";
 $errorMainDescription = "";
 $errorSubDescription = "";
 
+$baseRequest = new Request(null, null, null, Session::getSessionUserId());
+
+$foodStops = FoodStopsController::get($baseRequest)->data;
+$foodStopsManaged = FoodStopsController::get(new Request(null, null, "manage", Session::getSessionUserId()))->data;
+$currentUser = new User(UsersController::get(new Request($baseRequest))->data);
+
+// Default to first food stop
+if (isset($selectedFoodStopId)) {
+    foreach ($foodStopsManaged as $foodStop) {
+        $foodStop = new FoodStop($foodStop);
+        if ($foodStop->foodStopId == $selectedFoodStopId) {
+            $selectedFoodStop = $foodStop;
+        }
+    }
+}
+else {
+    $selectedFoodStop = new FoodStop($foodStopsManaged[0]);
+    $selectedFoodStopId = $selectedFoodStop->foodStopId;
+}
+
 $action = $_GET["action"];
 // Based on the action, fullfill reservations, update listings, or delete listings
 switch ($action) {
@@ -47,6 +67,14 @@ switch ($action) {
             die();
         }
         break;
+    case "listings":
+        $listingRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstop", Session::getSessionUserId());
+        $listings = ListingsController::get($listingRequest)->data;
+        die(json_encode($listings));
+    case "reservations":
+        $reservationRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstop", Session::getSessionUserId());
+        $reservations = ReservationsController::get($reservationRequest)->data;
+        die(json_encode($reservations));
     case "retrieve":
         $reservation = new Reservation($_GET);
         $fulfillRequest = new Request($reservation, $selectedFoodStopId, "fulfill", Session::getSessionUserId());
@@ -77,26 +105,6 @@ switch ($action) {
         break;
 }
 
-$baseRequest = new Request(null, null, null, Session::getSessionUserId());
-
-$foodStops = FoodStopsController::get($baseRequest)->data;
-$foodStopsManaged = FoodStopsController::get(new Request(null, null, "manage", Session::getSessionUserId()))->data;
-$currentUser = new User(UsersController::get(new Request($baseRequest))->data);
-
-
-// Default to first food stop
-if (isset($selectedFoodStopId)) {
-    foreach ($foodStopsManaged as $foodStop) {
-        $foodStop = new FoodStop($foodStop);
-        if ($foodStop->foodStopId == $selectedFoodStopId) {
-            $selectedFoodStop = $foodStop;
-        }
-    }
-}
-else {
-    $selectedFoodStop = new FoodStop($foodStopsManaged[0]);
-    $selectedFoodStopId = $selectedFoodStop->foodStopId;
-}
 $reservationRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstop", Session::getSessionUserId());
 $listingRequest = new Request(null, $selectedFoodStop->foodStopId, "foodstop", Session::getSessionUserId());
 
@@ -117,26 +125,10 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
             crossorigin="anonymous"></script>
 
     <script src="js/main.js"></script>
+    <script src="js/dashboard_setup.js"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/main.css">
     <title>CampusPlate | Manage</title>
-    <script>
-        function changeFoodStop(foodStopId) {
-            window.location = 'dashboard.php?foodstop=' + foodStopId;
-        }
-
-        function checkListings() {
-            fetch('dashboard.php?action=ping')
-                .then(response => response.json())
-                .then(data => console.log(data))
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-
-        // Keep food manager session alive
-        window.setInterval(checkListings, 10000);
-    </script>
 </head>
 <body>
 
@@ -167,7 +159,7 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
             <div class="col-12">
                 <div class="float-lg-end">
                     <span class="fw-lighter">Change Food Stop:</span>
-                    <select class="form-select-sm w-auto d-inline-block fw-lighter" onchange="changeFoodStop(this.value)">
+                    <select class="form-select-sm w-auto d-inline-block fw-lighter" id="foodStopSelector">
                         <?php
                         foreach ($foodStopsManaged as $foodStop) {
                             $foodStop = new FoodStop($foodStop);
@@ -210,8 +202,7 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
                     </svg>
                     Add Order
                 </button>
-                <button class="btn btn-primary"
-                        onclick="changeFoodStop(<?= $selectedFoodStop->foodStopId ?>)">
+                <button class="btn btn-primary" id="reloadButton">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
@@ -317,106 +308,6 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
         </div>
     </div>
 
-    <script>
-        var reservations = [];
-        var listings = [];
-        var confirmModal = document.getElementById('confirmModal');
-        var placeModal = document.getElementById('placeOrderModal');
-        var deleteModal = document.getElementById('deleteModal');
-
-        var modalReservationId;
-        var listingIdToDelete;
-
-        function getReservation(id) {
-            var reservation = null;
-
-            for (var i = 0; i < reservations.length; i++) {
-                reservation = reservations[i];
-                if (reservation.reservationId === parseInt(id)) {
-                    break;
-                }
-            }
-            return reservation;
-        }
-
-        function updatePickupListingQuantity(listing) {
-            let select = placeModal.querySelector("#selectedQuantity");
-            select.innerHTML = "";
-            for (let i = 1; i <= listing.quantityRemaining; i++) {
-                let option = document.createElement("option");
-                option.value = i.toString();
-                option.innerText = i.toString();
-                select.appendChild(option);
-            }
-        }
-
-        deleteModal.querySelector("#deleteListingButton").addEventListener('click', function event() {
-            window.location = 'dashboard.php?foodstop=<?=$selectedFoodStop->foodStopId?>&action=delete&listingId=' + listingIdToDelete;
-        });
-
-        deleteModal.addEventListener('show.bs.modal', function (event) {
-            let sourceButton = event.relatedTarget;
-            listingIdToDelete = sourceButton.getAttribute("data-bs-id");
-        });
-
-
-        placeModal.querySelector("#selectedListing").addEventListener('change', function (event) {
-            let select = placeModal.querySelector("#selectedListing");
-            listings.forEach(listing => {
-                if (parseInt(listing.listingId) === parseInt(select.value)) {
-                    updatePickupListingQuantity(listing);
-                }
-            });
-
-        });
-
-        placeModal.querySelector("#submit").addEventListener("click", function (event) {
-            let listingId = placeModal.querySelector("#selectedListing").value;
-            let quantity = placeModal.querySelector("#selectedQuantity").value;
-            window.location = 'dashboard.php?foodstop=<?=$selectedFoodStop->foodStopId?>&action=place&listingId=' + listingId + '&quantity=' + quantity;
-        });
-
-        placeModal.addEventListener('show.bs.modal', function (event) {
-            // Show listings
-            let select = placeModal.querySelector("#selectedListing");
-            select.innerHTML = "";
-            for (let i = 0; i < listings.length; i++) {
-                let listing = listings[i];
-                let option = document.createElement("option");
-                option.value = listing.listingId;
-                option.innerText = listing.title + " (" + listing.quantityRemaining + " Remaining)";
-                select.appendChild(option);
-            }
-
-            updatePickupListingQuantity(listings[0]);
-
-        });
-        confirmModal.querySelector("#submit").addEventListener("click", function (event) {
-            let reservation = getReservation(modalReservationId);
-            let quantityRetrieved = confirmModal.querySelector("#selectedAmount").value;
-            window.location = 'dashboard.php?foodstop=<?=$selectedFoodStop->foodStopId?>&action=retrieve&reservationId=' + reservation.reservationId + '&quantity=' + quantityRetrieved;
-        });
-
-        confirmModal.addEventListener('show.bs.modal', function (event) {
-            let sourceButton = event.relatedTarget;
-
-            modalReservationId = sourceButton.getAttribute("data-bs-id");
-            let reservation = getReservation(modalReservationId);
-
-            //TODO: Check if reservation is null
-            let quantity = reservation.quantity;
-
-            confirmModal.querySelector("#selectedAmount").innerHTML = "";
-            for (var x = quantity; x > 0; x--) {
-                var option = document.createElement("option");
-                option.value = x;
-                option.innerText = x;
-                confirmModal.querySelector("#selectedAmount").appendChild(option);
-            }
-        });
-
-    </script>
-
     <h3>Active Reservations</h3>
 
     <table class="table table-sm table-hover table-responsive-lg">
@@ -436,10 +327,6 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
                 $reservation = new Reservation($reservation);
 
                 ?>
-                <script>
-                    reservation = <?=json_encode($reservation)?>;
-                    reservations.push(reservation);
-                </script>
             <?php
 
             $matchedListing = null;
@@ -460,14 +347,13 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
                     <td><?= $reservation->code ?></td>
                     <td>
                         <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#confirmModal" data-bs-id="<?= $reservation->reservationId ?>">Retrieved
+                                data-bs-target="#confirmModal" data-bs-id="<?=$reservation->reservationId?>">Retrieved
                         </button>
                     </td>
                 </tr>
                 <?php
             }
-        }
-        else {
+        } else {
             ?>
             <?php
         }
@@ -479,15 +365,14 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
 
     <h3>Active Food Listings
         <div class="float-end">
-            <button class="btn btn-success"
-                    onclick="window.location.href='listing.php?action=create&foodstop=<?= $selectedFoodStopId ?>'">
+            <a href="listing.php?action=create&foodstop=<?=$selectedFoodStopId ?>"><button class="btn btn-success">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-plus-circle" viewBox="0 0 16 16">
                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                 </svg>
                 Add Listing
-            </button>
+            </button></a>
     </h3>
     <table class="table table-sm table-hover">
         <thead>
@@ -508,10 +393,6 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
 
 
             ?>
-            <script>
-                listing = <?=json_encode($listing)?>;
-                listings.push(listing);
-            </script>
             <tr>
                 <th scope="row"><?= $listing->title ?></th>
                 <td><?= $listing->description ?></td>
@@ -520,14 +401,17 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
                 <td><?= date("M jS g:ia", $listing->creationTime) ?></td>
                 <td><?= date("M jS g:ia", $listing->expirationTime) ?></td>
                 <td>
-                    <button class="btn btn-outline-info btn-sm" onclick="window.location.href='listing.php?action=move&foodstop=<?= $selectedFoodStopId ?>&listingId=<?= $listing->listingId ?>'"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-truck" viewBox="0 0 16 16">
+                    <a href="listing.php?action=move&foodstop=<?= $selectedFoodStopId ?>&listingId=<?= $listing->listingId ?>"
+                       class="btn btn-outline-info btn-sm" role="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-truck" viewBox="0 0 16 16">
                             <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
                         </svg> Move
-                    </button>
-                    <button class="btn btn-outline-secondary btn-sm"
-                            onclick="window.location.href='listing.php?action=update&foodstop=<?= $selectedFoodStopId ?>&listingId=<?= $listing->listingId ?>'">
-                        Edit
-                    </button>
+
+                    </a>
+                    <a href="listing.php?action=update&foodstop=<?= $selectedFoodStopId ?>&listingId=<?= $listing->listingId ?>"
+                       class="btn btn-outline-secondary btn-sm" role="button">
+                            Edit
+                    </a>
                     <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
                             data-bs-id="<?= $listing->listingId ?>">Delete
                     </button>
@@ -568,10 +452,10 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
                 <td><?= $listing->quantityRemaining ?>/<?= $listing->quantity ?></td>
                 <td><?= date("M jS g:ia", $listing->expirationTime) ?></td>
                 <td>
-                    <button class="btn btn-outline-secondary btn-sm"
-                            onclick="window.location.href='listing.php?action=update&foodstop=<?= $selectedFoodStopId ?>&listingId=<?= $listing->listingId ?>'">
+                    <a class="btn btn-outline-secondary btn-sm" role="button"
+                            href="listing.php?action=update&foodstop=<?= $selectedFoodStopId ?>&listingId=<?= $listing->listingId ?>">
                         Edit
-                    </button>
+                    </a>
                 </td>
             </tr>
             <?php
@@ -580,5 +464,6 @@ $recentlyExpiredListings = ListingsController::get($recentlyExpiredListingReques
         </tbody>
     </table>
 </div>
+<script src="js/dashboard.js"></script>
 </body>
 </html>
