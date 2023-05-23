@@ -115,30 +115,19 @@ if ($action == "update" || $action == "move") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
-            crossorigin="anonymous"></script>
 
+    <script src="js/bootstrap.js"></script>
     <script src="js/main.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.js"></script>
+
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="../css/jquery-ui.css">
+    <link rel="stylesheet" href="css/listing.css">
     <title>CampusPlate | Manage</title>
-    <script>
-        $(function () {
-            $("#creationDate").datepicker();
-            $("#expirationDate").datepicker();
-        });
+    <script src="js/listing_setup.js"></script>
 
-    </script>
-    <style>
-        .dateControl {
-            max-width: 150px;
-            display: inline-block;
-        }
-    </style>
 </head>
 <body>
 
@@ -271,8 +260,7 @@ if ($action == "update" || $action == "move") {
                 }
                 ?>
                 <div class="col-lg-12 mt-4">
-                    <button type="reset" class="btn btn-danger" onclick="window.location.href='dashboard.php'">Cancel
-                    </button>
+                    <a type="reset" class="btn btn-danger" role="button" href="dashboard.php">Cancel</a>
                     <button type="submit" class="btn btn-primary ms-3">Submit</button>
                 </div>
         </form>
