@@ -44,14 +44,12 @@ if (isset($_POST["action"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
-            crossorigin="anonymous"></script>
 
+    <script src="js/bootstrap.js"></script>
     <script src="js/main.js"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/main.css">
-    <script src='https://cdn.plot.ly/plotly-2.4.2.min.js'></script>
+
     <title>CampusPlate | Manage</title>
     <style>
         h3 {
@@ -118,28 +116,7 @@ if (isset($_POST["action"])) {
         </div>
     </div>
 
-    <script>
-        var deleteModal = document.getElementById('deleteModal');
-
-
-
-        deleteModal.addEventListener('show.bs.modal', function (event) {
-            let sourceButton = event.relatedTarget;
-            let foodstop = sourceButton.getAttribute("data-bs-foodstop");
-            let user = sourceButton.getAttribute("data-bs-user");
-
-            let foodstopId = sourceButton.getAttribute("data-bs-foodstop-id");
-            let userId = sourceButton.getAttribute("data-bs-user-id");
-            // TODO: This is not being inserted, get hard coded text to work first, then get it dynamically
-            deleteModal.querySelector(".user").innerHTML = user;
-            deleteModal.querySelector(".foodstop").innerHTML = foodstop;
-
-            deleteModal.querySelector("#removeRoleButton").addEventListener('click', function event() {
-                window.location = 'admin.php?action=removeRole&userId=' + userId + '&foodStopId=' + foodstopId;
-            });
-        });
-    </script>
-
+    <script src="js/admin.js"></script>
 
     <h2 class="mt-3">Admins and Food Stop Managers</h2>
     <div class="row">
@@ -229,10 +206,7 @@ if (isset($_POST["action"])) {
         </div>
 
     </div>
-
-    <div style="height:50px"></div>
-
-
+    <div class="mb-5"></div>
 </div>
 </body>
 </html>
