@@ -87,7 +87,7 @@ switch ($action) {
         $reservation->quantity = $_GET["quantity"];
         $reservation->status = Reservation::$RESERVATION_STATUS_ON_DEMAND;
 
-        $placeRequest = new Request($reservation, $selectedFoodStop, null, Session::getSessionUserId());
+        $placeRequest = new Request($reservation, $selectedFoodStopId, null, Session::getSessionUserId());
         $response = ReservationsController::post($placeRequest);
 
         if ($response->status == Reservation::$RESERVATION_RETURN_CODE_QUANTITY_NOT_AVAILABLE) {
