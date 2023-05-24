@@ -11,6 +11,31 @@ require_once(__DIR__ . "/../../model/AuthorizationModel.php");
 if (!Session::isSessionValid() ) {
     header('Location: ' . "index.php");
 }
+
+$action = $_GET["action"];
+$filter = $_GET["filter"];
+if ($action === "getPlotData") {
+
+    $x = array();
+    $y = array();
+    if ($filter == "items") {
+        $results = ReportingModel::getItemsPerDay();
+        foreach ($results as $result) {
+            array_push($x, $result["createdDate"]);
+            array_push($y, $result["numPerDate"]);
+        }
+    }
+    else if ($filter == "weight") {
+        $results = ReportingModel::getWeightRecoveredByDayInPounds();
+        foreach ($results as $result) {
+            array_push($x, $result["createdDate"]);
+            array_push($y, $result["total"]);
+        }
+    }
+    $data["x"] = $x;
+    $data["y"] = $y;
+    die(json_encode($data));
+}
 ?>
 
 <!DOCTYPE html>
@@ -18,20 +43,13 @@ if (!Session::isSessionValid() ) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
-            crossorigin="anonymous"></script>
-
+    <script src="js/bootstrap.js"></script>
     <script src="js/main.js"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/main.css">
-    <script src='https://cdn.plot.ly/plotly-2.4.2.min.js'></script>
+    <link rel="stylesheet" href="css/reporting.css">
+    <script src='js/plotly-2.18.2.min.js'></script>
     <title>CampusPlate | Manage</title>
-    <style>
-        h3 {
-            margin-left:15px;
-        }
-    </style>
 </head>
 <body>
 
@@ -106,70 +124,10 @@ if (!Session::isSessionValid() ) {
     <h3>Items Recovered By Day</h3>
     <div id="byDate">
     </div>
-    <script>
-        <?php
-        $results = ReportingModel::getItemsPerDay();
-        ?>
-        let data = [
-            {
-                x: [
-                    <?php
-                    for ($i = 0; $i < sizeof($results); $i++) {
-                        echo "'" . $results[$i]["createdDate"] . "'";
-                        if ($i < sizeof($results) - 1) echo ",";
-                    }
-
-                    ?>],
-                y: [
-                    <?php
-
-                    for ($i = 0; $i < sizeof($results); $i++) {
-                        echo $results[$i]["numPerDate"];
-                        if ($i < sizeof($results) - 1) echo ",";
-                    }
-                    ?>],
-                type: 'bar',
-                marker: {
-                    color: 'rgb(128,190,57)'
-
-                }
-            }
-        ];
-        Plotly.newPlot("byDate", data);
-    </script>
     <h3>Weight By Day (Pounds)</h3>
     <div id="weightByDate">
     </div>
-    <script>
-        <?php
-        $results = ReportingModel::getWeightRecoveredByDayInPounds();
-        ?>
-        let weightData = [
-            {
-                x: [
-                    <?php
-                    for ($i = 0; $i < sizeof($results); $i++) {
-                        echo "'" . $results[$i]["createdDate"] . "'";
-                        if ($i < sizeof($results) - 1) echo ",";
-                    }
-
-                    ?>],
-                y: [
-                    <?php
-
-                    for ($i = 0; $i < sizeof($results); $i++) {
-                        echo $results[$i]["total"];
-                        if ($i < sizeof($results) - 1) echo ",";
-                    }
-                    ?>],
-                type: 'bar',
-                marker: {
-                    color: 'rgb(128,190,57)'
-
-                }
-            }
-        ];
-        Plotly.newPlot("weightByDate", weightData);
+    <script src="js/reporting.js">
     </script>
 
     <h2 class="mt-3">User Statistics</h2>
@@ -229,20 +187,8 @@ if (!Session::isSessionValid() ) {
         </div>
 
     </div>
-
-
     <hr/>
-
-
-
-
-
-
-    <div style="height:50px"></div>
-    <hr/>
-    <div style="height:50px"></div>
-
-
+    <div class="mt-5"></div>
 </div>
 </body>
 </html>

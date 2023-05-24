@@ -1,7 +1,5 @@
 var deleteModal = document.getElementById('deleteModal');
 
-
-
 deleteModal.addEventListener('show.bs.modal', function (event) {
     let sourceButton = event.relatedTarget;
     let foodstop = sourceButton.getAttribute("data-bs-foodstop");
