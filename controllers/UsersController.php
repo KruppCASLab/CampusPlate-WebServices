@@ -40,6 +40,12 @@ class UsersController {
 
         $status = 0;
 
+        // This is for the test user for app store submission, this is only allowed on mopsdev
+        $shouldEnableTestUser = Config::getConfigValue("app", "enable_test_user");
+        if ($shouldEnableTestUser && $_SERVER["SERVER_NAME"] == "mopsdev.bw.edu" && $user->userName == "cptest@bw.edu") {
+            $credential->pin = "184500";
+        }
+
         // Make sure they are at BW by checking if the address ends with ab @bw email
         if (preg_match("/.*?@bw\.edu/", $user->userName) === 0) {
             return new Response(null, null, 3);
