@@ -30,7 +30,7 @@
         <div class="col-lg-6 col-sm-12">
             <h3>Install iOS App</h3>
             <p class="text">
-                If you are looking to download the application and are a member of the BW community, click on the following button from a mobile device:<div class="text-center"> <a href="https://testflight.apple.com/join/I7SiNpFO" class="text-center"><button class="btn btn-primary" href="">Install Campus Plate for iOS</button></a></div>
+                If you are looking to download the application and are a member of the BW community, click on the following button from a mobile device:<div class="text-center"> <a href="https://apps.apple.com/us/app/campus-plate/id1560379783" class="text-center"><button class="btn btn-primary" href="">Install Campus Plate for iOS</button></a></div>
             </p>
             <p>
                 Or, you can scan the following QR code from your iOS device:
@@ -56,7 +56,7 @@
             <h3>iOS App Tutorial</h3>
             <p>If you want to learn how to use the app, the video below provides a tutorial.</p>
             <div class="embed-responsive embed-responsive-16by9" >
-            <iframe class="embed-responsive-item" style="max-width:100%" width="560" height="315" src="https://www.youtube.com/embed/3_WQb5zwr0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe class="embed-responsive-item" style="max-width:100%" width="560" height="315" src="https://www.youtube.com/embed/kvyr83Ohrgo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
 
