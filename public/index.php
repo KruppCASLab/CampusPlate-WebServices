@@ -75,7 +75,8 @@
 
     <p>
         If you are a Food Stop manager, please click <a href="manage/dashboard.php">here</a> to access your Food Stop.<br /><br />
-        If you are just interested in the project, you can email <a href="mailto:flebo@bw.edu">Dr. Franklin Lebo</a> or <a href="mailto:bkrupp@bw.edu">Dr. Brian Krupp</a> or <a href="mailto:cwalkusk@bw.edu">Dr. Christy Walkuski</a>
+        This project was started by Dr. Franklin Lebo, Dr. Christy Walkuski, and Dr. Brian Krupp. If you are interested
+        in discussing the project, please contact <a href="mailto:bkrupp@bw.edu">Dr. Brian Krupp</a>.
     </p>
 </div>
 
