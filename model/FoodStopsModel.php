@@ -37,6 +37,17 @@ class FoodStopsModel {
         return $foodstops;
     }
 
+    static public function getFoodStop(int $id) {
+        $sql = "SELECT * from tblFoodStops where foodStopId = ?";
+        $results = Database::executeSql($sql, "i", array($id));
+        if (sizeof($results) > 0) {
+            return new FoodStop($results[0]);
+        }
+        else {
+            return null;
+        }
+    }
+
 
     /**
      * Returns food stops that a particular user manages

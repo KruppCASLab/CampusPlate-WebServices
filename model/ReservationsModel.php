@@ -18,6 +18,13 @@ class ReservationsModel {
         return !isset(Database::$lastError);
     }
 
+    static public function createRetrieval(Reservation $reservation) {
+        $sql = "INSERT INTO tblReservations(userId, listingId, quantity, status, code, timeCreated, timeExpired) VALUES (?,?,?,?,?,?,?)";
+        Database::executeSql($sql, "iiiiiii", array($reservation->userId, $reservation->listingId, $reservation->quantity, $reservation->status, $reservation->code, $reservation->timeCreated, $reservation->timeExpired));
+
+        return !isset(Database::$lastError);
+    }
+
     static public function fulfillReservation(Reservation $reservation) {
         $sql = "UPDATE tblReservations SET quantity = ?, status = ? WHERE reservationId = ?";
         Database::executeSql($sql, "iii", array($reservation->quantity, Reservation::$RESERVATION_STATUS_FULFILLED, $reservation->reservationId));
@@ -34,8 +41,8 @@ class ReservationsModel {
 
     static public function getUserReservations(int $userId) {
         // Only return reservations that were placed and not expired
-        $sql = "SELECT * from tblReservations where userId = ? AND ? < timeExpired AND status = ? ";
-        $results = Database::executeSql($sql, "iii", array($userId, time(), Reservation::$RESERVATION_STATUS_PLACED));
+        $sql = "SELECT * from tblReservations where userId = ? AND ? < timeExpired AND status = ? OR status = ?";
+        $results = Database::executeSql($sql, "iiii", array($userId, time(), Reservation::$RESERVATION_STATUS_PLACED, Reservation::$RESERVATION_STATUS_RETRIEVAL));
 
         $updatedResults = array();
         foreach($results as $result) {

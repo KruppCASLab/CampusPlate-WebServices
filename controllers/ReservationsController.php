@@ -11,20 +11,23 @@ class ReservationsController {
     static public function post(Request $request): Response {
         $reservation = new Reservation($request->data);
 
+        
         $reservation->userId = $request->userId;
+
 
         // By default, we are trying to place the reservation, so set the status to placed. Otherwise, it could be an
         // on demand reservation
         if (!isset($reservation->status)) {
             $reservation->status = Reservation::$RESERVATION_STATUS_PLACED;
         }
-
+        
         // Check if listing exists
         $listing = ListingsModel::getListing($reservation->listingId);
 
         if ($listing === null) {
             return new Response(null, null, Reservation::$RESERVATION_RETURN_CODE_LISTING_NOT_AVAILABLE);
         }
+
 
         // Check if there is enough quantity to be reserved
         $totalReserved = ReservationsModel::getReservationQuantity($reservation->listingId);
@@ -47,7 +50,28 @@ class ReservationsController {
         }
         $reservation->timeExpired = time() + ($minuteExpire * 60); // 30 minutes,
 
-        ReservationsModel::createReservation($reservation);
+        $foodStop = FoodStopsModel::getFoodStop($listing->foodStopId);
+        $stopType = $foodStop->type;
+
+        if ($stopType == "managed") {
+            ReservationsModel::createReservation($reservation);
+        }
+        elseif ($stopType == "unmanaged") {
+            $reservation->status = Reservation::$RESERVATION_STATUS_RETRIEVAL;
+            $testThreshold = 0.0004;
+            $lat = $foodStop->lat;
+            $lng = $foodStop->lng;
+
+            $userLat = $reservation->lat;
+            $userLng = $reservation->lng;
+            if (($userLat < ($lat + $testThreshold)) && ($userLat > ($lat - $testThreshold)) &&
+                ($userLng < ($lng + $testThreshold)) && ($userLng > ($lng - $testThreshold))) {
+                ReservationsModel::createReservation($reservation);
+            }
+            else {
+                $reservation->status = Reservation::$RETRIEVAL_RETURN_CODE_OUT_OF_RANGE;
+            };
+        }
         return new Response($reservation);
     }
 
