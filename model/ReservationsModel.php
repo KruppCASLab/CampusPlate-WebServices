@@ -41,8 +41,8 @@ class ReservationsModel {
 
     static public function getUserReservations(int $userId) {
         // Only return reservations that were placed and not expired
-        $sql = "SELECT * from tblReservations where userId = ? AND ? < timeExpired AND status = ? OR status = ?";
-        $results = Database::executeSql($sql, "iiii", array($userId, time(), Reservation::$RESERVATION_STATUS_PLACED, Reservation::$RESERVATION_STATUS_RETRIEVAL));
+        $sql = "SELECT * from tblReservations where userId = ? AND ? < timeExpired AND status = ?";
+        $results = Database::executeSql($sql, "iii", array($userId, time(), Reservation::$RESERVATION_STATUS_PLACED));
 
         $updatedResults = array();
         foreach($results as $result) {
