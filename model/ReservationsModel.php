@@ -34,8 +34,8 @@ class ReservationsModel {
 
     static public function getReservationQuantity(int $listingId) {
         // Get the total number of items that have been fulfilled through reservation or on demand OR or placed but have not expired
-        $sql = "SELECT SUM(quantity) from tblReservations where listingId = ? AND (status = ? OR status = ? OR (status = ? AND ? < timeExpired) )";
-        $results = Database::executeSql($sql, "iiiii", array($listingId, Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND, Reservation::$RESERVATION_STATUS_PLACED, time()));
+        $sql = "SELECT SUM(quantity) from tblReservations where listingId = ? AND (status = ? OR status = ? OR status = ? OR (status = ? AND ? < timeExpired) )";
+        $results = Database::executeSql($sql, "iiiiii", array($listingId, Reservation::$RESERVATION_STATUS_FULFILLED, Reservation::$RESERVATION_STATUS_ON_DEMAND, Reservation::$RESERVATION_STATUS_RETRIEVAL, Reservation::$RESERVATION_STATUS_PLACED, time()));
         return $results[0]["SUM(quantity)"];
     }
 
