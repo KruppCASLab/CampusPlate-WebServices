@@ -72,7 +72,7 @@ class ReservationsController {
                 $reservation->status = Reservation::$RETRIEVAL_RETURN_CODE_OUT_OF_RANGE;
             };
         }
-        return new Response($reservation);
+        return new Response($reservation, null, $reservation->status);
     }
 
     static public function get(Request $request): Response {
