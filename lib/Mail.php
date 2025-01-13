@@ -43,7 +43,6 @@ class Mail
         $mail->Username = $config->getConfigValue("email", "username");
         $mail->Password = $config->getConfigValue("email", "password");
         $mail->SetFrom($config->getConfigValue("email", "username"), "Campus Plate");
-        //$mail->AddReplyTo("bkrupp@bw.edu", "Brian Krupp");
         $mail->Subject = "Campus Plate : Account Registered";
         $mail->Body = $emailText;
         $mail->AddAddress($email);

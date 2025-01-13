@@ -47,7 +47,7 @@ class UsersController {
         }
 
         // Make sure they are at BW by checking if the address ends with ab @bw email
-        if (preg_match("/.*?@bw\.edu/", $user->userName) === 0) {
+        if (preg_match("/.*?@case\.edu/", $user->userName) === 0) {
             return new Response(null, null, 3);
         }
 
