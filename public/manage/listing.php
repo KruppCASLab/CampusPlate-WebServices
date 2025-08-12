@@ -117,7 +117,6 @@ if ($action == "update" || $action == "move") {
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="js/bootstrap.js"></script>
-    <script src="js/main.js"></script>
     <script src="js/jquery.js"></script>
     <script src="js/jquery-ui.js"></script>
 
