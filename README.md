@@ -1,15 +1,12 @@
-# CampusPlate
-
-# Building Android APK
-To build the Android application APK file, go to Build -> Generate Signed Bundle or APK. Then check APK. Select the keystore path and cpkey0 as the key. If needed, generate a new key but you should use the existing. Then choose release as the build type. The APK will be created, take the APK and upload to server.
-
-# Web Service Catalog
+# CampusPlate - Web Services
 ## Introduction
+The web services contain both the service endpoint (public/rest.php) and the web portal used for administrators (public/index.php).
+
 The web services listed below are used for Campus Plate. Each response is encapsulated in a response object. If a web service does not specify a return object, it can be assumed that a generic one is used. Below is an example.
 
 A status of 0 indicates success, any other number can mean an error or some other response. (-1 indicates that error was detected but not directly set in response). Data holds the corresponding data for that specific request. Error holds additional error information for the client. Below is an example:
 
-``` java
+``` json
 {
     "data": null,
     "status": 0,
@@ -129,7 +126,7 @@ A status of 0 indicates success, any other number can mean an error or some othe
 * Method: GET
 * Response: Returns the image data, base64 encoded.
 
-``` objective-c
+``` json
 {
     "data": "/9j/4AAQS ...",
     "status": 0,
@@ -236,7 +233,7 @@ Description: User attempts to create a reservation.
 ```
 * Response:  data is the reservation. code is the unique code that should be shown to the food stop manager. timeExpired is when their reservation expires. quantity is how much they reserved.
 	* **Please note:** status = 0 on success, 1 on quantity not available, 2 on listings no longer available
-``` javascript
+``` json
 {
     "data": {
         "reservationId": null,
@@ -257,7 +254,7 @@ Description: User attempts to create a reservation.
 Description: Gets reservations from users that have not expired OR that have not been fulfilled
 * Path: `https://<baseurl>/reservations`
 * Method: GET
-``` javascript
+``` json
 {
     "data": [
         {
