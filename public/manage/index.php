@@ -24,7 +24,6 @@ if (isset($username) && isset($password)) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="js/main.js"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/main.css">
     <title>CampusPlate | Manage</title>
