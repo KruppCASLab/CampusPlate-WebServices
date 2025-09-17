@@ -37,7 +37,7 @@ if (isset($username) && isset($password)) {
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="email" class="form-control" name="username" aria-describedby="loginHelp">
-                <div id="loginHelp" class="form-text">This is your BW email address</div>
+                <div id="loginHelp" class="form-text">This is your CWRU email address</div>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>

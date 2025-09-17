@@ -46,7 +46,7 @@ class UsersController {
             $credential->pin = "184500";
         }
 
-        // Make sure they are at BW by checking if the address ends with ab @bw email
+        // Make sure they are at CWRU by checking if the address ends with ab @CWRU email
         if (preg_match("/.*?@case\.edu/", $user->userName) === 0) {
             return new Response(null, null, 3);
         }
