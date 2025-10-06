@@ -30,7 +30,7 @@
         <div class="col-lg-6 col-sm-12">
             <h3>Install iOS App</h3>
             <p class="text">
-                If you are looking to download the application and are a member of the BW community, click on the following button from a mobile device:<div class="text-center"> <a href="https://apps.apple.com/us/app/campus-plate/id1560379783" class="text-center"><button class="btn btn-primary" href="">Install Campus Plate for iOS</button></a></div>
+                If you are looking to download the application and are a member of the CWRU community, click on the following button from a mobile device:<div class="text-center"> <a href="https://apps.apple.com/us/app/campus-plate/id1560379783" class="text-center"><button class="btn btn-primary" href="">Install Campus Plate for iOS</button></a></div>
             </p>
             <p>
                 Or, you can scan the following QR code from your iOS device:
@@ -41,7 +41,7 @@
         <div class="col-lg-6 col-sm-12">
             <h3>Install Android App</h3>
             <p class="text">
-                If you are looking to download the application and are a member of the BW community, click on the following button from a mobile device:<div class="text-center"> <a href="https://mops.bw.edu/cp/cp.apk" class="text-center"><button class="btn btn-success" href="">Install Campus Plate for Android</button></a><br /><small><i>Last Updated on <?=date("m/d/Y", filemtime("cp.apk"));?></i></small></div>
+                If you are looking to download the application and are a member of the CWRU community, click on the following button from a mobile device:<div class="text-center"> <a href="https://mops.bw.edu/cp/cp.apk" class="text-center"><button class="btn btn-success" href="">Install Campus Plate for Android</button></a><br /><small><i>Last Updated on <?=date("m/d/Y", filemtime("cp.apk"));?></i></small></div>
             </p>
             <p>
                 Or, you can scan the following QR code from your Android device:
@@ -76,7 +76,7 @@
     <p class="mb-5">
         If you are a Food Stop manager, please click <a href="manage/dashboard.php">here</a> to access your Food Stop.<br /><br />
         This project was started by Dr. Franklin Lebo, Dr. Christy Walkuski, and Dr. Brian Krupp. If you are interested
-        in discussing the project, please contact <a href="mailto:bkrupp@bw.edu">Dr. Brian Krupp</a>.
+        in discussing the project, please contact <a href="mailto:brian.krupp2@case.edu">Dr. Brian Krupp</a>.
     </p>
 </div>
 

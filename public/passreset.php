@@ -76,7 +76,7 @@ else if (isset($username)) {
     $response = UsersController::post($request);
 
     if ($response->status == 3) {
-        die("Please enter a valid BW email address.");
+        die("Please enter a valid CWRU email address.");
     }
 
     $showPasswordForm = true;
@@ -162,7 +162,7 @@ else if (isset($username)) {
                 <div class="mb-3 col-lg-4">
                     <label for="username" class="form-label">Username</label>
                     <input type="email" class="form-control" name="username" aria-describedby="loginHelp" id="username">
-                    <div id="loginHelp" class="form-text">This is your BW email address</div>
+                    <div id="loginHelp" class="form-text">This is your CWRU email address</div>
                 </div>
                 <?php
             }
