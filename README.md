@@ -1,5 +1,26 @@
 # CampusPlate - Web Services
-## Introduction
+## Campus Plate - Migration Steps
+
+To use the newest version of Campus Plate web services, there are several small changes to the database and new services that need to be installed
+
+### Steps
+Below are the steps to be performed:
+1. Stop the web server so people cannot access Campus Plate (Ideally, this is not during a time when it is being used)
+2. Make the database change described below
+   * On the table `tblFoodStops`, perform the following:
+     * Delete column `type`
+     * Add the following columns (BOOLEAN)
+   ```sql
+     `managed` tinyint(1) NOT NULL,
+     `reservable` tinyint(1) NOT NULL,
+   ```
+3. Install the latest web services using rsync
+4. Verify configuration file
+5. Restart web server
+6. Verify access via mobile application and access via administrative dashboard 
+
+
+## Web Service Catalog
 The web services contain both the service endpoint (public/rest.php) and the web portal used for administrators (public/index.php).
 
 The web services listed below are used for Campus Plate. Each response is encapsulated in a response object. If a web service does not specify a return object, it can be assumed that a generic one is used. Below is an example.
