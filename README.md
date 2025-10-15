@@ -15,10 +15,21 @@ Below are the steps to be performed:
      `reservable` tinyint(1) NOT NULL,
    ```
 3. Install the latest web services using rsync
-4. Verify configuration file
-5. Restart web server
-6. Verify access via mobile application and access via administrative dashboard 
+4. Add to `config.cfg` the `organization` entry in the `app` stanza:
 
+```
+[app]
+enable_test_user = false
+image_dir = "/var/www/cp/images"
+organization = "CWRU"
+
+```
+   
+6. Verify configuration file
+7. Restart web server
+8. Verify access via mobile application and access via administrative dashboard 
+
+---
 
 ## Web Service Catalog
 The web services contain both the service endpoint (public/rest.php) and the web portal used for administrators (public/index.php).
