@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . "/../../lib/Security.php");
 require_once(__DIR__ . "/../../lib/Session.php");
+require_once(__DIR__ . "/../../lib/Config.php");
 
 $username = $_POST["username"];
 $password = $_POST["password"];
@@ -37,7 +38,7 @@ if (isset($username) && isset($password)) {
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="email" class="form-control" name="username" aria-describedby="loginHelp">
-                <div id="loginHelp" class="form-text">This is your CWRU email address</div>
+                <div id="loginHelp" class="form-text">This is your <?=Config::getConfigValue("app", "organization")?> email address</div>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
