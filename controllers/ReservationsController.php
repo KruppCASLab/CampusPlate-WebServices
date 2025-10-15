@@ -50,28 +50,8 @@ class ReservationsController {
         }
         $reservation->timeExpired = time() + ($minuteExpire * 60); // 30 minutes,
 
-        $foodStop = FoodStopsModel::getFoodStop($listing->foodStopId);
-        $stopType = $foodStop->type;
+        ReservationsModel::createReservation($reservation);
 
-        if ($stopType == "managed") {
-            ReservationsModel::createReservation($reservation);
-        }
-        elseif ($stopType == "unmanaged") {
-            $reservation->status = Reservation::$RESERVATION_STATUS_RETRIEVAL;
-            $testThreshold = 0.0004;
-            $lat = $foodStop->lat;
-            $lng = $foodStop->lng;
-
-            $userLat = $reservation->lat;
-            $userLng = $reservation->lng;
-            if (($userLat < ($lat + $testThreshold)) && ($userLat > ($lat - $testThreshold)) &&
-                ($userLng < ($lng + $testThreshold)) && ($userLng > ($lng - $testThreshold))) {
-                ReservationsModel::createReservation($reservation);
-            }
-            else {
-                $reservation->status = Reservation::$RETRIEVAL_RETURN_CODE_OUT_OF_RANGE;
-            };
-        }
         return new Response($reservation, null, $reservation->status);
     }
 
