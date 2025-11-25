@@ -26,6 +26,3 @@ Now that you are a **foodstop manager**, your main usage of this webportal will 
 
 ## 2. Updating a listing
 ## 3. Deleting a listing 
-# [3] Orders
-As a manager of unmannaged foodstops, you can add orders of incoming people through the portal.
->>>>>>> Stashed changes
