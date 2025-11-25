@@ -1,5 +1,7 @@
 # CampusPlate - Web Services
 <!-- TOC -->
+* [Open Source Contributing Code of Conduct](./CODE_OF_CONDUCT.md)
+  * [Contribution Guidelines](./CONTRIBUTING.md)
 * [Campus Plate - Migration Steps](#campus-plate---migration-steps)
 * [Web Service Catalog](#web-service-catalog)
 <!-- TOC -->
