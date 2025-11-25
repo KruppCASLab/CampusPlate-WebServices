@@ -1,4 +1,4 @@
-# Food Stop Manager Management
+# Admin Guide: Food Stop Manager Management
 > To perform the functions below, you must be configured as an **administrator** for Campus Plate. Contact your system administrator if you need help having your account setup as an administrator. 
 
 ## Overview

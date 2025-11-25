@@ -17,7 +17,7 @@ If instead you see this message:
 ```
 Error: You are currently not authorized as a manager of food stops.
 ```
-This means you require the [admin to make you a food stop manager](Food%20Stop%20Management.md). Contact them externally to let them know.
+This means you require the [admin to make you a food stop manager](Admin%20Guide.md). Contact them externally to let them know.
 
 # [2] Managing listings at your food stop
 Now that you are a **foodstop manager**, your main usage of this webportal will be adding, updating, and deleting listings.
