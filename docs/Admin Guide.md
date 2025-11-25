@@ -1,5 +1,5 @@
 # Food Stop Manager Management
-> To perform the functions below, you must be configured as an administrator for Campus Plate. Contact your system administrator if you need help having your account setup as an administrator. 
+> To perform the functions below, you must be configured as an **administrator** for Campus Plate. Contact your system administrator if you need help having your account setup as an administrator. 
 
 ## Overview
 * Food stop managers can add listings (items) to food stops, update listings, fulfill orders, and more. Individual people can manage one or several food stops. These instructions will show you how to add food stop managers and remove food stop managers.
