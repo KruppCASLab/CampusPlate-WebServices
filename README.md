@@ -1,4 +1,8 @@
 # CampusPlate - Web Services
+<!-- TOC -->
+* [Campus Plate - Migration Steps](#campus-plate---migration-steps)
+* [Web Service Catalog](#web-service-catalog)
+<!-- TOC -->
 ## Campus Plate - Migration Steps
 
 To use the newest version of Campus Plate web services, there are several small changes to the database and new services that need to be installed
@@ -31,7 +35,7 @@ organization = "CWRU"
 
 ---
 
-## Web Service Catalog
+# Web Service Catalog
 The web services contain both the service endpoint (public/rest.php) and the web portal used for administrators (public/index.php).
 
 The web services listed below are used for Campus Plate. Each response is encapsulated in a response object. If a web service does not specify a return object, it can be assumed that a generic one is used. Below is an example.
