@@ -1,6 +1,8 @@
 # CampusPlate
 This document describes the format in which the web portal and the database interact. This is known as the API.
 
+For usage guides, please refer to the [Admin Guide](./docs/Admin%20Guide.md) or the [Foodstop Manager Guide](./docs/FSManager%20Guide.md). 
+
 # Building Android APK
 To build the Android application APK file, go to Build -> Generate Signed Bundle or APK. Then check APK. Select the keystore path and cpkey0 as the key. If needed, generate a new key but you should use the existing. Then choose release as the build type. The APK will be created, take the APK and upload to server.
 

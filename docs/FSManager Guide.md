@@ -23,6 +23,6 @@ This means you require the [admin to make you a food stop manager](Admin%20Guide
 Now that you are a **foodstop manager**, your main usage of this webportal will be adding, updating, and deleting listings.
 > A listing refers to any offering that your stop may have.
 ## 1. Adding a listing 
-
+1. Click on add listing
 ## 2. Updating a listing
 ## 3. Deleting a listing 
