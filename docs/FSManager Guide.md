@@ -23,6 +23,31 @@ This means you require the [admin to make you a food stop manager](Admin%20Guide
 Now that you are a **foodstop manager**, your main usage of this webportal will be adding, updating, and deleting listings.
 > A listing refers to any offering that your stop may have.
 ## 1. Adding a listing 
-1. Click on add listing
+1. Click on add listing. 
+![](./Documentation/addlist.jpg)
+2. Fill out the fields. 
+```
+Each item is a single unit of food that your food stop gives out. 
+e.g. if you are handing out potatoes in a bag vs individual potatoes:
+```
+![](./Documentation/bagpotato.png)
+![](./Documentation/potato.png)
+
+```
+The expiration date should auto-fill, but you can also manually change it.
+```
+3. The listings should appear as such:
+![](./Documentation/listingsadd.png)
+
 ## 2. Updating a listing
+To update incorrect listings, click edit.
+![](./Documentation/edit1.png)
+![](./Documentation/edit2.png)
+![](./Documentation/editEnd.png)
 ## 3. Deleting a listing 
+> Note: do NOT delete items when they are recovered. Only delete them if they've been listed incorrectly.
+
+![](./Documentation/delete1.png)
+![](./Documentation/delete2.png)
+![](./Documentation/deletedone.png)
+
