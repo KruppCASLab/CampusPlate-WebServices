@@ -117,7 +117,7 @@ if ($action === "getPlotData") {
         </div>
         <div class="col-md-4 col-sm-12 text-center ">
             <h1 class="display-1 secondaryColor"><?=round($weightNotRecovered, 0)?></h1>
-            <p>Total Weight Composted in Grind2Energy<br />(<small>For Listings Reporting Weight</small>)</p>
+            <p>Total Weight Not Recovered <br />(<small>For Listings Reporting Weight</small>)</p>
         </div>
     </div>
     <h3>Items Recovered By Day</h3>

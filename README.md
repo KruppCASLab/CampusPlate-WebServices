@@ -1,18 +1,56 @@
 # CampusPlate
-This document describes the format in which the web portal and the database interact. This is known as the API.
-
 For usage guides, please refer to the [Admin Guide](./docs/Admin%20Guide.md) or the [Foodstop Manager Guide](./docs/FSManager%20Guide.md). 
 
-# Building Android APK
-To build the Android application APK file, go to Build -> Generate Signed Bundle or APK. Then check APK. Select the keystore path and cpkey0 as the key. If needed, generate a new key but you should use the existing. Then choose release as the build type. The APK will be created, take the APK and upload to server.
+# CampusPlate - Web Services
+<!-- TOC -->
+* [Open Source Contributing Code of Conduct](./CODE_OF_CONDUCT.md)
+  * [Contribution Guidelines](./CONTRIBUTING.md)
+* [Campus Plate - Migration Steps](#campus-plate---migration-steps)
+* [Web Service Catalog](#web-service-catalog)
+<!-- TOC -->
 
-# Web Service Catalog
-## Introduction
+## Campus Plate - Migration Steps
+
+To use the newest version of Campus Plate web services, there are several small changes to the database and new services that need to be installed
+
+### Steps
+Below are the steps to be performed:
+1. Stop the web server so people cannot access Campus Plate (Ideally, this is not during a time when it is being used)
+2. Make the database change described below
+   * On the table `tblFoodStops`, perform the following:
+     * Delete column `type`
+     * Add the following columns (BOOLEAN)
+   ```sql
+     `managed` tinyint(1) NOT NULL,
+     `reservable` tinyint(1) NOT NULL,
+   ```
+3. Install the latest web services using rsync
+4. Add to `config.cfg` the `organization` entry in the `app` stanza:
+
+```
+[app]
+enable_test_user = false
+image_dir = "/var/www/cp/images"
+organization = "CWRU"
+
+```
+   
+6. Verify configuration file
+7. Restart web server
+8. Verify access via mobile application and access via administrative dashboard 
+
+---
+
+## Web Service Catalog
+This document describes the format in which the web portal and the database interact. This is known as the API.
+
+The web services contain both the service endpoint (public/rest.php) and the web portal used for administrators (public/index.php).
+
 The web services listed below are used for Campus Plate. Each response is encapsulated in a response object. If a web service does not specify a return object, it can be assumed that a generic one is used. Below is an example.
 
 A status of 0 indicates success, any other number can mean an error or some other response. (-1 indicates that error was detected but not directly set in response). Data holds the corresponding data for that specific request. Error holds additional error information for the client. Below is an example:
 
-``` java
+``` json
 {
     "data": null,
     "status": 0,
@@ -132,7 +170,7 @@ A status of 0 indicates success, any other number can mean an error or some othe
 * Method: GET
 * Response: Returns the image data, base64 encoded.
 
-``` objective-c
+``` json
 {
     "data": "/9j/4AAQS ...",
     "status": 0,
@@ -239,7 +277,7 @@ Description: User attempts to create a reservation.
 ```
 * Response:  data is the reservation. code is the unique code that should be shown to the food stop manager. timeExpired is when their reservation expires. quantity is how much they reserved.
 	* **Please note:** status = 0 on success, 1 on quantity not available, 2 on listings no longer available
-``` javascript
+``` json
 {
     "data": {
         "reservationId": null,
@@ -260,7 +298,7 @@ Description: User attempts to create a reservation.
 Description: Gets reservations from users that have not expired OR that have not been fulfilled
 * Path: `https://<baseurl>/reservations`
 * Method: GET
-``` javascript
+``` json
 {
     "data": [
         {

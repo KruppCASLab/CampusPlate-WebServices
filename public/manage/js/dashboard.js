@@ -7,9 +7,13 @@ function changeFoodStop(foodStopId) {
     window.location = 'dashboard.php?foodstop=' + foodStopId;
 }
 
-document.getElementById("foodStopSelector").onchange = function () {
-    changeFoodStop(this.value);
+var selector = document.getElementById("foodStopSelector");
+if (selector != null) {
+        selector.onchange = function () {
+        changeFoodStop(this.value);
+    }
 }
+document.getElementById("foodStopSelector")
 
 document.getElementById("reloadButton").onclick = function () {
     window.location.reload();
@@ -81,6 +85,7 @@ function updatePickupListingQuantity(listing) {
 }
 
 deleteModal.querySelector("#deleteListingButton").addEventListener('click', function event() {
+    console.log("Deleting");
     window.location = 'dashboard.php?action=delete&listingId=' + listingIdToDelete + foodstop;
 });
 
