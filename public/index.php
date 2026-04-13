@@ -70,8 +70,14 @@ require_once(__DIR__ . "/../lib/Config.php");
             <div class="embed-responsive embed-responsive-16by9" >
                 <iframe class="embed-responsive-item" style="max-width:100%" width="560" height="315" src="https://www.youtube.com/embed/1pjBDbHvOQA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
+        </div>
 
-
+        <div class="col-lg-6 col-sm-12">
+            <h3>Food Stop Manager Tutorial</h3>
+            <p>This video shows how to manage food items within Campus Plate.</p>
+            <div class="embed-responsive embed-responsive-16by9" >
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/xhJ6IEljqgo?si=ka3Si30NhEL5eIiD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
         </div>
     </div>
 
