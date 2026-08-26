@@ -16,7 +16,7 @@ class AuthorizationModel {
 
     static public function isAFoodStopManager(int $userId): bool {
         $sql = "SELECT * from tblFoodStopManagers WHERE userId = ?";
-        $results = Database::executeSql($sql, "ii", array($userId));
+        $results = Database::executeSql($sql, "i", array($userId));
         return sizeof($results) > 0;
     }
 
